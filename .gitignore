@@ -1,0 +1,78 @@
+# 운영체제 관련 파일
+# macOS
+.DS_Store
+# Windows
+Thumbs.db
+
+# 의존성 관련
+src/main/frontend/node_modules
+/.pnp
+.pnp.js
+
+# 테스트 관련
+/coverage
+
+# 프로덕션 빌드 관련
+/build
+/dist
+
+# 환경 파일 관련 (보안에 민감한 정보 포함될 수 있음)
+/.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# 로그 파일
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+/resources/spring_boot.log
+
+# IntelliJ IDEA 관련
+.idea/
+*.iml
+
+# VSCode 관련
+.vscode/
+
+# 빌드 관련
+/target
+
+# Gradle 관련
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/

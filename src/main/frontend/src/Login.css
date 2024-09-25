@@ -1,0 +1,31 @@
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: #f0f0f0;
+}
+
+.card {
+    border-radius: 10px;
+    max-width: 400px;
+    width: 100%;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.login-button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+.login-img {
+    width: 100%;
+    height: auto;
+}
