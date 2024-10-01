@@ -31,7 +31,8 @@ public class TouristSpot { //여행지 엔티티
     private String oneLineDesc;  // 한 줄 설명
 
     @ElementCollection
-    @Column(name = "image_urls", nullable = true)
+    @CollectionTable(name = "tourist_spot_imageurls", joinColumns = @JoinColumn(name = "spot_id"))
+    @Column(name = "image_url", nullable = true)
     private List<String> imageUrls;  // 이미지 URL 목록
 
     @Column(name = "detailed_info", nullable = false, columnDefinition = "TEXT")
@@ -45,7 +46,8 @@ public class TouristSpot { //여행지 엔티티
     private Map<String, String> contactInfo;  // 유연한 Contact 정보 (key-value 구조)
 
     @ElementCollection
-    @Column(nullable = true)
+    @CollectionTable(name = "tourist_spot_tags", joinColumns = @JoinColumn(name = "spot_id"))
+    @Column(name = "tag", nullable = true)
     private List<String> tags;  // 태그 목록
 
     @Column(nullable = true, length = 255)
@@ -56,4 +58,7 @@ public class TouristSpot { //여행지 엔티티
 
     @Column(nullable = false, length = 255)
     private String region;  // 지역 정보
+
+    @Column(name = "indoor_outdoor", nullable = true, length = 255)
+    private String indoorOutdoor;  // 실내/실외 정보 (컬럼 매핑)
 }
