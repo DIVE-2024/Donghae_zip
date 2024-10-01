@@ -3,6 +3,7 @@ package com.example.donghae_zip.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -25,5 +26,11 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean // 스프링 컨테이너에 이 메서드가 반환하는 객체를 빈으로 등록한다.
     public RestTemplate restTemplate() {
         return new RestTemplate(); // RestTemplate 객체를 생성하여 반환한다.
+    }
+
+    // WebClient.Builder를 스프링 빈으로 등록
+    @Bean
+    public WebClient.Builder webClientBuilder() {
+        return WebClient.builder();
     }
 }

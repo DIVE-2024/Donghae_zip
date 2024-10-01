@@ -24,6 +24,14 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation 'javax.servlet:javax.servlet-api:4.0.1'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+
+    //Jackson 라이브러리 의존성 추가
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
+
+    //org 라이브러리 의존성 추가 - lee
+    implementation 'org.json:json:20210307'
 
     // Lombok
     implementation 'org.projectlombok:lombok:1.18.26'
