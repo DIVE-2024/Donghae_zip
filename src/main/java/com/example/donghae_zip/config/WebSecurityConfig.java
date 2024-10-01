@@ -47,6 +47,7 @@ public class WebSecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -55,6 +56,12 @@ public class WebSecurityConfig {
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api-test-swagger").permitAll()
                         .requestMatchers("/api/members/**").permitAll()
                         .requestMatchers("/oauth2/**", "/login/**").permitAll()
+                        // 둘레길 관련 API 인증 없이 접근 가능
+                        .requestMatchers("/api/trails/**").permitAll()
+                        // 여행지 관련 API 인증 없이 접근 가능
+                        .requestMatchers("/api/tourist-spots/**").permitAll()
+                        // 축제 관련 API 인증 없이 접근 가능
+                        .requestMatchers("/api/festivals/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
