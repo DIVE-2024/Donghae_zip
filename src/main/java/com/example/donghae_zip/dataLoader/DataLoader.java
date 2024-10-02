@@ -37,7 +37,7 @@ public class DataLoader implements CommandLineRunner {
 
     private void loadTrailData() throws Exception {
         // 둘렛길(최종) 파일 경로 설정
-        File trailFile = new File("C:\\Users\\sh980\\workspace\\둘렛길(최종).json");
+        File trailFile = new File("C:\\히껑\\DIVE2024\\둘렛길(최종).json");
 
         // 둘렛길 데이터 저장 서비스 호출
         trailService.saveTrailFromJson(trailFile.getAbsolutePath());
@@ -45,14 +45,14 @@ public class DataLoader implements CommandLineRunner {
 
     private void loadFestivalData() throws Exception {
         // 축제(최종) 파일 경로 설정
-        File festivalFile = new File("C:\\Users\\sh980\\workspace\\축제(최종).json");
+        File festivalFile = new File("C:\\히껑\\DIVE2024\\축제(최종).json");
 
         // 축제 데이터 저장 서비스 호출
         festivalService.saveFestivalFromJson(festivalFile.getAbsolutePath());
     }
 
     private void loadTouristSpotData() throws Exception {
-        String touristSpotFilePath = "C:\\Users\\sh980\\workspace\\여행지(최종).json";
+        String touristSpotFilePath = "C:\\히껑\\DIVE2024\\여행지(최종).json";
         touristSpotService.saveTouristSpotFromJson(touristSpotFilePath);
     }
 }
