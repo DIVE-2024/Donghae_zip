@@ -5,6 +5,10 @@ import com.example.donghae_zip.repository.TrailRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +20,39 @@ public class TrailService {
 
     @Autowired
     private TrailRepository trailRepository;
+
+    // ID로 둘레길 조회
+    public Trail getTrailById(Long id) {
+        return trailRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No trail found with ID: " + id));
+    }
+
+    // 둘레길 제목으로 검색 (페이지네이션 적용)
+    public Page<Trail> searchByTitle(String title, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return trailRepository.findByCourseNameContaining(title, pageable);
+    }
+
+    // 난이도로 검색 (페이지네이션 적용)
+    public Page<Trail> searchByDifficulty(String difficulty, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return trailRepository.findByDifficultyContaining(difficulty, pageable);
+    }
+
+
+    // 소요시간으로 정렬된 둘레길 목록을 페이지네이션과 함께 반환
+    // 소요시간으로 정렬된 둘레길 목록을 반환
+    public List<Trail> getTrailsSortedByTime(String direction) {
+        Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by("timeInMinutes").ascending() : Sort.by("timeInMinutes").descending();
+        return trailRepository.findAll(sort);
+    }
+
+    // 소요거리로 정렬된 둘레길 목록을 페이지네이션과 함께 반환
+    // 소요거리로 정렬된 둘레길 목록을 반환
+    public List<Trail> getTrailsSortedByLength(String direction) {
+        Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by("lengthInKm").ascending() : Sort.by("lengthInKm").descending();
+        return trailRepository.findAll(sort);
+    }
 
     @Transactional
     public void saveTrailFromJson(String filePath) throws Exception {
@@ -56,5 +93,34 @@ public class TrailService {
 
             trailRepository.save(trail);
         }
+    }
+
+    // 둘레길 생성 (관리자 기능)
+    public Trail createTrail(Trail trail) {
+        return trailRepository.save(trail);
+    }
+
+    // 둘레길 수정 (관리자 기능)
+    public Trail updateTrail(Long id, Trail updatedTrail) {
+        Trail existingTrail = getTrailById(id);
+        existingTrail.setCourseName(updatedTrail.getCourseName());
+        existingTrail.setStartPoint(updatedTrail.getStartPoint());
+        existingTrail.setEndPoint(updatedTrail.getEndPoint());
+        existingTrail.setCourseIntro(updatedTrail.getCourseIntro());
+        existingTrail.setCourseOverview(updatedTrail.getCourseOverview());
+        existingTrail.setTouristPoints(updatedTrail.getTouristPoints());
+        existingTrail.setTravelInfo(updatedTrail.getTravelInfo());
+        existingTrail.setGpxPath(updatedTrail.getGpxPath());
+        existingTrail.setLength(updatedTrail.getLength());
+        existingTrail.setTime(updatedTrail.getTime());
+        existingTrail.setDifficulty(updatedTrail.getDifficulty());
+        existingTrail.setLengthInKm(updatedTrail.getLengthInKm());
+        existingTrail.setTimeInMinutes(updatedTrail.getTimeInMinutes());
+        return trailRepository.save(existingTrail);
+    }
+
+    // 둘레길 삭제 (관리자 기능)
+    public void deleteTrail(Long id) {
+        trailRepository.deleteById(id);
     }
 }

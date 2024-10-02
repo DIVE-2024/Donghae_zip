@@ -47,6 +47,7 @@ public class WebSecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -55,6 +56,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api-test-swagger").permitAll()
                         .requestMatchers("/api/members/**").permitAll()
                         .requestMatchers("/oauth2/**", "/login/**").permitAll()
+
                         .requestMatchers("/api/accommodations/**").permitAll() // 모든 사용자가 숙박 데이터에 접근할 수 있도록 허용
                         .requestMatchers("/api/restaurants/**").permitAll() // 모든 사용자가 식당 데이터에 접근할 수 있도록 허용
                         .requestMatchers("/api/donghae/**").permitAll() // 동해선 정보에 대한 접근 허용
@@ -62,6 +64,12 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/station-stats/**").permitAll() // 주별 승하차 인원수 접근 허용
                         .requestMatchers("/api/map/coordinates/**").permitAll() //kakao map 접근 허용
                         .requestMatchers("/static/**", "/favicon.ico").permitAll()  // 정적 리소스 허용
+                        // 둘레길 관련 API 인증 없이 접근 가능
+                        .requestMatchers("/api/trails/**").permitAll()
+                        // 여행지 관련 API 인증 없이 접근 가능
+                        .requestMatchers("/api/tourist-spots/**").permitAll()
+                        // 축제 관련 API 인증 없이 접근 가능
+                        .requestMatchers("/api/festivals/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
