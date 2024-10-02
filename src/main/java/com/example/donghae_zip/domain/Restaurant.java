@@ -38,4 +38,7 @@ public class Restaurant {
 
     private Double latitude;  // 위도 필드 추가
     private Double longitude; // 경도 필드 추가
+
+    // 구,군
+    private String district;
 }

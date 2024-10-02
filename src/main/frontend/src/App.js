@@ -2,6 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from './Login';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Restaurant from './Restaurant/Restaurant';
+import Accommodation from './Accommodation/Accommodation';
+import AccommodationList from './Accommodation/AccommodationList';
 
 function App() {
     return (
@@ -9,6 +12,12 @@ function App() {
             <Routes>
                 <Route path="/login" element={<Login />} />
                 <Route path="/loginSuccess" element={<LoginSuccess />} />
+                <Route path="/restaurant/:id" element={<Restaurant />} />
+                <Route path="/accommodation/:uniqueId" element={<Accommodation />} />
+                {/* 전체 숙박시설 목록 */}
+                <Route path="/accommodations" element={<AccommodationList />} />
+                {/* 지역별 숙박시설 목록 */}
+                <Route path="/accommodations/region/:region" element={<AccommodationList />} />
             </Routes>
         </Router>
     );
