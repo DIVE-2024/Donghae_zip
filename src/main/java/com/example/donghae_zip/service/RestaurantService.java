@@ -5,6 +5,8 @@ import com.example.donghae_zip.domain.Restaurant;
 import com.example.donghae_zip.repository.RestaurantRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,8 +22,8 @@ public class RestaurantService {
     private KakaoMapService kakaoMapService;
 
     // 모든 식당 데이터 가져오기
-    public List<Restaurant> getAllRestaurants() {
-        return restaurantRepository.findAll();
+    public Page<Restaurant> getAllRestaurants(Pageable pageable) {
+        return restaurantRepository.findAll(pageable);
     }
 
     // ID로 특정 식당 데이터 가져오기
@@ -29,14 +31,24 @@ public class RestaurantService {
         return restaurantRepository.findById(id);
     }
 
-    // 지역과 해시태그로 식당 데이터 가져오기
-    public List<Restaurant> getRestaurantsByRegionAndHashtag(Region region, String hashtag) {
-        return restaurantRepository.findByRegionAndHashtagContaining(region, hashtag);
+    // 지역과 해시태그로 식당 데이터 가져오기 (페이징 처리)
+    public Page<Restaurant> getRestaurantsByRegionAndHashtag(Region region, String hashtag, Pageable pageable) {
+        return restaurantRepository.findByRegionAndHashtagContaining(region, hashtag, pageable);
     }
 
-    // 해시태그로 식당 데이터 가져오기
-    public List<Restaurant> getRestaurantsByHashtag(String hashtag) {
-        return restaurantRepository.findByHashtag(hashtag);
+    // 해시태그로 식당 데이터 가져오기 (페이징 처리)
+    public Page<Restaurant> getRestaurantsByHashtag(String hashtag, Pageable pageable) {
+        return restaurantRepository.findByHashtag(hashtag, pageable);
+    }
+
+    // 지역과 구/군, 해시태그로 식당 데이터 가져오기
+    public Page<Restaurant> getRestaurantsByRegionAndDistrictAndHashtag(Region region, String district, String hashtag, Pageable pageable) {
+        return restaurantRepository.findByRegionAndDistrictAndHashtagContaining(region, district, hashtag, pageable);
+    }
+
+    // 지역과 구/군으로 식당 데이터 가져오기
+    public Page<Restaurant> getRestaurantsByRegionAndDistrict(Region region, String district, Pageable pageable) {
+        return restaurantRepository.findByRegionAndDistrict(region, district, pageable);
     }
 
     // 주소 기반으로 식당의 경도와 위도 업데이트
