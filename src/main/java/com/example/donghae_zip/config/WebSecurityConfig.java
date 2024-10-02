@@ -61,6 +61,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/donghae_timetable/**").permitAll() // 운행 시간표 접근 허용
                         .requestMatchers("/api/station-stats/**").permitAll() // 주별 승하차 인원수 접근 허용
                         .requestMatchers("/api/map/coordinates/**").permitAll() //kakao map 접근 허용
+                        .requestMatchers("/static/**", "/favicon.ico").permitAll()  // 정적 리소스 허용
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

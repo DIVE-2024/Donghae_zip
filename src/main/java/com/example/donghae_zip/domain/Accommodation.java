@@ -46,4 +46,6 @@ public class Accommodation {
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "enum('부산','울산')", nullable = false)
     private Region region;
+
+    private String district;  // 구/군 필드 추가
 }
