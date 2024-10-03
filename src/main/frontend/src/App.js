@@ -5,30 +5,39 @@ import Footer from "./components/Footer";
 import Restaurant from './Restaurant/Restaurant';
 import Accommodation from './Accommodation/Accommodation';
 import AccommodationList from './Accommodation/AccommodationList';
+import RestaurantList from './Restaurant/RestaurantList';
+import RestaurantListByHashtag from './Restaurant/RestaurantListByHashtag';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
     return (
-        <div className="App">
-            <Header />
-            {/* 페이지 콘텐츠 */}
-            <div style={{ minHeight: "calc(100vh - 200px)" }}>
-                {/* 여기에 페이지 별 컨텐츠가 들어갈 수 있습니다 */}
-            </div>
-            <Footer />
+        <Router>
+            <Routes>
+                {/* 특정 식당 페이지 */}
+                <Route path="/restaurant/:id" element={<Restaurant />} />
 
-            <Router>
-                <Routes>
-                    <Route path="/restaurant/:id" element={<Restaurant />} />
-                    <Route path="/accommodation/:uniqueId" element={<Accommodation />} />
-                    {/* 전체 숙박시설 목록 */}
-                    <Route path="/accommodations" element={<AccommodationList />} />
-                    {/* 지역별 숙박시설 목록 */}
-                    <Route path="/accommodations/region/:region" element={<AccommodationList />} />
-                </Routes>
-            </Router>
-        </div>
+                {/* 전체 식당 목록 페이지 */}
+                <Route path="/restaurants" element={<RestaurantList />} />
+
+                {/* 지역별 식당 목록 페이지 */}
+                <Route path="/restaurants/region/:region" element={<RestaurantList />} />
+
+                {/* 특정 숙박 시설 페이지 */}
+                <Route path="/accommodation/:uniqueId" element={<Accommodation />} />
+
+                {/* 전체 숙박시설 목록 페이지 */}
+                <Route path="/accommodations" element={<AccommodationList />} />
+
+                {/* 지역별 숙박시설 목록 페이지 */}
+                <Route path="/accommodations/region/:region" element={<AccommodationList />} />
+
+
+                {/* 해시태그별 더보기 페이지 */}
+                <Route path="/restaurants/:region/hashtag/:hashtag" element={<RestaurantListByHashtag />} />
+            </Routes>
+        </Router>
     );
 }
+
 
 export default App;

@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:3000")  // 프론트엔드 도메인 허용
 @RestController
 @RequestMapping("/api/restaurants")
 public class RestaurantController {
@@ -27,6 +29,13 @@ public class RestaurantController {
     public Page<Restaurant> getAllRestaurants(Pageable pageable) {
         return restaurantService.getAllRestaurants(pageable);
     }
+
+    // 해시태그 목록 가져오기
+    @GetMapping("/hashtags")
+    public List<String> getAllHashtags() {
+        return restaurantService.getAllHashtags();
+    }
+
 
     // 특정 ID의 식당 데이터 가져오기
     @GetMapping("/{id}")
@@ -45,14 +54,41 @@ public class RestaurantController {
         return restaurant;
     }
 
-    // 지역과 해시태그로 식당 데이터 가져오기 (페이징 처리)
-    @GetMapping("/search")
-    public Page<Restaurant> getRestaurantsByRegionAndHashtag(
-            @RequestParam("region") Region region,
-            @RequestParam("hashtag") String hashtag,
+    // 지역으로 식당 데이터 가져오기 (페이징 처리)
+    @GetMapping("/region/{region}")
+    public Page<Restaurant> getRestaurantsByRegion(
+            @PathVariable("region") Region region,
             Pageable pageable) {
-        return restaurantService.getRestaurantsByRegionAndHashtag(region, hashtag, pageable);
+        return restaurantService.getRestaurantsByRegion(region, pageable);
     }
+
+    @GetMapping("/region/{region}/hashtags")
+    public ResponseEntity<Map<String, Map<String, Object>>> getRestaurantsByRegionAndHashtag(
+            @PathVariable("region") Region region) {
+        Map<String, Map<String, Object>> result = restaurantService.getTopRestaurantsByRegionAndHashtag(region, 5);
+        return ResponseEntity.ok(result);
+    }
+
+
+    @GetMapping("/region/{region}/hashtag/{hashtag}")
+    public Page<Restaurant> getAllRestaurantsByRegionAndHashtag(
+            @PathVariable String region,
+            @PathVariable String hashtag,
+            Pageable pageable) {
+        if (!hashtag.startsWith("#")) {
+            hashtag = "#" + hashtag;
+        }
+        Region regionEnum = Region.valueOf(region.toUpperCase());
+        return restaurantService.getAllRestaurantsByRegionAndHashtag(regionEnum, hashtag, pageable);
+    }
+
+    // 지역에 따른 구/군 목록 가져오기
+    @GetMapping("/region/{region}/districts")
+    public List<String> getDistrictsByRegion(@PathVariable("region") Region region) {
+        // region에 맞는 구/군 목록을 반환하는 로직 (예: 부산 지역에 속한 구/군)
+        return restaurantService.getDistrictsByRegion(region);
+    }
+
 
     // 해시태그로 식당 데이터 가져오기 (페이징 처리)
     @GetMapping("/hashtag/{hashtag}")
@@ -98,4 +134,6 @@ public class RestaurantController {
         restaurantService.updateAllRestaurantCoordinates();
         return ResponseEntity.ok("Coordinates updated successfully for all restaurants.");
     }
+
+
 }
