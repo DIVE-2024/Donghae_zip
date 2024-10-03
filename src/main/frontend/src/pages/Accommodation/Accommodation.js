@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import Map from '../Map/Map';
-import AccommodationImage from '../ImageUrl/AccommodationImage';
+import Map from '../../components/Map/Map'; // Map 컴포넌트 경로 확인
+import AccommodationImage from '../../components/ImageUrl/AccommodationImage'; // AccommodationImage 경로 확인
 
 const Accommodation = () => {
     const { uniqueId } = useParams();  // URL에서 unique_id를 가져옴
@@ -13,7 +13,6 @@ const Accommodation = () => {
             .then(response => {
                 const data = response.data;
 
-                // JSON으로 파싱이 필요한 필드들 처리, 값이 존재할 때만 JSON.parse 수행
                 const parsedAccommodation = {
                     ...data,
                     image_url: data.image_url ? JSON.parse(data.image_url) : [],
@@ -21,7 +20,6 @@ const Accommodation = () => {
                 };
 
                 setAccommodation(parsedAccommodation);  // 파싱된 숙박시설 데이터를 저장
-                console.log(parsedAccommodation);
             })
             .catch(error => {
                 console.error('Error fetching accommodation data:', error);
@@ -38,9 +36,9 @@ const Accommodation = () => {
             <h2>{accommodation.name}</h2>
 
             {/* 이미지 출력 */}
-            {accommodation.imageUrl && <AccommodationImage imageUrls={accommodation.imageUrl} />}
+            {accommodation.image_url && <AccommodationImage imageUrls={accommodation.image_url} />}
             {/* 기본 정보 출력 */}
-            <p>웹사이트: {accommodation.websiteUrl}</p>
+            <p>웹사이트: {accommodation.website_url}</p>
             <p>주소: {accommodation.address}</p>
             <p>전화번호: {accommodation.phoneNumber}</p>
             {accommodation.website_url && <p>웹사이트: <a href={accommodation.website_url} target="_blank" rel="noopener noreferrer">{accommodation.website_url}</a></p>}

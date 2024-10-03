@@ -1,67 +1,49 @@
 .custom-navbar {
-    background-color: #486284; /* 헤더 배경 색상 */
-    height: 100px; /* 헤더 높이 */
+    height: 100px; /* 헤더의 세로 길이 조정 */
+    background-color: #5E80B1; /* 헤더 색상 변경 */
 }
 
-.custom-nav-button {
-    color: white;
-    border: none;
-    background-color: transparent;
-    padding: 0.5rem 1rem;
-    font-weight: bold;
-    font-size: 1.2rem; /* 글씨 크기 증가 */
-    text-transform: uppercase;
+.custom-logo {
+    font-size: 1.9rem; /* 글씨 크기 */
+    font-weight: bold; /* bold 적용 */
+    margin-right: auto; /* 왼쪽 끝으로 이동 */
+    margin-left: 60px; /* 로고 왼쪽에 여백 추가 */
+    color: white; /* 로고 글씨 색상 변경 */
 }
 
-.custom-nav-button:hover {
-    background-color: #3b526f; /* 버튼 호버 시 배경 색상 */
-    color: white;
+.navbar-nav {
+    margin-left: auto; /* 메뉴들을 회원가입 왼쪽으로 이동 */
 }
 
-.custom-nav-dropdown .dropdown-toggle::after {
-    display: none; /* 드롭다운 화살표 제거 */
+.nav-link {
+    margin-right: 15px; /* 메뉴들 간의 간격 조정 */
+    color: white !important; /* 메뉴들 글씨 색상 흰색으로 변경 */
 }
 
-.custom-button {
-    background-color: #486284;
-    border-color: #486284;
-    color: white;
-    font-size: 1.2rem; /* 회원가입, 로그인 글씨 크기 증가 */
+.custom-login-btn {
+    margin-right: 30px; /* 로그인 버튼 오른쪽에 여백 추가 */
 }
 
-.custom-button:hover {
-    background-color: #3b526f;
-    border-color: #3b526f;
+.nav-item.dropdown:hover .dropdown-menu {
+    display: block;
 }
 
-/* MyPage 오른쪽 여백 제거 */
-.no-right-margin {
-    margin-right: 5px !important;
+.dropdown-menu {
+    display: none;
+    background-color: #CED7E4; /* 드롭다운 메뉴 배경색 변경 */
 }
 
-/* 로그인 버튼 오른쪽 여백 추가 */
-.custom-login-margin {
-    margin-right: 40px;
+.dropdown-item {
+    color: white !important; /* 드롭다운 항목 글씨 색상 흰색으로 변경 */
 }
 
-/* 드롭다운 메뉴 스타일 수정 */
-.custom-nav-dropdown .dropdown-menu {
-    background-color: #B4C2D7; /* 드롭다운 배경 색상 변경 */
+.dropdown-item:hover {
+    background-color: #5E80B1; /* 드롭다운 항목 hover 시 배경색 설정 */
 }
 
-.custom-nav-dropdown .dropdown-item {
-    color: white; /* 드롭다운 항목 글씨 색상 */
-}
-
-.custom-nav-dropdown .dropdown-item:hover {
-    background-color: #3b526f; /* 드롭다운 항목 호버 시 배경 색상 */
-    color: white; /* 드롭다운 항목 호버 시 글씨 색상 */
-}
-
-/* 구분선 스타일 */
-.styled-divider {
-    height: 60px; /* 구분선 높이 */
-    width: 1px; /* 구분선 너비 */
-    background-color: white; /* 구분선 색상 */
-    margin: 0 15px; /* 좌우 여백 */
+/* MyPage와 회원가입 사이에 구분선 및 오른쪽 여백 추가 */
+.nav-item.mypage {
+    border-right: 1px solid white; /* 구분선을 흰색으로 설정 */
+    padding-right: 10px; /* 구분선과 텍스트 간 여백 */
+    margin-right: 25px; /* 구분선 오른쪽 여백 */
 }
