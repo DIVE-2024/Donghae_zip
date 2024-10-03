@@ -193,7 +193,10 @@ Caused by: com.mysql.cj.exceptions.CJException: Unknown database 'donghae_zip'
 2024-10-02T05:36:12.334+09:00 ERROR 35552 --- [Donghae_zip] [main] o.s.b.web.embedded.tomcat.TomcatStarter  : Error starting Tomcat context. Exception: org.springframework.beans.factory.UnsatisfiedDependencyException. Message: Error creating bean with name 'jwtRequestFilter': Unsatisfied dependency expressed through field 'userDetailsService': Error creating bean with name 'customUserDetailsService': Unsatisfied dependency expressed through field 'memberRepository': Error creating bean with name 'memberRepository' defined in com.example.donghae_zip.repository.MemberRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Cannot resolve reference to bean 'jpaSharedEM_entityManagerFactory' while setting bean property 'entityManager'
 2024-10-02T05:36:12.361+09:00  INFO 35552 --- [Donghae_zip] [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
 2024-10-02T05:36:12.367+09:00  WARN 35552 --- [Donghae_zip] [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Unable to start web server
-2024-10-02T05:36:12.376+09:00  INFO 35552 --- [Donghae_zip] [main] .s.b.a.l.ConditionEvaluationReportLogger :
+
+
+2024-10-02T05:36:12.376+09:00  INFO 35552 --- [Donghae_zip] [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
 
 Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
 2024-10-02T05:36:12.403+09:00 ERROR 35552 --- [Donghae_zip] [main] o.s.boot.SpringApplication               : Application run failed
@@ -543,7 +546,9 @@ Caused by: com.mysql.cj.exceptions.CJException: Unknown database 'donghae_zip'
 2024-10-02T17:34:00.752+09:00 ERROR 20108 --- [Donghae_zip] [main] o.s.b.web.embedded.tomcat.TomcatStarter  : Error starting Tomcat context. Exception: org.springframework.beans.factory.UnsatisfiedDependencyException. Message: Error creating bean with name 'jwtRequestFilter': Unsatisfied dependency expressed through field 'userDetailsService': Error creating bean with name 'customUserDetailsService': Unsatisfied dependency expressed through field 'memberRepository': Error creating bean with name 'memberRepository' defined in com.example.donghae_zip.repository.MemberRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Cannot resolve reference to bean 'jpaSharedEM_entityManagerFactory' while setting bean property 'entityManager'
 2024-10-02T17:34:00.797+09:00  INFO 20108 --- [Donghae_zip] [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
 2024-10-02T17:34:00.802+09:00  WARN 20108 --- [Donghae_zip] [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Unable to start web server
-2024-10-02T17:34:00.811+09:00  INFO 20108 --- [Donghae_zip] [main] .s.b.a.l.ConditionEvaluationReportLogger :
+
+2024-10-02T17:34:00.811+09:00  INFO 20108 --- [Donghae_zip] [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
 
 Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
 2024-10-02T17:34:00.835+09:00 ERROR 20108 --- [Donghae_zip] [main] o.s.boot.SpringApplication               : Application run failed
@@ -893,7 +898,8 @@ Caused by: com.mysql.cj.exceptions.CJException: Unknown database 'donghae_zip'
 2024-10-02T17:39:50.091+09:00 ERROR 27188 --- [Donghae_zip] [main] o.s.b.web.embedded.tomcat.TomcatStarter  : Error starting Tomcat context. Exception: org.springframework.beans.factory.UnsatisfiedDependencyException. Message: Error creating bean with name 'jwtRequestFilter': Unsatisfied dependency expressed through field 'userDetailsService': Error creating bean with name 'customUserDetailsService': Unsatisfied dependency expressed through field 'memberRepository': Error creating bean with name 'memberRepository' defined in com.example.donghae_zip.repository.MemberRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Cannot resolve reference to bean 'jpaSharedEM_entityManagerFactory' while setting bean property 'entityManager'
 2024-10-02T17:39:50.126+09:00  INFO 27188 --- [Donghae_zip] [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
 2024-10-02T17:39:50.129+09:00  WARN 27188 --- [Donghae_zip] [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Unable to start web server
-2024-10-02T17:39:50.137+09:00  INFO 27188 --- [Donghae_zip] [main] .s.b.a.l.ConditionEvaluationReportLogger :
+
+2024-10-02T17:39:50.137+09:00  INFO 27188 --- [Donghae_zip] [main] .s.b.a.l.ConditionEvaluationReportLogger : 
 
 Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
 2024-10-02T17:39:50.151+09:00 ERROR 27188 --- [Donghae_zip] [main] o.s.boot.SpringApplication               : Application run failed
@@ -1103,7 +1109,8 @@ Caused by: org.hibernate.HibernateException: Unable to determine Dialect without
 2024-10-02T17:47:43.686+09:00  INFO 4144 --- [Donghae_zip] [main] c.e.donghae_zip.DonghaeZipApplication    : Started DonghaeZipApplication in 5.748 seconds (process running for 6.337)
 2024-10-02T17:47:43.800+09:00  WARN 4144 --- [Donghae_zip] [main] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Error: 1146, SQLState: 42S02
 2024-10-02T17:47:43.800+09:00 ERROR 4144 --- [Donghae_zip] [main] o.h.engine.jdbc.spi.SqlExceptionHelper   : Table 'donghae_zip.trail' doesn't exist
-2024-10-02T17:47:43.819+09:00  INFO 4144 --- [Donghae_zip] [main] .s.b.a.l.ConditionEvaluationReportLogger :
+
+2024-10-02T17:47:43.819+09:00  INFO 4144 --- [Donghae_zip] [main] .s.b.a.l.ConditionEvaluationReportLogger : 
 
 Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
 2024-10-02T17:47:43.834+09:00 ERROR 4144 --- [Donghae_zip] [main] o.s.boot.SpringApplication               : Application run failed

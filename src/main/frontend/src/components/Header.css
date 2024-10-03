@@ -1,0 +1,67 @@
+.custom-navbar {
+    background-color: #486284; /* 헤더 배경 색상 */
+    height: 100px; /* 헤더 높이 */
+}
+
+.custom-nav-button {
+    color: white;
+    border: none;
+    background-color: transparent;
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+    font-size: 1.2rem; /* 글씨 크기 증가 */
+    text-transform: uppercase;
+}
+
+.custom-nav-button:hover {
+    background-color: #3b526f; /* 버튼 호버 시 배경 색상 */
+    color: white;
+}
+
+.custom-nav-dropdown .dropdown-toggle::after {
+    display: none; /* 드롭다운 화살표 제거 */
+}
+
+.custom-button {
+    background-color: #486284;
+    border-color: #486284;
+    color: white;
+    font-size: 1.2rem; /* 회원가입, 로그인 글씨 크기 증가 */
+}
+
+.custom-button:hover {
+    background-color: #3b526f;
+    border-color: #3b526f;
+}
+
+/* MyPage 오른쪽 여백 제거 */
+.no-right-margin {
+    margin-right: 5px !important;
+}
+
+/* 로그인 버튼 오른쪽 여백 추가 */
+.custom-login-margin {
+    margin-right: 40px;
+}
+
+/* 드롭다운 메뉴 스타일 수정 */
+.custom-nav-dropdown .dropdown-menu {
+    background-color: #B4C2D7; /* 드롭다운 배경 색상 변경 */
+}
+
+.custom-nav-dropdown .dropdown-item {
+    color: white; /* 드롭다운 항목 글씨 색상 */
+}
+
+.custom-nav-dropdown .dropdown-item:hover {
+    background-color: #3b526f; /* 드롭다운 항목 호버 시 배경 색상 */
+    color: white; /* 드롭다운 항목 호버 시 글씨 색상 */
+}
+
+/* 구분선 스타일 */
+.styled-divider {
+    height: 60px; /* 구분선 높이 */
+    width: 1px; /* 구분선 너비 */
+    background-color: white; /* 구분선 색상 */
+    margin: 0 15px; /* 좌우 여백 */
+}
