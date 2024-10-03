@@ -63,14 +63,13 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/donghae_timetable/**").permitAll() // 운행 시간표 접근 허용
                         .requestMatchers("/api/station-stats/**").permitAll() // 주별 승하차 인원수 접근 허용
                         .requestMatchers("/api/map/coordinates/**").permitAll() //kakao map 접근 허용
-
+                        .requestMatchers("/static/**", "/favicon.ico").permitAll()  // 정적 리소스 허용
                         // 둘레길 관련 API 인증 없이 접근 가능
                         .requestMatchers("/api/trails/**").permitAll()
                         // 여행지 관련 API 인증 없이 접근 가능
                         .requestMatchers("/api/tourist-spots/**").permitAll()
                         // 축제 관련 API 인증 없이 접근 가능
                         .requestMatchers("/api/festivals/**").permitAll()
-
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

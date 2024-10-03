@@ -98,20 +98,21 @@ public class TouristSpotService {
         JsonNode rootNode = objectMapper.readTree(new File(filePath));
 
         for (JsonNode node : rootNode) {
-            JsonNode placeCategoryNode = node.get("Place Category");
-            if (placeCategoryNode == null || placeCategoryNode.asText().isEmpty()) {
-                continue;
+            String title = Optional.ofNullable(node.get("title")).map(JsonNode::asText).orElse("No Title");
+
+            // 중복 체크 (여기서는 제목으로 체크하지만, 다른 고유 식별자가 있다면 그걸로 확인할 수 있음)
+            if (touristSpotRepository.existsByTitle(title)) {
+                System.out.println("Tourist spot already exists: " + title);
+                continue;  // 이미 존재하면 저장하지 않고 넘어감
             }
 
+            // 새로 저장할 객체 생성
             TouristSpot touristSpot = new TouristSpot();
-
-            touristSpot.setTitle(Optional.ofNullable(node.get("title")).map(JsonNode::asText).orElse("No Title"));
+            touristSpot.setTitle(title);
             touristSpot.setAddress(Optional.ofNullable(node.get("address")).map(JsonNode::asText).orElse("No Address"));
-            touristSpot.setPlaceCategory(placeCategoryNode.asText());
+            touristSpot.setPlaceCategory(Optional.ofNullable(node.get("Place Category")).map(JsonNode::asText).orElse("Unknown"));
             touristSpot.setOneLineDesc(Optional.ofNullable(node.get("one_line_desc")).map(JsonNode::asText).orElse("No Description"));
             touristSpot.setDetailedInfo(Optional.ofNullable(node.get("detailed_info")).map(JsonNode::asText).orElse("No Info"));
-
-            // 좌표 정보
             touristSpot.setLongitude(Optional.ofNullable(node.get("coordinates")).map(coord -> coord.get("longitude").asText()).orElse(null));
             touristSpot.setLatitude(Optional.ofNullable(node.get("coordinates")).map(coord -> coord.get("latitude").asText()).orElse(null));
             touristSpot.setRegion(Optional.ofNullable(node.get("region")).map(JsonNode::asText).orElse("No Region"));

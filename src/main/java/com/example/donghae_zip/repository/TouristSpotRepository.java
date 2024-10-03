@@ -9,7 +9,8 @@ import java.util.List;
 
 public interface TouristSpotRepository extends JpaRepository<TouristSpot, Long> {
 
-    boolean existsByTitleAndAddress(String title, String address);
+    // 중복 확인 메소드
+    boolean existsByTitle(String title);
 
     Page<TouristSpot> findByIndoorOutdoor(String indoorOutdoor, Pageable pageable);  // 실내/실외 필터
 
