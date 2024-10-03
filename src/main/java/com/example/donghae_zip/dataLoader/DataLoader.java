@@ -1,3 +1,4 @@
+/*
 package com.example.donghae_zip.dataLoader;
 
 import com.example.donghae_zip.service.FestivalService;
@@ -56,3 +57,4 @@ public class DataLoader implements CommandLineRunner {
         touristSpotService.saveTouristSpotFromJson(touristSpotFilePath);
     }
 }
+*/

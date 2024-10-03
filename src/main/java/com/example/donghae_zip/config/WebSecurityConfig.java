@@ -56,7 +56,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api-test-swagger").permitAll()
                         .requestMatchers("/api/members/**").permitAll()
                         .requestMatchers("/oauth2/**", "/login/**").permitAll()
-
+                        .requestMatchers("/api/weather/**").permitAll() // 날씨 관련 허용
                         .requestMatchers("/api/accommodations/**").permitAll() // 모든 사용자가 숙박 데이터에 접근할 수 있도록 허용
                         .requestMatchers("/api/restaurants/**").permitAll() // 모든 사용자가 식당 데이터에 접근할 수 있도록 허용
                         .requestMatchers("/api/donghae/**").permitAll() // 동해선 정보에 대한 접근 허용
@@ -87,7 +87,6 @@ public class WebSecurityConfig {
                         .authenticationEntryPoint(customAuthenticationEntryPoint)
                         .accessDeniedHandler(customAccessDeniedHandler)
                 );
-
         return http.build();
     }
 }

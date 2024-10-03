@@ -40,6 +40,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String username = null;  // 토큰에서 추출한 사용자 이름(이메일)
         String jwt = null;  // JWT 토큰
 
+
         // Authorization 헤더가 존재하고, Bearer로 시작하는지 확인
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             // "Bearer " 이후의 실제 JWT 토큰 부분만 추출
