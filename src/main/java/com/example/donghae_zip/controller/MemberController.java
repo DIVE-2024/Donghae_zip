@@ -50,7 +50,14 @@ public class MemberController {
         if (member.isPresent()) {
             // JWT 토큰 생성
             String token = jwtTokenUtil.generateToken(member.get().getEmail());
-            return ResponseEntity.ok().body("로그인 성공. JWT 토큰: " + token);
+
+            // JSON 형식으로 응답
+            Map<String, Object> response = new HashMap<>();
+            response.put("token", token);
+            response.put("nickname", member.get().getNickname());
+            response.put("member", member.get());
+
+            return ResponseEntity.ok(response);  // JSON 객체로 응답
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패: 이메일 또는 비밀번호가 잘못되었습니다.");
         }

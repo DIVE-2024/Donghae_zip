@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import Map from '../Map/Map';
-import RestaurantImage from '../ImageUrl/RestaurantImage';
+import Map from '../../components/Map/Map';
+import RestaurantImage from '../../components/ImageUrl/RestaurantImage';
 
 const Restaurant = () => {
     const { id } = useParams();
@@ -13,7 +13,6 @@ const Restaurant = () => {
             .then(response => {
                 const data = response.data;
 
-                // 각 문자열을 배열로 변환
                 const parsedRestaurant = {
                     ...data,
                     imageUrl: JSON.parse(data.imageUrl),
@@ -24,7 +23,6 @@ const Restaurant = () => {
                 };
 
                 setRestaurant(parsedRestaurant);
-                console.log(parsedRestaurant); // 파싱된 데이터 확인
             })
             .catch(error => {
                 console.error('Error fetching restaurant data:', error);
@@ -62,7 +60,7 @@ const Restaurant = () => {
                 ))}
             </ul>
 
-            {/* 지도 컴포넌트 */}
+            {/* 지도 출력 */}
             <Map latitude={restaurant.latitude} longitude={restaurant.longitude} />
         </div>
     );
