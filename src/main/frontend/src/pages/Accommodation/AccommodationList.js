@@ -66,7 +66,7 @@ const AccommodationList = () => {
                     value={region}
                     onChange={(e) => setRegion(e.target.value)}
                 >
-                    <option value="">All Regions</option>
+                    <option value="">지역 선택</option>
                     <option value="부산">부산</option>
                     <option value="울산">울산</option>
                 </select>
