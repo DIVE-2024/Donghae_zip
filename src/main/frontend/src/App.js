@@ -7,7 +7,11 @@ import Accommodation from './Accommodation/Accommodation';
 import AccommodationList from './Accommodation/AccommodationList';
 import RestaurantList from './Restaurant/RestaurantList';
 import RestaurantListByHashtag from './Restaurant/RestaurantListByHashtag';
+import StationStatsChart from "./Chart/StationStatsChart";
 import 'bootstrap/dist/css/bootstrap.min.css';
+// import DonghaeInfo from "./Donghae/DonghaeInfo";
+import DonghaeHotPlace from "./Donghae/DonghaeHotPlace";
+
 
 function App() {
     return (
@@ -15,6 +19,7 @@ function App() {
             <Routes>
                 {/* 특정 식당 페이지 */}
                 <Route path="/restaurant/:id" element={<Restaurant />} />
+
 
                 {/* 전체 식당 목록 페이지 */}
                 <Route path="/restaurants" element={<RestaurantList />} />
@@ -31,9 +36,18 @@ function App() {
                 {/* 지역별 숙박시설 목록 페이지 */}
                 <Route path="/accommodations/region/:region" element={<AccommodationList />} />
 
-
                 {/* 해시태그별 더보기 페이지 */}
                 <Route path="/restaurants/:region/hashtag/:hashtag" element={<RestaurantListByHashtag />} />
+
+                {/* 차트 페이지 추가 */}
+                <Route path="/station-stats" element={<StationStatsChart />} />
+
+                {/* 동해선 정보 페이지 추가 */}
+                {/*<Route path="/donghae-map" element={<DonghaeInfo />} />*/}
+
+                {/* 동해선 핫플레이스 페이지 추가 */}
+                <Route path="/donghae-hotplace" element={<DonghaeHotPlace />} />
+
             </Routes>
         </Router>
     );
