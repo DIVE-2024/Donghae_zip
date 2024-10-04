@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Set;
 
 public interface TouristSpotRepository extends JpaRepository<TouristSpot, Long> {
 
@@ -26,6 +27,9 @@ public interface TouristSpotRepository extends JpaRepository<TouristSpot, Long> 
 
     // 태그로 검색 (한 개 이상의 태그 포함 시, 페이지네이션 적용)
     Page<TouristSpot> findByTagsIn(List<String> tags, Pageable pageable);
+
+    // 특정 PlaceCategory의 여행지를 찾는 메서드
+    List<TouristSpot> findByPlaceCategoryIn(Set<String> placeCategories);
 
 
     Page<TouristSpot> findByTitleContainingAndPlaceCategoryContainingAndRegionContainingAndTagsContaining(

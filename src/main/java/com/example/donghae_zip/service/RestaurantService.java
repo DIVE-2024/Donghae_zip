@@ -133,6 +133,11 @@ public class RestaurantService {
         }
     }
 
+
+    // 찜이 많은 수로 레스토랑을 정렬
+    public Page<Restaurant> getRestaurantsSortedByFavorites(Pageable pageable) {
+        return restaurantRepository.findRestaurantsOrderByFavoritesCount(pageable);
+
     public Map<String, Map<String, Object>> getTopRestaurantsByRegionAndHashtag(Region region, int limit) {
         Map<String, Map<String, Object>> hashtagMap = new HashMap<>();
 
@@ -162,9 +167,6 @@ public class RestaurantService {
     public Page<Restaurant> getAllRestaurantsByRegionAndHashtag(Region region, String hashtag, Pageable pageable) {
         return restaurantRepository.findAllByRegionAndHashtag(region, hashtag, pageable);
     }
-
-
-
 
 
 

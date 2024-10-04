@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AccommodationRepository extends JpaRepository<Accommodation, Long> {
@@ -23,5 +24,9 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
 
     // 가격대별 숙박시설 검색
     Page<Accommodation> findByAveragePriceBetween(int minPrice, int maxPrice, Pageable pageable);
+
+    // ID로 특정 숙박시설 조회
+    Optional<Accommodation> findById(Long uniqueId);
+
 
 }

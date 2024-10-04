@@ -91,4 +91,6 @@ public class TouristSpotController {
         Page<TouristSpot> spots = touristSpotService.searchSpots(title, category, region, tag, pageable);
         return ResponseEntity.ok(spots);
     }
+
+
 }
