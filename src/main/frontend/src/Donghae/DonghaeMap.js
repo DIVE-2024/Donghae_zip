@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
-const DonghaeMap = ({ stations = [], onStationClick }) => {
+const DonghaeMap = ({ stations = [], accommodations = [], onStationClick, selectedAccommodation }) => {
+    const mapRef = useRef(null); // 지도 객체 참조
+    const [isMapLoaded, setIsMapLoaded] = useState(false); // 지도 로드 상태 관리
+    const apiKey = process.env.REACT_APP_KAKAO_API_KEY;
+
     useEffect(() => {
-        const apiKey = process.env.REACT_APP_KAKAO_API_KEY; // 카카오 API 키
-
         const loadKakaoMapScript = (apiKey, callback) => {
             const script = document.createElement('script');
             script.async = true;
@@ -12,128 +14,132 @@ const DonghaeMap = ({ stations = [], onStationClick }) => {
 
             script.onload = () => {
                 if (window.kakao && window.kakao.maps) {
-                    callback(); // 스크립트 로드 후 콜백 실행
+                    setIsMapLoaded(true); // 스크립트 로드 후 상태 변경
+                    callback(); // 콜백 실행
                 } else {
                     console.error("Kakao API가 로드되지 않았습니다.");
                 }
             };
         };
 
-        const createMarker = (map, latitude, longitude, stationName, onClick, index) => {
-            console.log(`마커 생성 - ${stationName}: (${latitude}, ${longitude})`);
+        const initializeMap = () => {
+            const container = document.getElementById('donghae-map');
+            const options = {
+                center: new window.kakao.maps.LatLng(35.32803, 129.276652),
+                level: 9,
+            };
+            const map = new window.kakao.maps.Map(container, options);
+            mapRef.current = map;
+        };
 
-            // 마커 위치 설정
-            const markerPosition = new window.kakao.maps.LatLng(latitude, longitude);
-            const marker = new window.kakao.maps.Marker({
-                position: markerPosition,
-                title: stationName,
-            });
+        loadKakaoMapScript(apiKey, initializeMap);
+    }, [apiKey]);
 
-            // 마커를 지도에 표시
-            marker.setMap(map);
+    useEffect(() => {
+        if (isMapLoaded && mapRef.current) {
+            const createMarker = (latitude, longitude, name, onClick, markerType = 'station') => {
+                const markerPosition = new window.kakao.maps.LatLng(latitude, longitude);
 
-            // 마커 클릭 이벤트
-            window.kakao.maps.event.addListener(marker, 'click', () => {
-                onClick(stationName);
-            });
+                // 마커 이미지 설정
+                let markerImageSrc = '';
+                if (markerType === 'station') {
+                    markerImageSrc = '/image/marker.png'; // 역 마커 이미지 경로
+                } else if (markerType === 'accommodation') {
+                    markerImageSrc = '/image/AccommodaionMarker.png'; // 숙박시설 마커 이미지 경로
+                }
 
-            // 각 역의 인덱스에 따라 라벨 위치를 다르게 설정
-            const labelOffsetY = index % 2 === 0 ? -40 : 40; // 짝수 인덱스는 위쪽, 홀수 인덱스는 아래쪽에 표시
+                const imageSize = new window.kakao.maps.Size(40, 40); // 마커 크기
+                const imageOption = { offset: new window.kakao.maps.Point(20, 40) }; // 마커 이미지의 앵커 포인트 설정
 
-            // CustomOverlay로 역 이름을 표시
-            const labelContent = `
+                const markerImage = new window.kakao.maps.MarkerImage(markerImageSrc, imageSize, imageOption);
+
+                // 마커 생성
+                const marker = new window.kakao.maps.Marker({
+                    position: markerPosition,
+                    title: name,
+                    image: markerImage // 커스텀 마커 이미지 적용
+                });
+                marker.setMap(mapRef.current);
+
+                // 마커 클릭 이벤트
+                window.kakao.maps.event.addListener(marker, 'click', () => {
+                    onClick(name);
+                    mapRef.current.setCenter(markerPosition);
+                    mapRef.current.setLevel(5);
+                });
+
+                // 커스텀 오버레이 (라벨) 생성
+                const labelContent = `
                 <div style="
                     padding: 5px;
                     background-color: white;
                     border: 1px solid black;
                     border-radius: 10px;
-                    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
                     font-size: 14px;
                     font-weight: bold;
                     text-align: center;
                     min-width: 100px;
                     cursor: pointer;">
-                    ${stationName}
+                    ${name}
                 </div>`;
 
-            const customOverlay = new window.kakao.maps.CustomOverlay({
-                position: markerPosition,
-                content: labelContent,
-                yAnchor: labelOffsetY / 100, // yAnchor를 조정하여 라벨 위치 조정
-                xAnchor: 0.5 // xAnchor는 중앙에 위치하게 설정
-            });
-            customOverlay.setMap(map);
+                const customOverlay = new window.kakao.maps.CustomOverlay({
+                    position: markerPosition,
+                    content: labelContent,
+                    yAnchor: 2.5, // 마커 위에 이름 표시
+                    xAnchor: 0.5,
+                    zIndex: 3,
+                });
+                customOverlay.setMap(mapRef.current);
+                customOverlay.setVisible(false); // 기본적으로 숨김
 
-            // 라벨 클릭 이벤트 (역 이름 클릭 시에도 onClick 호출)
-            window.kakao.maps.event.addListener(customOverlay, 'click', () => {
-                onClick(stationName);
-            });
-        };
+                // 마커에 마우스 오버 시 이름 보이기
+                window.kakao.maps.event.addListener(marker, 'mouseover', () => {
+                    customOverlay.setVisible(true); // 마우스 오버 시 라벨 표시
+                });
 
-        // 중간 좌표 생성 함수
-        const interpolate = (startLat, startLng, endLat, endLng, numPoints) => {
-            const points = [];
-            for (let i = 1; i < numPoints; i++) {
-                const lat = startLat + (endLat - startLat) * (i / numPoints);
-                const lng = startLng + (endLng - startLng) * (i / numPoints);
-                points.push(new window.kakao.maps.LatLng(lat, lng));
-            }
-            return points;
-        };
-
-        const createPolyline = (map, stations) => {
-            const path = [];
-            stations.forEach((station, index) => {
-                path.push(new window.kakao.maps.LatLng(station.latitude, station.longitude));
-
-                // 각 역 사이에 10개의 중간 좌표를 생성하여 곡선을 만든다
-                if (index < stations.length - 1) {
-                    const nextStation = stations[index + 1];
-                    const interpolatedPoints = interpolate(
-                        station.latitude,
-                        station.longitude,
-                        nextStation.latitude,
-                        nextStation.longitude,
-                        10 // 중간 좌표 개수
-                    );
-                    path.push(...interpolatedPoints);
-                }
-            });
-
-            const polyline = new window.kakao.maps.Polyline({
-                path: path, // 생성된 좌표 배열
-                strokeWeight: 5, // 선의 두께
-                strokeColor: "#0074FF", // 선 색상 (좀 더 명확한 파란색)
-                strokeOpacity: 0.8, // 선의 투명도
-                strokeStyle: "solid", // 선 스타일
-            });
-            polyline.setMap(map);
-        };
-
-        loadKakaoMapScript(apiKey, () => {
-            const container = document.getElementById('donghae-map');
-            const options = {
-                center: new window.kakao.maps.LatLng(35.32803, 129.276652), // 초기 중심 좌표 (부전역 기준으로 수정 가능)
-                level: 9, // 지도 확대 레벨
+                // 마커에서 마우스 아웃 시 이름 숨기기
+                window.kakao.maps.event.addListener(marker, 'mouseout', () => {
+                    customOverlay.setVisible(false); // 마우스 아웃 시 라벨 숨김
+                });
             };
-            const map = new window.kakao.maps.Map(container, options);
 
-            // '부산' 또는 '울산' 지역 필터링 및 역 순서대로 정렬
+            const createPolyline = (stations) => {
+                const path = stations.map(station =>
+                    new window.kakao.maps.LatLng(station.latitude, station.longitude)
+                );
+
+                const polyline = new window.kakao.maps.Polyline({
+                    path: path,
+                    strokeWeight: 7,
+                    strokeColor: "#0074FF",
+                    strokeOpacity: 0.8,
+                    strokeStyle: "solid",
+                });
+                polyline.setMap(mapRef.current);
+            };
+
+            // 지도에 역 마커와 폴리라인 추가
             const filteredStations = stations
                 .filter(station => station.region.includes('부산') || station.region.includes('울산'))
                 .sort((a, b) => a.stationOrder - b.stationOrder);
 
-            // 마커 생성 및 라벨 설정
-            filteredStations.forEach((station, index) => {
-                createMarker(map, station.latitude, station.longitude, station.stationName, onStationClick, index);
+            filteredStations.forEach((station) => {
+                createMarker(station.latitude, station.longitude, station.stationName, onStationClick, 'station');
             });
 
-            // 정렬된 역들만으로 폴리라인 그리기 (곡선 효과)
-            createPolyline(map, filteredStations);
-        });
-    }, [stations, onStationClick]);
+            createPolyline(filteredStations);
 
-    return <div id="donghae-map" style={{ width: '50%', height: '1000px',margin: '0 auto' }}></div>;
+            // 숙박시설 마커 생성
+            accommodations.forEach((accommodation) => {
+                createMarker(accommodation.latitude, accommodation.longitude, accommodation.name, () => {
+                    console.log(`숙박시설: ${accommodation.name} 클릭됨`);
+                }, 'accommodation');
+            });
+        }
+    }, [isMapLoaded, stations, accommodations, onStationClick]);
+
+    return <div id="donghae-map" style={{ width: '50%', height: '1000px' }}></div>;
 };
 
 export default DonghaeMap;
