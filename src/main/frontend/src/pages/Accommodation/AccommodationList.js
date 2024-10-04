@@ -12,26 +12,24 @@ const AccommodationList = () => {
 
     const itemsPerPage = 15;
 
-    // 가격 범위에 따른 minPrice, maxPrice 설정
-    const getMinMaxPrice = () => {
-        switch (priceRange) {
-            case '0-30000':
-                return { minPrice: 0, maxPrice: 30000 };
-            case '30000-50000':
-                return { minPrice: 30000, maxPrice: 50000 };
-            case '50000-80000':
-                return { minPrice: 50000, maxPrice: 80000 };
-            case '80000-100000':
-                return { minPrice: 80000, maxPrice: 100000 };
-            case '100000-':
-                return { minPrice: 100000, maxPrice: 10000000 }; // Set a reasonable upper limit, e.g., 1,000,000
-
-            default:
-                return { minPrice: 0, maxPrice: Number.MAX_SAFE_INTEGER };
-        }
-    };
-
     useEffect(() => {
+        const getMinMaxPrice = () => {
+            switch (priceRange) {
+                case '0-30000':
+                    return { minPrice: 0, maxPrice: 30000 };
+                case '30000-50000':
+                    return { minPrice: 30000, maxPrice: 50000 };
+                case '50000-80000':
+                    return { minPrice: 50000, maxPrice: 80000 };
+                case '80000-100000':
+                    return { minPrice: 80000, maxPrice: 100000 };
+                case '100000-':
+                    return { minPrice: 100000, maxPrice: 10000000 }; // Set a reasonable upper limit
+                default:
+                    return { minPrice: 0, maxPrice: Number.MAX_SAFE_INTEGER };
+            }
+        };
+
         setLoading(true);
         const { minPrice, maxPrice } = getMinMaxPrice(); // 가격대별 최소, 최대 가격을 가져옴
         let url = `/api/accommodations?page=${page}&size=${itemsPerPage}`;
@@ -68,7 +66,7 @@ const AccommodationList = () => {
                     value={region}
                     onChange={(e) => setRegion(e.target.value)}
                 >
-                    <option value="">All Regions</option>
+                    <option value="">지역 선택</option>
                     <option value="부산">부산</option>
                     <option value="울산">울산</option>
                 </select>

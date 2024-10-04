@@ -57,4 +57,7 @@ public class DonghaeInfo {
 
     @Column(name = "alighting_2023")
     private Integer alighting2023; // 2023년 하차 인원 수
+
+    @Column(name = "station_order")
+    private Integer stationOrder; // 역의 순서
 }

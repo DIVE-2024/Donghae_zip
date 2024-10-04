@@ -19,10 +19,18 @@ public class DonghaeInfoService {
     @Autowired
     private DonghaeTimetableService donghaeTimetableService;
 
+    // 동해선에 속한 모든 역 정보 가져오기
+    public List<DonghaeInfo> getAllDonghaeLineStations() {
+        return donghaeInfoRepository.findByLineName("동해선"); // "동해선" 노선에 속한 역들만 가져오기
+    }
+
     // 모든 동해선 역 정보 가져오기
     public List<DonghaeInfo> getAllStations() {
         return donghaeInfoRepository.findAll();
     }
+
+
+    // 동해선에 속한 모든 역 정보 가져오기
 
     // 특정 역 정보 가져오기
     public Optional<DonghaeInfo> getStationByName(String stationName) {
