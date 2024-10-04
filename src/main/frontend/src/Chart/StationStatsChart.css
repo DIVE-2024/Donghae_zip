@@ -1,0 +1,3 @@
+ul.recharts-default-legend li {
+    margin: 6px; /* 각 항목 아래에 10px 여백 추가 */
+}
