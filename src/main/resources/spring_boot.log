@@ -1,0 +1,256 @@
+2024-10-05T01:01:21.373+09:00  INFO 21732 --- [Donghae_zip] [main] c.e.donghae_zip.DonghaeZipApplication    : Starting DonghaeZipApplication using Java 17.0.10 with PID 21732 (C:\Users\sh980\workspace\Donghae_zip\build\classes\java\main started by sh980 in C:\Users\sh980\workspace\Donghae_zip)
+2024-10-05T01:01:21.375+09:00  INFO 21732 --- [Donghae_zip] [main] c.e.donghae_zip.DonghaeZipApplication    : No active profile set, falling back to 1 default profile: "default"
+2024-10-05T01:01:22.404+09:00  INFO 21732 --- [Donghae_zip] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-10-05T01:01:22.592+09:00  INFO 21732 --- [Donghae_zip] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 181 ms. Found 11 JPA repository interfaces.
+2024-10-05T01:01:22.913+09:00  WARN 21732 --- [Donghae_zip] [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.ws.config.annotation.DelegatingWsConfiguration' of type [org.springframework.ws.config.annotation.DelegatingWsConfiguration$$SpringCGLIB$$0] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [annotationActionEndpointMapping] is declared through a non-static factory method on that class; consider declaring it as static instead.
+2024-10-05T01:01:22.944+09:00  INFO 21732 --- [Donghae_zip] [main] .w.s.a.s.AnnotationActionEndpointMapping : Supporting [WS-Addressing August 2004, WS-Addressing 1.0]
+2024-10-05T01:01:23.239+09:00  INFO 21732 --- [Donghae_zip] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2024-10-05T01:01:23.252+09:00  INFO 21732 --- [Donghae_zip] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-10-05T01:01:23.253+09:00  INFO 21732 --- [Donghae_zip] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.30]
+2024-10-05T01:01:23.340+09:00  INFO 21732 --- [Donghae_zip] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-10-05T01:01:23.341+09:00  INFO 21732 --- [Donghae_zip] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1915 ms
+2024-10-05T01:01:23.472+09:00  INFO 21732 --- [Donghae_zip] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-10-05T01:01:23.775+09:00  INFO 21732 --- [Donghae_zip] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@2a425cf5
+2024-10-05T01:01:23.777+09:00  INFO 21732 --- [Donghae_zip] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-10-05T01:01:23.823+09:00  INFO 21732 --- [Donghae_zip] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-10-05T01:01:23.932+09:00  INFO 21732 --- [Donghae_zip] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
+2024-10-05T01:01:24.000+09:00  INFO 21732 --- [Donghae_zip] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2024-10-05T01:01:24.400+09:00  INFO 21732 --- [Donghae_zip] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-10-05T01:01:25.942+09:00  INFO 21732 --- [Donghae_zip] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-10-05T01:01:25.946+09:00  INFO 21732 --- [Donghae_zip] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-10-05T01:01:26.404+09:00  INFO 21732 --- [Donghae_zip] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-10-05T01:01:27.234+09:00  WARN 21732 --- [Donghae_zip] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-10-05T01:01:27.255+09:00  INFO 21732 --- [Donghae_zip] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2024-10-05T01:01:27.898+09:00  INFO 21732 --- [Donghae_zip] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2024-10-05T01:01:27.910+09:00  INFO 21732 --- [Donghae_zip] [main] c.e.donghae_zip.DonghaeZipApplication    : Started DonghaeZipApplication in 6.982 seconds (process running for 7.939)
+2024-10-05T01:01:45.134+09:00  INFO 21732 --- [Donghae_zip] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-10-05T01:01:45.134+09:00  INFO 21732 --- [Donghae_zip] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2024-10-05T01:01:45.137+09:00  INFO 21732 --- [Donghae_zip] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2024-10-05T01:01:50.021+09:00  INFO 21732 --- [Donghae_zip] [http-nio-8080-exec-8] o.springdoc.api.AbstractOpenApiResource  : Init duration for springdoc-openapi is: 967 ms
+2024-10-05T01:02:32.991+09:00  WARN 21732 --- [Donghae_zip] [http-nio-8080-exec-5] ration$PageModule$WarningLoggingModifier : Serializing PageImpl instances as-is is not supported, meaning that there is no guarantee about the stability of the resulting JSON structure!
+	For a stable JSON structure, please use Spring Data's PagedModel (globally via @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO))
+	or Spring HATEOAS and Spring Data's PagedResourcesAssembler as documented in https://docs.spring.io/spring-data/commons/reference/repositories/core-extensions.html#core.web.pageables.
+
+2024-10-05T01:21:38.689+09:00  INFO 21732 --- [Donghae_zip] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-10-05T01:21:38.692+09:00  INFO 21732 --- [Donghae_zip] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-10-05T01:21:38.693+09:00  INFO 21732 --- [Donghae_zip] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2024-10-05T01:21:43.834+09:00  INFO 13912 --- [Donghae_zip] [main] c.e.donghae_zip.DonghaeZipApplication    : Starting DonghaeZipApplication using Java 17.0.10 with PID 13912 (C:\Users\sh980\workspace\Donghae_zip\build\classes\java\main started by sh980 in C:\Users\sh980\workspace\Donghae_zip)
+2024-10-05T01:21:43.835+09:00  INFO 13912 --- [Donghae_zip] [main] c.e.donghae_zip.DonghaeZipApplication    : No active profile set, falling back to 1 default profile: "default"
+2024-10-05T01:21:44.829+09:00  INFO 13912 --- [Donghae_zip] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-10-05T01:21:45.028+09:00  INFO 13912 --- [Donghae_zip] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 189 ms. Found 11 JPA repository interfaces.
+2024-10-05T01:21:45.346+09:00  WARN 13912 --- [Donghae_zip] [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.ws.config.annotation.DelegatingWsConfiguration' of type [org.springframework.ws.config.annotation.DelegatingWsConfiguration$$SpringCGLIB$$0] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [annotationActionEndpointMapping] is declared through a non-static factory method on that class; consider declaring it as static instead.
+2024-10-05T01:21:45.373+09:00  INFO 13912 --- [Donghae_zip] [main] .w.s.a.s.AnnotationActionEndpointMapping : Supporting [WS-Addressing August 2004, WS-Addressing 1.0]
+2024-10-05T01:21:45.608+09:00  INFO 13912 --- [Donghae_zip] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2024-10-05T01:21:45.621+09:00  INFO 13912 --- [Donghae_zip] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-10-05T01:21:45.621+09:00  INFO 13912 --- [Donghae_zip] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.30]
+2024-10-05T01:21:45.686+09:00  INFO 13912 --- [Donghae_zip] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-10-05T01:21:45.686+09:00  INFO 13912 --- [Donghae_zip] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1804 ms
+2024-10-05T01:21:45.794+09:00  INFO 13912 --- [Donghae_zip] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-10-05T01:21:46.062+09:00  INFO 13912 --- [Donghae_zip] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@778c2e7c
+2024-10-05T01:21:46.064+09:00  INFO 13912 --- [Donghae_zip] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-10-05T01:21:46.099+09:00  INFO 13912 --- [Donghae_zip] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-10-05T01:21:46.146+09:00  INFO 13912 --- [Donghae_zip] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
+2024-10-05T01:21:46.190+09:00  INFO 13912 --- [Donghae_zip] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2024-10-05T01:21:46.479+09:00  INFO 13912 --- [Donghae_zip] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-10-05T01:21:47.827+09:00  INFO 13912 --- [Donghae_zip] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-10-05T01:21:47.831+09:00  INFO 13912 --- [Donghae_zip] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-10-05T01:21:48.325+09:00  INFO 13912 --- [Donghae_zip] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-10-05T01:21:49.182+09:00  WARN 13912 --- [Donghae_zip] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-10-05T01:21:49.202+09:00  INFO 13912 --- [Donghae_zip] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2024-10-05T01:21:49.856+09:00  INFO 13912 --- [Donghae_zip] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2024-10-05T01:21:49.868+09:00  INFO 13912 --- [Donghae_zip] [main] c.e.donghae_zip.DonghaeZipApplication    : Started DonghaeZipApplication in 6.492 seconds (process running for 7.141)
+2024-10-05T01:21:49.886+09:00  INFO 13912 --- [Donghae_zip] [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2024-10-05T01:21:49.915+09:00 ERROR 13912 --- [Donghae_zip] [main] o.s.boot.SpringApplication               : Application run failed
+
+java.lang.IllegalStateException: Failed to execute CommandLineRunner
+	at org.springframework.boot.SpringApplication.lambda$callRunner$6(SpringApplication.java:797) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.util.function.ThrowingConsumer.accept(ThrowingConsumer.java:66) ~[spring-core-6.1.13.jar:6.1.13]
+	at org.springframework.util.function.ThrowingConsumer$1.accept(ThrowingConsumer.java:88) ~[spring-core-6.1.13.jar:6.1.13]
+	at org.springframework.boot.SpringApplication.callRunner(SpringApplication.java:798) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.boot.SpringApplication.callRunner(SpringApplication.java:789) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.boot.SpringApplication.lambda$callRunners$3(SpringApplication.java:774) ~[spring-boot-3.3.4.jar:3.3.4]
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:183) ~[na:na]
+	at java.base/java.util.stream.SortedOps$SizedRefSortingSink.end(SortedOps.java:357) ~[na:na]
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:510) ~[na:na]
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499) ~[na:na]
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:150) ~[na:na]
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:173) ~[na:na]
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234) ~[na:na]
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596) ~[na:na]
+	at org.springframework.boot.SpringApplication.callRunners(SpringApplication.java:774) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:342) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1363) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1352) ~[spring-boot-3.3.4.jar:3.3.4]
+	at com.example.donghae_zip.DonghaeZipApplication.main(DonghaeZipApplication.java:26) ~[main/:na]
+Caused by: java.io.FileNotFoundException: C:\히껑\DIVE2024\둘렛길(최종).json (지정된 경로를 찾을 수 없습니다)
+	at java.base/java.io.FileInputStream.open0(Native Method) ~[na:na]
+	at java.base/java.io.FileInputStream.open(FileInputStream.java:216) ~[na:na]
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:157) ~[na:na]
+	at com.fasterxml.jackson.core.TokenStreamFactory._fileInputStream(TokenStreamFactory.java:318) ~[jackson-core-2.17.2.jar:2.17.2]
+	at com.fasterxml.jackson.core.JsonFactory.createParser(JsonFactory.java:1219) ~[jackson-core-2.17.2.jar:2.17.2]
+	at com.fasterxml.jackson.databind.ObjectMapper.readTree(ObjectMapper.java:3252) ~[jackson-databind-2.15.2.jar:2.15.2]
+	at com.example.donghae_zip.service.TrailService.saveTrailFromJson(TrailService.java:60) ~[main/:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:355) ~[spring-aop-6.1.13.jar:6.1.13]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.1.13.jar:6.1.13]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.1.13.jar:6.1.13]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:768) ~[spring-aop-6.1.13.jar:6.1.13]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:379) ~[spring-tx-6.1.13.jar:6.1.13]
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-6.1.13.jar:6.1.13]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.13.jar:6.1.13]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:768) ~[spring-aop-6.1.13.jar:6.1.13]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:720) ~[spring-aop-6.1.13.jar:6.1.13]
+	at com.example.donghae_zip.service.TrailService$$SpringCGLIB$$0.saveTrailFromJson(<generated>) ~[main/:na]
+	at com.example.donghae_zip.dataLoader.DataLoader.loadTrailData(DataLoader.java:43) ~[main/:na]
+	at com.example.donghae_zip.dataLoader.DataLoader.run(DataLoader.java:29) ~[main/:na]
+	at org.springframework.boot.SpringApplication.lambda$callRunner$5(SpringApplication.java:790) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.util.function.ThrowingConsumer$1.acceptWithException(ThrowingConsumer.java:83) ~[spring-core-6.1.13.jar:6.1.13]
+	at org.springframework.util.function.ThrowingConsumer.accept(ThrowingConsumer.java:60) ~[spring-core-6.1.13.jar:6.1.13]
+	... 17 common frames omitted
+
+2024-10-05T01:21:51.453+09:00  INFO 13912 --- [Donghae_zip] [main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-10-05T01:21:51.455+09:00  INFO 13912 --- [Donghae_zip] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-10-05T01:21:51.458+09:00  INFO 13912 --- [Donghae_zip] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2024-10-05T01:25:09.469+09:00  INFO 26104 --- [Donghae_zip] [main] c.e.donghae_zip.DonghaeZipApplication    : Starting DonghaeZipApplication using Java 17.0.10 with PID 26104 (C:\Users\sh980\workspace\Donghae_zip\build\classes\java\main started by sh980 in C:\Users\sh980\workspace\Donghae_zip)
+2024-10-05T01:25:09.470+09:00  INFO 26104 --- [Donghae_zip] [main] c.e.donghae_zip.DonghaeZipApplication    : No active profile set, falling back to 1 default profile: "default"
+2024-10-05T01:25:10.453+09:00  INFO 26104 --- [Donghae_zip] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-10-05T01:25:10.636+09:00  INFO 26104 --- [Donghae_zip] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 175 ms. Found 11 JPA repository interfaces.
+2024-10-05T01:25:10.964+09:00  WARN 26104 --- [Donghae_zip] [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.ws.config.annotation.DelegatingWsConfiguration' of type [org.springframework.ws.config.annotation.DelegatingWsConfiguration$$SpringCGLIB$$0] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [annotationActionEndpointMapping] is declared through a non-static factory method on that class; consider declaring it as static instead.
+2024-10-05T01:25:10.991+09:00  INFO 26104 --- [Donghae_zip] [main] .w.s.a.s.AnnotationActionEndpointMapping : Supporting [WS-Addressing August 2004, WS-Addressing 1.0]
+2024-10-05T01:25:11.236+09:00  INFO 26104 --- [Donghae_zip] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2024-10-05T01:25:11.248+09:00  INFO 26104 --- [Donghae_zip] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-10-05T01:25:11.249+09:00  INFO 26104 --- [Donghae_zip] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.30]
+2024-10-05T01:25:11.320+09:00  INFO 26104 --- [Donghae_zip] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-10-05T01:25:11.320+09:00  INFO 26104 --- [Donghae_zip] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1801 ms
+2024-10-05T01:25:11.448+09:00  INFO 26104 --- [Donghae_zip] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-10-05T01:25:11.727+09:00  INFO 26104 --- [Donghae_zip] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@12aa519b
+2024-10-05T01:25:11.729+09:00  INFO 26104 --- [Donghae_zip] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-10-05T01:25:11.765+09:00  INFO 26104 --- [Donghae_zip] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-10-05T01:25:11.809+09:00  INFO 26104 --- [Donghae_zip] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
+2024-10-05T01:25:11.839+09:00  INFO 26104 --- [Donghae_zip] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2024-10-05T01:25:12.159+09:00  INFO 26104 --- [Donghae_zip] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-10-05T01:25:13.543+09:00  INFO 26104 --- [Donghae_zip] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-10-05T01:25:13.546+09:00  INFO 26104 --- [Donghae_zip] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-10-05T01:25:13.965+09:00  INFO 26104 --- [Donghae_zip] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-10-05T01:25:14.738+09:00  WARN 26104 --- [Donghae_zip] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-10-05T01:25:14.756+09:00  INFO 26104 --- [Donghae_zip] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2024-10-05T01:25:15.415+09:00  INFO 26104 --- [Donghae_zip] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2024-10-05T01:25:15.429+09:00  INFO 26104 --- [Donghae_zip] [main] c.e.donghae_zip.DonghaeZipApplication    : Started DonghaeZipApplication in 6.399 seconds (process running for 7.039)
+2024-10-05T01:25:15.459+09:00  INFO 26104 --- [Donghae_zip] [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2024-10-05T01:25:15.482+09:00 ERROR 26104 --- [Donghae_zip] [main] o.s.boot.SpringApplication               : Application run failed
+
+java.lang.IllegalStateException: Failed to execute CommandLineRunner
+	at org.springframework.boot.SpringApplication.lambda$callRunner$6(SpringApplication.java:797) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.util.function.ThrowingConsumer.accept(ThrowingConsumer.java:66) ~[spring-core-6.1.13.jar:6.1.13]
+	at org.springframework.util.function.ThrowingConsumer$1.accept(ThrowingConsumer.java:88) ~[spring-core-6.1.13.jar:6.1.13]
+	at org.springframework.boot.SpringApplication.callRunner(SpringApplication.java:798) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.boot.SpringApplication.callRunner(SpringApplication.java:789) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.boot.SpringApplication.lambda$callRunners$3(SpringApplication.java:774) ~[spring-boot-3.3.4.jar:3.3.4]
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.accept(ForEachOps.java:183) ~[na:na]
+	at java.base/java.util.stream.SortedOps$SizedRefSortingSink.end(SortedOps.java:357) ~[na:na]
+	at java.base/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:510) ~[na:na]
+	at java.base/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499) ~[na:na]
+	at java.base/java.util.stream.ForEachOps$ForEachOp.evaluateSequential(ForEachOps.java:150) ~[na:na]
+	at java.base/java.util.stream.ForEachOps$ForEachOp$OfRef.evaluateSequential(ForEachOps.java:173) ~[na:na]
+	at java.base/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234) ~[na:na]
+	at java.base/java.util.stream.ReferencePipeline.forEach(ReferencePipeline.java:596) ~[na:na]
+	at org.springframework.boot.SpringApplication.callRunners(SpringApplication.java:774) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:342) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1363) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1352) ~[spring-boot-3.3.4.jar:3.3.4]
+	at com.example.donghae_zip.DonghaeZipApplication.main(DonghaeZipApplication.java:26) ~[main/:na]
+Caused by: java.io.FileNotFoundException: C:\히껑\DIVE2024\둘렛길(최종).json (지정된 경로를 찾을 수 없습니다)
+	at java.base/java.io.FileInputStream.open0(Native Method) ~[na:na]
+	at java.base/java.io.FileInputStream.open(FileInputStream.java:216) ~[na:na]
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:157) ~[na:na]
+	at com.fasterxml.jackson.core.TokenStreamFactory._fileInputStream(TokenStreamFactory.java:318) ~[jackson-core-2.17.2.jar:2.17.2]
+	at com.fasterxml.jackson.core.JsonFactory.createParser(JsonFactory.java:1219) ~[jackson-core-2.17.2.jar:2.17.2]
+	at com.fasterxml.jackson.databind.ObjectMapper.readTree(ObjectMapper.java:3252) ~[jackson-databind-2.15.2.jar:2.15.2]
+	at com.example.donghae_zip.service.TrailService.saveTrailFromJson(TrailService.java:60) ~[main/:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:355) ~[spring-aop-6.1.13.jar:6.1.13]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.1.13.jar:6.1.13]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.1.13.jar:6.1.13]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:768) ~[spring-aop-6.1.13.jar:6.1.13]
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:379) ~[spring-tx-6.1.13.jar:6.1.13]
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119) ~[spring-tx-6.1.13.jar:6.1.13]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.1.13.jar:6.1.13]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:768) ~[spring-aop-6.1.13.jar:6.1.13]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:720) ~[spring-aop-6.1.13.jar:6.1.13]
+	at com.example.donghae_zip.service.TrailService$$SpringCGLIB$$0.saveTrailFromJson(<generated>) ~[main/:na]
+	at com.example.donghae_zip.dataLoader.DataLoader.loadTrailData(DataLoader.java:43) ~[main/:na]
+	at com.example.donghae_zip.dataLoader.DataLoader.run(DataLoader.java:29) ~[main/:na]
+	at org.springframework.boot.SpringApplication.lambda$callRunner$5(SpringApplication.java:790) ~[spring-boot-3.3.4.jar:3.3.4]
+	at org.springframework.util.function.ThrowingConsumer$1.acceptWithException(ThrowingConsumer.java:83) ~[spring-core-6.1.13.jar:6.1.13]
+	at org.springframework.util.function.ThrowingConsumer.accept(ThrowingConsumer.java:60) ~[spring-core-6.1.13.jar:6.1.13]
+	... 17 common frames omitted
+
+2024-10-05T01:25:17.039+09:00  INFO 26104 --- [Donghae_zip] [main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-10-05T01:25:17.041+09:00  INFO 26104 --- [Donghae_zip] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-10-05T01:25:17.046+09:00  INFO 26104 --- [Donghae_zip] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2024-10-05T01:26:06.469+09:00  INFO 28804 --- [Donghae_zip] [main] c.e.donghae_zip.DonghaeZipApplication    : Starting DonghaeZipApplication using Java 17.0.10 with PID 28804 (C:\Users\sh980\workspace\Donghae_zip\build\classes\java\main started by sh980 in C:\Users\sh980\workspace\Donghae_zip)
+2024-10-05T01:26:06.470+09:00  INFO 28804 --- [Donghae_zip] [main] c.e.donghae_zip.DonghaeZipApplication    : No active profile set, falling back to 1 default profile: "default"
+2024-10-05T01:26:07.573+09:00  INFO 28804 --- [Donghae_zip] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-10-05T01:26:07.776+09:00  INFO 28804 --- [Donghae_zip] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 184 ms. Found 11 JPA repository interfaces.
+2024-10-05T01:26:08.149+09:00  WARN 28804 --- [Donghae_zip] [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.ws.config.annotation.DelegatingWsConfiguration' of type [org.springframework.ws.config.annotation.DelegatingWsConfiguration$$SpringCGLIB$$0] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [annotationActionEndpointMapping] is declared through a non-static factory method on that class; consider declaring it as static instead.
+2024-10-05T01:26:08.184+09:00  INFO 28804 --- [Donghae_zip] [main] .w.s.a.s.AnnotationActionEndpointMapping : Supporting [WS-Addressing August 2004, WS-Addressing 1.0]
+2024-10-05T01:26:08.471+09:00  INFO 28804 --- [Donghae_zip] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2024-10-05T01:26:08.485+09:00  INFO 28804 --- [Donghae_zip] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-10-05T01:26:08.486+09:00  INFO 28804 --- [Donghae_zip] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.30]
+2024-10-05T01:26:08.583+09:00  INFO 28804 --- [Donghae_zip] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-10-05T01:26:08.583+09:00  INFO 28804 --- [Donghae_zip] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2065 ms
+2024-10-05T01:26:08.720+09:00  INFO 28804 --- [Donghae_zip] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-10-05T01:26:09.002+09:00  INFO 28804 --- [Donghae_zip] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@17d76ebb
+2024-10-05T01:26:09.005+09:00  INFO 28804 --- [Donghae_zip] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-10-05T01:26:09.052+09:00  INFO 28804 --- [Donghae_zip] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-10-05T01:26:09.135+09:00  INFO 28804 --- [Donghae_zip] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
+2024-10-05T01:26:09.182+09:00  INFO 28804 --- [Donghae_zip] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2024-10-05T01:26:09.520+09:00  INFO 28804 --- [Donghae_zip] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-10-05T01:26:10.841+09:00  INFO 28804 --- [Donghae_zip] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-10-05T01:26:10.845+09:00  INFO 28804 --- [Donghae_zip] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-10-05T01:26:11.280+09:00  INFO 28804 --- [Donghae_zip] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-10-05T01:26:12.045+09:00  WARN 28804 --- [Donghae_zip] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-10-05T01:26:12.064+09:00  INFO 28804 --- [Donghae_zip] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2024-10-05T01:26:12.751+09:00  INFO 28804 --- [Donghae_zip] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2024-10-05T01:26:12.765+09:00  INFO 28804 --- [Donghae_zip] [main] c.e.donghae_zip.DonghaeZipApplication    : Started DonghaeZipApplication in 6.717 seconds (process running for 7.452)
+2024-10-05T01:27:07.796+09:00  INFO 28804 --- [Donghae_zip] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-10-05T01:27:07.798+09:00  INFO 28804 --- [Donghae_zip] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-10-05T01:27:07.801+09:00  INFO 28804 --- [Donghae_zip] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2024-10-05T01:27:47.301+09:00  INFO 20252 --- [Donghae_zip] [main] c.e.donghae_zip.DonghaeZipApplication    : Starting DonghaeZipApplication using Java 17.0.10 with PID 20252 (C:\Users\sh980\workspace\Donghae_zip\build\classes\java\main started by sh980 in C:\Users\sh980\workspace\Donghae_zip)
+2024-10-05T01:27:47.302+09:00  INFO 20252 --- [Donghae_zip] [main] c.e.donghae_zip.DonghaeZipApplication    : No active profile set, falling back to 1 default profile: "default"
+2024-10-05T01:27:48.240+09:00  INFO 20252 --- [Donghae_zip] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-10-05T01:27:48.437+09:00  INFO 20252 --- [Donghae_zip] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 183 ms. Found 11 JPA repository interfaces.
+2024-10-05T01:27:48.751+09:00  WARN 20252 --- [Donghae_zip] [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.ws.config.annotation.DelegatingWsConfiguration' of type [org.springframework.ws.config.annotation.DelegatingWsConfiguration$$SpringCGLIB$$0] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [annotationActionEndpointMapping] is declared through a non-static factory method on that class; consider declaring it as static instead.
+2024-10-05T01:27:48.781+09:00  INFO 20252 --- [Donghae_zip] [main] .w.s.a.s.AnnotationActionEndpointMapping : Supporting [WS-Addressing August 2004, WS-Addressing 1.0]
+2024-10-05T01:27:49.045+09:00  INFO 20252 --- [Donghae_zip] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2024-10-05T01:27:49.060+09:00  INFO 20252 --- [Donghae_zip] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-10-05T01:27:49.060+09:00  INFO 20252 --- [Donghae_zip] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.30]
+2024-10-05T01:27:49.143+09:00  INFO 20252 --- [Donghae_zip] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-10-05T01:27:49.144+09:00  INFO 20252 --- [Donghae_zip] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1794 ms
+2024-10-05T01:27:49.271+09:00  INFO 20252 --- [Donghae_zip] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-10-05T01:27:49.545+09:00  INFO 20252 --- [Donghae_zip] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1b94c789
+2024-10-05T01:27:49.548+09:00  INFO 20252 --- [Donghae_zip] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-10-05T01:27:49.588+09:00  INFO 20252 --- [Donghae_zip] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-10-05T01:27:49.661+09:00  INFO 20252 --- [Donghae_zip] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
+2024-10-05T01:27:49.712+09:00  INFO 20252 --- [Donghae_zip] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2024-10-05T01:27:50.069+09:00  INFO 20252 --- [Donghae_zip] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-10-05T01:27:51.351+09:00  INFO 20252 --- [Donghae_zip] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-10-05T01:27:51.354+09:00  INFO 20252 --- [Donghae_zip] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-10-05T01:27:51.774+09:00  INFO 20252 --- [Donghae_zip] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-10-05T01:27:52.542+09:00  WARN 20252 --- [Donghae_zip] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-10-05T01:27:52.563+09:00  INFO 20252 --- [Donghae_zip] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2024-10-05T01:27:53.197+09:00  INFO 20252 --- [Donghae_zip] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2024-10-05T01:27:53.209+09:00  INFO 20252 --- [Donghae_zip] [main] c.e.donghae_zip.DonghaeZipApplication    : Started DonghaeZipApplication in 6.355 seconds (process running for 7.013)
+2024-10-05T01:27:54.714+09:00  INFO 20252 --- [Donghae_zip] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-10-05T01:27:54.716+09:00  INFO 20252 --- [Donghae_zip] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2024-10-05T01:27:54.719+09:00  INFO 20252 --- [Donghae_zip] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

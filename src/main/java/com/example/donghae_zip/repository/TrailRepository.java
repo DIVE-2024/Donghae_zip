@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface TrailRepository extends JpaRepository<Trail, Long> {
 
@@ -20,6 +22,9 @@ public interface TrailRepository extends JpaRepository<Trail, Long> {
 
     Page<Trail> findByCourseNameContaining(String title, Pageable pageable);
     Page<Trail> findByDifficultyContaining(String difficulty, Pageable pageable);
+
+    // ID로 특정 둘레길 조회
+    Optional<Trail> findById(Long trailId);
 
 
 }

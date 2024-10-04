@@ -2,6 +2,8 @@ package com.example.donghae_zip.repository;
 
 import com.example.donghae_zip.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
@@ -13,4 +15,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     // 닉네임으로 회원 조회
     Optional<Member> findByNickname(String nickname);
+
+    // 나이대에 해당하는 사용자들을 조회하는 메서드 추가
+    List<Member> findByAgeBetween(int minAge, int maxAge);
 }

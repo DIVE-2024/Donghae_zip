@@ -33,13 +33,13 @@ public class WeatherScheduler {
     }
 
 
-    // 테스트 용도 .. 매 1분마다 중기 예보갱신
-    @Scheduled(fixedRate = 60000) // 1분(60000ms)마다 실행
-/*
+/*    // 테스트 용도 .. 매 1분마다 중기 예보갱신
+    @Scheduled(fixedRate = 60000) // 1분(60000ms)마다 실행*/
+
 
     // 매일 1번 중기 예보 갱신 (매일 자정에 실행)
     @Scheduled(cron = "0 0 6,18 * * ?") // 매일 6시, 18시에 실행
-*/
+
     public void updateMidTermTemperature() {
         // 부산 기온 예보 가져오기
         String busanResponse = weatherService.getMidTermTemperature(BUSAN_REG_ID);

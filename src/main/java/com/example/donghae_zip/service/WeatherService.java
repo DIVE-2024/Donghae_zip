@@ -60,6 +60,16 @@ public class WeatherService {
         for (int i = 0; i <= 3; i++) {
             String fcstDate = incrementDateByDays(baseDate, i); // 현재 날짜에서 i일을 더한 날짜
 
+            // 중기 예보 데이터가 존재하면 해당 날짜의 중기 예보 데이터를 삭제
+            List<Weather> midTermForecasts = weatherRepository.findByRegionAndForecastDateAndForecastTimeIsNull(region, fcstDate);
+            if (!midTermForecasts.isEmpty()) {
+                System.out.println("중기 예보 데이터 존재 확인 - 삭제 예정: " + midTermForecasts.size() + " 개 데이터");
+                weatherRepository.deleteAll(midTermForecasts);
+                System.out.println(fcstDate + " 중기예보 데이터가 삭제되었습니다.");
+            } else {
+                System.out.println("삭제할 중기 예보 데이터가 없습니다.");
+            }
+
             for (String time : getHourlyTimeSlots()) {
                 Map<String, String> dataMap = new LinkedHashMap<>();
 
@@ -137,6 +147,7 @@ public class WeatherService {
 
         return hourlyWeatherData;
     }
+
 
     // 이전 시간대 찾기 메서드
     private String getPreviousValidTime(String currentTime, String[] validTimes) {
