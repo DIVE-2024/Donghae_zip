@@ -1,0 +1,129 @@
+.main-container {
+    display: flex;
+    flex-direction: column;
+    background-color: #edf2f7;
+    min-height: 100vh; /* 페이지가 화면보다 짧을 때도 전체 높이를 차지하게 */
+}
+
+.top-section {
+    display: flex;
+    justify-content: space-between;
+    padding: 80px 0 0 50px; /* 위쪽에 80px 패딩 추가 */
+    background-color: #5E80B1;
+    box-sizing: border-box;
+    height: auto; /* 고정 높이 제거 */
+    flex-wrap: nowrap; /* 줄바꿈 방지 */
+}
+
+.text-section {
+    flex: 0.5;
+    padding-right: 20px;
+    color: white;
+    margin-right: 60px; /* 문구와 사진 사이 여백 추가 */
+}
+
+.text-section h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    font-weight: bold; /* 텍스트 굵게 처리 */
+}
+
+.text-section h5 {
+    font-size: 1rem;
+    margin-bottom: 40px;
+    color: #e0e0e0;
+}
+
+.text-section p {
+    font-size: 1.1rem;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+/* 부모 요소의 넓이 제한 */
+.search-bar {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    width: 500px; /* 검색창의 전체 넓이를 고정 */
+}
+
+.search-bar .form-control {
+    width: 70%; /* 검색창의 너비를 줄이기 */
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+}
+
+.search-bar .btn-primary {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.image-section {
+    flex: 0.5;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    height: auto; /* 고정 높이 제거 */
+}
+
+.placeholder-image {
+    width: 100%;
+    height: 100%;
+    border-top-left-radius: 20px; /* 부모 컨테이너에 둥근 모서리 적용 */
+    overflow: hidden; /* 이미지를 컨테이너 안에 맞게 자름 */
+}
+
+.placeholder-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-top-left-radius: 20px; /* 이미지 자체에도 둥근 모서리 적용 */
+    border-radius: 0; /* 다른 모서리는 둥글지 않도록 설정 */
+}
+
+.bottom-section {
+    display: flex;
+    justify-content: space-between;
+    padding: 40px;
+    background-color: #B4C2D7;
+    height: auto; /* 고정 높이 제거 */
+}
+
+.half-section {
+    flex: 1;
+    padding: 20px;
+    margin: 0 10px;
+    background-color: #B4C2D7;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.half-section h3 {
+    font-size: 1.5rem;
+    font-weight: bold; /* Bold 처리 */
+    margin-bottom: 20px;
+}
+
+.map-placeholder, .chart-placeholder {
+    width: 100%;
+    height: 300px;
+    background-color: #cbd5e0;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.map-placeholder img, .chart-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}

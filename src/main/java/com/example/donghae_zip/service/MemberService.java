@@ -75,54 +75,47 @@ public class MemberService {
     public Member saveOrUpdateSocialUser(String email, String provider, String providerId, String name, String nickname, String phone) {
         logger.info("Trying to save or update social user. Email: {}, Provider: {}, ProviderId: {}", email, provider, providerId);
 
-        // provider와 providerId로 사용자를 찾음 (구글, 네이버, 카카오 모두 동일하게 동작)
-        Optional<Member> existingMember = memberRepository.findByProviderAndProviderId(provider, providerId);
+        // 1. 이메일로 먼저 사용자 확인
+        Optional<Member> existingMemberByEmail = memberRepository.findByEmail(email);
 
-        // 이메일이 없는 경우(카카오에서 제공되지 않는 경우), 가상의 이메일 생성
-        if (email == null || email.isEmpty()) {
-            email = provider + "_" + providerId + "@example.com";
-            logger.info("Generated email: {}", email);
+        if (existingMemberByEmail.isPresent()) {
+            // 이미 이메일로 등록된 사용자가 있으면 해당 사용자 반환
+            logger.info("Member already exists with email: {}", email);
+            return existingMemberByEmail.get();
         }
 
-        // 만약 사용자가 없을 경우 새로 생성
-        if (existingMember.isEmpty()) {
-            // 새로운 소셜 로그인 사용자를 등록할 때 기본 정보 설정
-            Member newMember = new Member();
-            newMember.setEmail(email);
-            newMember.setProvider(provider);
-            newMember.setProviderId(providerId);
+        // 2. 이메일이 없으면 provider와 providerId로 사용자 확인
+        Optional<Member> existingMemberByProviderId = memberRepository.findByProviderAndProviderId(provider, providerId);
 
-            // 고유한 닉네임 생성
-            String generatedNickname = (nickname != null) ? nickname : "동해선" + UUID.randomUUID().toString().substring(0, 8);
-
-            // 닉네임 중복 확인
-            while (memberRepository.findByNickname(generatedNickname).isPresent()) {
-                generatedNickname = "동해선" + UUID.randomUUID().toString().substring(0, 8); // 중복 시 새로운 닉네임 생성
-            }
-
-            newMember.setNickname(generatedNickname);
-
-            // 고유한 전화번호 생성
-            String generatedPhone = (phone != null) ? phone : "000-0000-" + (int) (Math.random() * 10000);
-            newMember.setPhone(generatedPhone);
-
-            // 고유한 이름 생성
-            String generatedName = (name != null) ? name : "User_" + UUID.randomUUID().toString().substring(0, 8);
-            newMember.setName(generatedName);
-
-            newMember.setRole(Member.Role.USER);
-
-            // 소셜 로그인 사용자는 비밀번호에 무작위 문자열 설정
-            String randomPassword = PasswordGenerator.generateRandomPassword();
-            newMember.setPassword(passwordEncoder.encode(randomPassword));
-
-            logger.info("Saving new member with email: {}", newMember.getEmail());
-            return memberRepository.save(newMember);
+        if (existingMemberByProviderId.isPresent()) {
+            // 이미 같은 providerId로 등록된 사용자가 있으면 해당 사용자 반환
+            logger.info("Member already exists with providerId: {}", providerId);
+            return existingMemberByProviderId.get();
         }
 
-        // 기존 사용자 반환 (provider와 providerId로 찾은 사용자)
-        logger.info("Member already exists with providerId: {}", existingMember.get().getProviderId());
-        return existingMember.get();
+        // 3. 새로운 사용자인 경우 저장
+        Member newMember = new Member();
+        newMember.setEmail(email != null ? email : provider + "_" + providerId + "@example.com");
+        newMember.setProvider(provider);
+        newMember.setProviderId(providerId);
+
+        // 닉네임, 전화번호, 이름 생성 (기존 로직 그대로 사용)
+        String generatedNickname = (nickname != null) ? nickname : "동해선" + UUID.randomUUID().toString().substring(0, 8);
+        while (memberRepository.findByNickname(generatedNickname).isPresent()) {
+            generatedNickname = "동해선" + UUID.randomUUID().toString().substring(0, 8);
+        }
+        newMember.setNickname(generatedNickname);
+
+        newMember.setPhone(phone != null ? phone : "000-0000-" + (int) (Math.random() * 10000));
+        newMember.setName(name != null ? name : "User_" + UUID.randomUUID().toString().substring(0, 8));
+        newMember.setRole(Member.Role.USER);
+
+        // 무작위 비밀번호 생성
+        String randomPassword = PasswordGenerator.generateRandomPassword();
+        newMember.setPassword(passwordEncoder.encode(randomPassword));
+
+        logger.info("Saving new member with email: {}", newMember.getEmail());
+        return memberRepository.save(newMember);
     }
 
 
