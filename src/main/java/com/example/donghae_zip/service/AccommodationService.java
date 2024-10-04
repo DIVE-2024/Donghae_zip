@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -55,4 +56,10 @@ public class AccommodationService {
     public Page<Accommodation> getAccommodationsByRegionDistrictAndPriceRange(Region region, String district, int minPrice, int maxPrice, Pageable pageable) {
         return accommodationRepository.findByRegionAndDistrictAndAveragePriceBetween(region, district, minPrice, maxPrice, pageable);
     }
+
+    // 반경 내 숙박시설 검색 (페이징 처리)
+    public Page<Accommodation> getAccommodationsWithinRadius(BigDecimal latitude, BigDecimal longitude, double radius, Pageable pageable) {
+        return accommodationRepository.findWithinRadius(latitude, longitude, radius, pageable);
+    }
+
 }
