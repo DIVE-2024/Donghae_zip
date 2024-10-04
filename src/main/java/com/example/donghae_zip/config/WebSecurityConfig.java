@@ -47,7 +47,6 @@ public class WebSecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -70,6 +69,10 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/tourist-spots/**").permitAll()
                         // 축제 관련 API 인증 없이 접근 가능
                         .requestMatchers("/api/festivals/**").permitAll()
+                        // 인증이 필요한 찜 API 경로
+                        .requestMatchers("/api/favorites/auth/**").authenticated()
+                        // 인증 없이 나이대별 인기 여행지 조회 가능
+                        .requestMatchers("/api/favorites/public/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -88,4 +91,5 @@ public class WebSecurityConfig {
                 );
         return http.build();
     }
+
 }

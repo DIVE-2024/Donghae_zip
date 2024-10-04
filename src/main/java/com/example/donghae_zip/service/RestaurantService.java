@@ -103,5 +103,9 @@ public class RestaurantService {
         }
     }
 
+    // 찜이 많은 수로 레스토랑을 정렬
+    public Page<Restaurant> getRestaurantsSortedByFavorites(Pageable pageable) {
+        return restaurantRepository.findRestaurantsOrderByFavoritesCount(pageable);
+    }
 
 }
