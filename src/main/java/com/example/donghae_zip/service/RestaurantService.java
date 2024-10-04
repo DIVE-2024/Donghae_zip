@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+
+
 @Service
 public class RestaurantService {
 
@@ -42,7 +44,6 @@ public class RestaurantService {
         return new ArrayList<>(uniqueHashtags); // 리스트로 변환 후 반환
     }
 
-
     // ID로 특정 식당 데이터 가져오기
     public Optional<Restaurant> getRestaurantById(Long id) {
         return restaurantRepository.findById(id);
@@ -55,11 +56,9 @@ public class RestaurantService {
 
     // 지역에 따른 구/군 목록 가져오기
     public List<String> getDistrictsByRegion(Region region) {
-        // 해당 지역의 모든 레스토랑을 찾고, 중복 없이 구/군 목록을 추출
         List<String> districts = restaurantRepository.findDistinctDistrictsByRegion(region);
-        return districts; // 구/군 목록 반환
+        return districts;
     }
-
 
     // 지역과 해시태그로 식당 데이터 가져오기 (페이징 처리)
     public Page<Restaurant> getRestaurantsByRegionAndHashtag(Region region, String hashtag, Pageable pageable) {
@@ -133,16 +132,17 @@ public class RestaurantService {
         }
     }
 
-
     // 찜이 많은 수로 레스토랑을 정렬
     public Page<Restaurant> getRestaurantsSortedByFavorites(Pageable pageable) {
         return restaurantRepository.findRestaurantsOrderByFavoritesCount(pageable);
+    }
 
+    // 지역과 해시태그로 상위 레스토랑 가져오기
     public Map<String, Map<String, Object>> getTopRestaurantsByRegionAndHashtag(Region region, int limit) {
         Map<String, Map<String, Object>> hashtagMap = new HashMap<>();
 
         // 모든 해시태그를 가져와서 처리
-        List<String> hashtags = getAllHashtags(); // 이미 존재하는 해시태그 목록 가져오기 메서드 사용
+        List<String> hashtags = getAllHashtags();
 
         for (String hashtag : hashtags) {
             // 해시태그와 지역에 따른 모든 식당 개수 가져오기
@@ -152,23 +152,17 @@ public class RestaurantService {
             Pageable pageable = PageRequest.of(0, limit);
             List<Restaurant> topRestaurants = restaurantRepository.findTop5ByRegionAndHashtag(region, hashtag, pageable);
 
-            // 가져온 음식점 목록이 있으면 해시태그로 매핑
             if (!topRestaurants.isEmpty()) {
                 Map<String, Object> data = new HashMap<>();
-                data.put("totalRestaurants", totalRestaurants);  // 전체 식당 개수
-                data.put("restaurants", topRestaurants);  // 상위 5개의 식당 목록
+                data.put("totalRestaurants", totalRestaurants);
+                data.put("restaurants", topRestaurants);
                 hashtagMap.put(hashtag, data);
             }
         }
-        return hashtagMap;  // 해시태그 별로 그룹화된 맵 반환
+        return hashtagMap;
     }
-
 
     public Page<Restaurant> getAllRestaurantsByRegionAndHashtag(Region region, String hashtag, Pageable pageable) {
         return restaurantRepository.findAllByRegionAndHashtag(region, hashtag, pageable);
     }
-
-
-
-
 }
