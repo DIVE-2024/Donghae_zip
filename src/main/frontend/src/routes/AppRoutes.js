@@ -8,10 +8,15 @@ import Login from '../pages/Login/Login';
 import LoginSuccess from "../services/LoginSuccess";
 import RestaurantList from "../pages/Restaurant/RestaurantList";
 import RestaurantListByHashtag from "../pages/Restaurant/RestaurantListByHashtag";
+import DonghaeHotPlace from "../Donghae/DonghaeHotPlace";
+import StationStatsChart from "../Chart/StationStatsChart";
+import DonghaeSubway from "../Donghae/DonghaeSubway";
+import ImageMapWithCoordinates from "../Donghae/ImageMapWithCoordinates";
 
 const AppRoutes = () => {
     return (
         <Routes>
+                <Route path="/image-cord" element={<ImageMapWithCoordinates/>} />
             {/* 식당 */}
             <Route path="/restaurants" element={<RestaurantList />} />
             <Route path="/restaurant/:id" element={<Restaurant />} />
@@ -25,6 +30,13 @@ const AppRoutes = () => {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
             <Route path="/loginSuccess" element={<LoginSuccess />} />
+            {/* 차트 페이지 추가 */}
+            <Route path="/station-stats" element={<StationStatsChart />} />
+            {/* 동해선 핫플레이스 페이지 추가 */}
+            <Route path="/donghae-hotplace" element={<DonghaeHotPlace />} />
+            {/* 동해선 노선도 페이지 추가 */}
+            <Route path="/donghae-subway" element={<DonghaeSubway />} />
+
         </Routes>
     );
 };
