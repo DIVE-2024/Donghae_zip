@@ -18,11 +18,13 @@ const COLORS = [
 
 const StationStatsChart = () => {
     const [data, setData] = useState([]);
+
+    // 기본값 설정
     const [yearsAndMonths, setYearsAndMonths] = useState([]);  // 연도와 월 목록
     const [weeks, setWeeks] = useState([]);  // 주차 목록
-    const [yearAndMonth, setYearAndMonth] = useState('');  // 선택된 연도와 월
-    const [week, setWeek] = useState('');  // 선택된 주차
-    const [stationName, setStationName] = useState('');
+    const [yearAndMonth, setYearAndMonth] = useState('2023년 01월');  // 기본값: 2023년 01월
+    const [week, setWeek] = useState('2023년 01월 1주차');  // 기본값: 2023년 01월 1주차
+    const [stationName, setStationName] = useState('개운포');  // 기본값: 개운포
     const [stations, setStations] = useState([]);  // 역 목록
 
     // 연도와 월 가져오기
@@ -94,15 +96,16 @@ const StationStatsChart = () => {
         }
     }, [yearAndMonth, week, stationName]);
 
-// 차트 부분
+    // 차트 렌더링
     return (
         <div>
             <div>
                 {/* 연도와 월 선택 필터 */}
-                <div style={{display: 'flex', gap: '1rem'}}>
-                    <select
-                        onChange={(e) => setYearAndMonth(e.target.value)}
-                        style={{fontSize: '1.2rem', padding: '0.5rem', height: '3rem'}}  // 크기 조정
+                <div className="custom-select-wrapper" style={{display: 'flex', gap: '1rem',marginLeft:'14rem',marginBottom:'4rem'}}>
+                    <select className="custom-select"
+                            value={yearAndMonth}  // 기본값 반영
+                            onChange={(e) => setYearAndMonth(e.target.value)}
+                            style={{fontSize: '1.2rem', padding: '0.5rem', height: '3rem'}}
                     >
                         <option value="">연도와 월 선택</option>
                         {yearsAndMonths.map((ym, index) => (
@@ -112,9 +115,10 @@ const StationStatsChart = () => {
                         ))}
                     </select>
 
-                    <select
-                        onChange={(e) => setWeek(e.target.value)}
-                        style={{fontSize: '1.2rem', padding: '0.5rem', height: '3rem'}}  // 크기 조정
+                    <select className="custom-select"
+                            value={week}  // 기본값 반영
+                            onChange={(e) => setWeek(e.target.value)}
+                            style={{fontSize: '1.2rem', padding: '0.5rem', height: '3rem'}}
                     >
                         <option value="">주차 선택</option>
                         {weeks.map((week, index) => (
@@ -124,9 +128,10 @@ const StationStatsChart = () => {
                         ))}
                     </select>
 
-                    <select
-                        onChange={(e) => setStationName(e.target.value)}
-                        style={{fontSize: '1.2rem', padding: '0.5rem', height: '3rem'}}  // 크기 조정
+                    <select className="custom-select"
+                            value={stationName}  // 기본값 반영
+                            onChange={(e) => setStationName(e.target.value)}
+                            style={{fontSize: '1.2rem', padding: '0.5rem', height: '3rem'}}
                     >
                         <option value="">역 선택</option>
                         {stations.map((station, index) => (
@@ -137,13 +142,13 @@ const StationStatsChart = () => {
                     </select>
                 </div>
             </div>
-            {/* 승차 비율 파이 차트 */}
+
+            {/* 승차/하차 비율 파이 차트 렌더링 */}
             {data.length > 0 && (
-                <div style={{display: 'flex', gap: '5rem', justifyContent: 'center', marginTop: '5rem'}}>
-                    {/* 승차 비율 파이 차트 */}
+                <div style={{display: 'flex', justifyContent: 'center', marginTop: '2rem'}}>
                     <div>
                         <h3>시간대별 평균 승차 비율</h3>
-                        <PieChart width={600} height={700}>
+                        <PieChart width={600} height={700} className="pie-shadow">
                             <Pie
                                 data={data}
                                 dataKey="boardingPercentage"
@@ -151,29 +156,28 @@ const StationStatsChart = () => {
                                 cx="50%"
                                 cy="50%"
                                 outerRadius={150}
+                                innerRadius={60}
                                 fill="#8884d8"
                                 labelLine={true}
-                                label={({percent}) => `${(percent * 100).toFixed(1)}%`}
+                                label={({ percent }) => `${(percent * 100).toFixed(1)}%`}
                                 minAngle={6}
                             >
                                 {data.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]}/>
+                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                 ))}
                             </Pie>
-                            <Tooltip formatter={(value) => `${value.toFixed(1)}%`}/>
+                            <Tooltip formatter={(value) => `${value.toFixed(1)}%`} />
                             <Legend
-                                formatter={(value, entry) => {
-                                    const boardingPassengers = entry.payload.boardingPassengers;  // 실제 승차 인원
-                                    return `${value}: (${boardingPassengers}명)`;  // 시간대와 실제 승차 인원 표시
-                                }}
+                                formatter={(value, entry) => (
+                                    <span style={{ color: 'black' }}>{`${value}: (${entry.payload.boardingPassengers}명)`}</span>
+                                )}
                             />
                         </PieChart>
                     </div>
 
-                    {/* 하차 비율 파이 차트 */}
                     <div>
                         <h3>시간대별 평균 하차 비율</h3>
-                        <PieChart width={600} height={700}>
+                        <PieChart width={600} height={700} className="pie-shadow">
                             <Pie
                                 data={data}
                                 dataKey="alightingPercentage"
@@ -181,20 +185,20 @@ const StationStatsChart = () => {
                                 cx="50%"
                                 cy="50%"
                                 outerRadius={150}
+                                innerRadius={60}
                                 fill="#82ca9d"
-                                label={({percent}) => `${(percent * 100).toFixed(1)}%`}
+                                label={({ percent }) => `${(percent * 100).toFixed(1)}%`}
                                 minAngle={6}
                             >
                                 {data.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]}/>
+                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                 ))}
                             </Pie>
-                            <Tooltip formatter={(value) => `${value.toFixed(1)}%`}/>
+                            <Tooltip formatter={(value) => `${value.toFixed(1)}%`} />
                             <Legend
-                                formatter={(value, entry) => {
-                                    const alightingPassengers = entry.payload.alightingPassengers;  // 실제 하차 인원
-                                    return `${value}: (${alightingPassengers}명)`;  // 시간대와 실제 하차 인원 표시
-                                }}
+                                formatter={(value, entry) => (
+                                    <span style={{ color: 'black' }}>{`${value}: (${entry.payload.alightingPassengers}명)`}</span>
+                                )}
                             />
                         </PieChart>
                     </div>
@@ -202,7 +206,6 @@ const StationStatsChart = () => {
             )}
         </div>
     );
-
 };
 
 export default StationStatsChart;

@@ -1,3 +1,30 @@
 ul.recharts-default-legend li {
     margin: 6px; /* 각 항목 아래에 10px 여백 추가 */
 }
+/* 부모 래퍼 스타일 */
+.custom-select-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 50rem;
+    margin-right: 1rem;
+}
+
+/* 기본 select 커스텀 */
+.custom-select {
+    appearance: none; /* 기본 화살표 제거 */
+    width: 100%;
+    padding: 10px;
+    font-size: 1.2rem;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #333;
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="none" stroke="black" d="M2 0 L4 2 L2 4 L0 2 Z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 10px;
+    cursor: pointer;
+}
+.pie-shadow {
+    filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.15));
+}

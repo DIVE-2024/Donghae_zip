@@ -5,13 +5,13 @@ function Footer() {
     return (
         <footer className="custom-footer">
             <div className="footer-content">
-                <div className="footer-left">
+                <div className="footer-left" style={{fontSize:'2rem'}}>
                     Donghae.zip
                 </div>
                 <hr className="footer-divider" />
                 <div className="footer-bottom">
-                    <span>©2024 서경꿈나무들. All rights reserved</span>
-                    <div className="footer-links">
+                    <p style={{fontSize:'1.3rem'}}>©2024 서경꿈나무들. All rights reserved</p>
+                    <div className="footer-links" style={{fontSize:'1.3rem'}}>
                         <a href="/privacy-policy" className="footer-link">Privacy & Policy</a>
                         <a href="/terms-condition" className="footer-link">Terms & Condition</a>
                     </div>

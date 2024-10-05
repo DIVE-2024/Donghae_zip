@@ -1,5 +1,9 @@
+*{
+    font-family: 'Jua', sans-serif;
+}
+
 .custom-footer {
-    background-color: #A5A8AC; /* Footer 배경색 */
+    background-color: #506599; /* Footer 배경색 */
     padding: 40px 20px; /* 위아래 패딩 추가 */
     text-align: center; /* 기본 텍스트 가운데 정렬 */
     color: #333333; /* 텍스트 색상 */
@@ -8,7 +12,7 @@
 
 .footer-left {
     text-align: left; /* 왼쪽 정렬 */
-    font-size: 1.2rem;
+    font-size: 1.9rem;
     font-weight: bold;
     color: #1D1D1D; /* 로고 텍스트 색상 */
     margin-bottom: 20px; /* 아래 여백 추가 */

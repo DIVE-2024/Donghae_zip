@@ -64,12 +64,12 @@ const Header = () => {
                                     <Link className="nav-link" to="/signup">회원가입</Link>
                                 </li>
                                 <li className="nav-item">
-                                    <button className="btn btn-primary custom-login-btn" onClick={handleLoginClick}>Log In</button>
+                                    <button className="btn btn-primary custom-login-btn" style={{marginTop:'0.2rem',width:'5rem',height:'3rem',fontSize:'1.2rem'}} onClick={handleLoginClick}>Log In</button>
                                 </li>
                             </>
                         ) : (
                             <li className="nav-item">
-                                <button className="btn btn-primary custom-login-btn" onClick={handleLogoutClick}>Log Out</button>
+                                <button className="btn btn-primary custom-login-btn" style={{marginTop:'0.3rem',height:'3rem',fontSize:'1.2rem'}} onClick={handleLogoutClick}>Log Out</button>
                             </li>
                         )}
                     </ul>
