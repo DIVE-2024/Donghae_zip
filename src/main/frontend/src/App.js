@@ -5,8 +5,7 @@ import Footer from "./components/Footer";
 import MainPage from "./pages/MainPage/MainPage"; // 메인 페이지 컴포넌트 가져오기
 import AppRoutes from './routes/AppRoutes';  // 로그인, 회원가입, 기타 경로 처리
 import 'bootstrap/dist/css/bootstrap.min.css';
-
-
+import './App.css'
 
 function App() {
     return (

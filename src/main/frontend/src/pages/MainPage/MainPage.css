@@ -1,3 +1,8 @@
+body {
+    font-family: 'Jua', sans-serif;
+}
+
+
 .main-container {
     display: flex;
     flex-direction: column;
@@ -9,7 +14,6 @@
     display: flex;
     justify-content: space-between;
     padding: 80px 0 0 50px; /* 위쪽에 80px 패딩 추가 */
-    background-color: #5E80B1;
     box-sizing: border-box;
     height: auto; /* 고정 높이 제거 */
     flex-wrap: nowrap; /* 줄바꿈 방지 */
@@ -21,21 +25,26 @@
     color: white;
     margin-right: 60px; /* 문구와 사진 사이 여백 추가 */
 }
-
+.text-section h3{
+    text-shadow: 2px 4px 6px rgba(0, 0, 0, 0.8);
+}
 .text-section h1 {
-    font-size: 2.5rem;
+    text-shadow: 2px 4px 6px rgba(0, 0, 0, 0.5);
+    font-size: 3.5rem;
     margin-bottom: 10px;
-    font-weight: bold; /* 텍스트 굵게 처리 */
+    font-weight: normal; /* 텍스트 굵게 처리 */
 }
 
 .text-section h5 {
+    text-shadow: 2px 4px 6px rgba(0, 0, 0, 0.5);
     font-size: 1rem;
     margin-bottom: 40px;
     color: #e0e0e0;
 }
 
 .text-section p {
-    font-size: 1.1rem;
+    text-shadow: 2px 4px 6px rgba(0, 0, 0, 0.5);
+    font-size: 1.5rem;
     margin-top: 40px;
     margin-bottom: 40px;
 }
@@ -43,17 +52,24 @@
 /* 부모 요소의 넓이 제한 */
 .search-bar {
     display: flex;
-    align-items: center;
+    justify-content: center; /* 수평 중앙 정렬 */
+    align-items: center;     /* 수직 중앙 정렬 */
     margin-top: 20px;
-    width: 500px; /* 검색창의 전체 넓이를 고정 */
+    width: 100%;  /* 검색 바의 전체 너비 */
+}
+
+.input-group {
+    width: 35rem; /* 검색 바의 고정 너비 */
+    height: 4rem;
 }
 
 .search-bar .form-control {
-    width: 70%; /* 검색창의 너비를 줄이기 */
+    width: 80%; /* 검색창의 너비를 줄이기 */
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #ccc;
     margin-right: 10px;
+    font-size: 1.5rem;
 }
 
 .search-bar .btn-primary {
@@ -75,23 +91,23 @@
 
 .placeholder-image {
     width: 100%;
-    height: 100%;
+    height: 113%;
     border-top-left-radius: 20px; /* 부모 컨테이너에 둥근 모서리 적용 */
     overflow: hidden; /* 이미지를 컨테이너 안에 맞게 자름 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .placeholder-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-top-left-radius: 20px; /* 이미지 자체에도 둥근 모서리 적용 */
-    border-radius: 0; /* 다른 모서리는 둥글지 않도록 설정 */
+    border-radius: 50px; /* 이미지 자체에도 둥근 모서리 적용 */
 }
 
 .bottom-section {
     display: flex;
     justify-content: space-between;
-    padding: 40px;
+    padding: 10px;
     background-color: #B4C2D7;
     height: auto; /* 고정 높이 제거 */
 }
@@ -103,6 +119,7 @@
     background-color: #B4C2D7;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: auto; /* 필요에 따라 자동 높이 */
 }
 
 .half-section h3 {
@@ -111,9 +128,27 @@
     margin-bottom: 20px;
 }
 
-.map-placeholder, .chart-placeholder {
+.half-section.left-section{
+    height: 100%;
+}
+
+.half-section.right-section{
+    width: 55%;
+}
+
+.map-placeholder{
     width: 100%;
-    height: 300px;
+    height: 49rem;
+    background-color: #cbd5e0;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chart-placeholder {
+    width: 100%;
+    height: 60rem;
     background-color: #cbd5e0;
     border-radius: 10px;
     display: flex;
@@ -123,7 +158,6 @@
 
 .map-placeholder img, .chart-placeholder img {
     width: 100%;
-    height: 100%;
     object-fit: cover;
     border-radius: 10px;
 }

@@ -4,7 +4,7 @@
 }
 
 .custom-logo {
-    font-size: 1.9rem; /* 글씨 크기 */
+    font-size: 2.5rem; /* 글씨 크기 */
     font-weight: bold; /* bold 적용 */
     margin-right: auto; /* 왼쪽 끝으로 이동 */
     margin-left: 60px; /* 로고 왼쪽에 여백 추가 */
@@ -16,6 +16,7 @@
 }
 
 .nav-link {
+    font-size: 1.5rem;
     margin-right: 15px; /* 메뉴들 간의 간격 조정 */
     color: white !important; /* 메뉴들 글씨 색상 흰색으로 변경 */
 }
@@ -30,10 +31,14 @@
 
 .dropdown-menu {
     display: none;
+    font-size: 1.2rem;
     background-color: #CED7E4; /* 드롭다운 메뉴 배경색 변경 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* 입체적인 그림자 */
+    margin-right: 1.2rem;
 }
 
 .dropdown-item {
+    font-size: 1.5rem;
     color: white !important; /* 드롭다운 항목 글씨 색상 흰색으로 변경 */
 }
 
