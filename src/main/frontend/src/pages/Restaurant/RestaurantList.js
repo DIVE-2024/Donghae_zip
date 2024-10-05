@@ -16,9 +16,80 @@ const RestaurantList = () => {
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [restaurantCount, setRestaurantCount] = useState(0);
-
+    const [favoriteRestaurants, setFavoriteRestaurants] = useState([]); // 사용자의 찜 목록
     const itemsPerPage = 15; // 한 페이지에 15개의 식당
     const maxPagesToShow = 5; // 1 ~ 5 페이지만 페이지네이션에 보여줌
+
+    // 사용자 찜 목록 가져오기
+    const fetchFavoriteRestaurants = useCallback(() => {
+        const token = sessionStorage.getItem('token');
+        const userId = sessionStorage.getItem('userId');
+
+        if (!userId) {
+            console.error('userId가 세션에 저장되지 않았습니다.');
+            return;
+        }
+
+        axios.get(`/api/favorites/auth/restaurants/${userId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            params: {
+                page: page,  // 페이지 번호 추가
+                size: itemsPerPage  // 페이지 크기 추가
+            }
+        })
+            .then(response => {
+                const favoriteRestaurantIds = response.data.content.map(fav => fav.restaurant.id); // restaurantId 배열로 변환
+                setFavoriteRestaurants(favoriteRestaurantIds); // 찜 목록 상태에 저장
+                setTotalPages(response.data.totalPages); // 전체 페이지 수 설정
+                setRestaurantCount(response.data.totalElements); // 전체 식당 수 설정
+                setLoading(false);
+            })
+            .catch(error => {
+                console.error('Error fetching favorite restaurants:', error);
+                setLoading(false);
+            });
+    }, [page]);
+
+    // 찜하기/찜 해제 처리
+    const toggleFavorite = (restaurantId) => {
+        const token = sessionStorage.getItem('token');
+        const userId = sessionStorage.getItem('userId');
+
+        if (!userId) {
+            console.error('userId가 세션에 저장되지 않았습니다.');
+            return;
+        }
+
+        if (favoriteRestaurants.includes(restaurantId)) {
+            // 찜 해제
+            axios.delete(`/api/favorites/auth/restaurants/${userId}/${restaurantId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(() => {
+                    setFavoriteRestaurants(prev => prev.filter(id => id !== restaurantId)); // 찜 목록에서 제거
+                })
+                .catch(error => {
+                    console.error('Error removing favorite:', error);
+                });
+        } else {
+            // 찜하기
+            axios.post(`/api/favorites/auth/restaurants/${userId}`, { restaurantId }, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(() => {
+                    setFavoriteRestaurants(prev => [...prev, restaurantId]); // 찜 목록에 추가
+                })
+                .catch(error => {
+                    console.error('Error adding favorite:', error);
+                });
+        }
+    };
 
     // Fetch hashtags and districts when region changes
     useEffect(() => {
@@ -61,7 +132,8 @@ const RestaurantList = () => {
 
     useEffect(() => {
         fetchRestaurants();
-    }, [fetchRestaurants]);
+        fetchFavoriteRestaurants(); // 사용자의 찜 목록도 가져옴
+    }, [fetchRestaurants, fetchFavoriteRestaurants]);
 
     // 페이지네이션을 위한 페이지 번호 계산
     const getPaginationGroup = () => {
@@ -140,7 +212,11 @@ const RestaurantList = () => {
                                         <Link to={`/restaurant/${restaurant.id}`} className="btn btn-primary review-btn me-2">
                                             상세 보기
                                         </Link>
-                                        <i className="bi bi-heart heart-icon"></i>
+                                        {/* 하트 아이콘: 찜한 식당은 채워진 하트, 그렇지 않은 식당은 빈 하트 */}
+                                        <i
+                                            className={`bi bi-heart${favoriteRestaurants.includes(restaurant.id) ? '-fill' : ''} heart-icon`}
+                                            onClick={() => toggleFavorite(restaurant.id)}
+                                        ></i>
                                     </div>
                                 </div>
                             </div>
