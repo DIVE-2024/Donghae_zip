@@ -20,6 +20,16 @@ public class TrailController {
     @Autowired
     private TrailService trailService;
 
+    // 전체 둘레길 조회 메서드
+    @Operation(summary = "모든 둘레길 조회", description = "모든 둘레길 정보를 페이지네이션으로 조회합니다.")
+    @GetMapping
+    public ResponseEntity<Page<Trail>> getAllTrails(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "15") int size) {
+        Page<Trail> trails = trailService.getAllTrails(page, size);
+        return ResponseEntity.ok(trails);
+    }
+
     @Operation(summary = "ID로 둘레길 조회", description = "ID를 통해 특정 둘레길 정보를 조회합니다.")
     @GetMapping("/{id}")
     public ResponseEntity<Trail> getTrailById(@PathVariable Long id) {
@@ -27,35 +37,43 @@ public class TrailController {
         return ResponseEntity.ok(trail);
     }
 
-    @Operation(summary = "둘레길 제목으로 검색", description = "제목을 기준으로 둘레길 정보를 검색합니다. (페이지네이션 적용)")
+    @Operation(summary = "제목으로 둘레길 검색", description = "제목을 기준으로 둘레길을 페이지네이션으로 검색합니다.")
     @GetMapping("/search/title")
-    public ResponseEntity<Page<Trail>> searchByTitle(@RequestParam String title,
-                                                     @RequestParam(defaultValue = "0") int page,
-                                                     @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Page<Trail>> searchByTitle(
+            @RequestParam String title,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "15") int size) {
         Page<Trail> trails = trailService.searchByTitle(title, page, size);
         return ResponseEntity.ok(trails);
     }
 
-    @Operation(summary = "난이도로 둘레길 검색", description = "난이도를 기준으로 둘레길 정보를 검색합니다. (페이지네이션 적용)")
+    @Operation(summary = "난이도로 둘레길 검색", description = "난이도를 기준으로 둘레길을 페이지네이션으로 검색합니다.")
     @GetMapping("/search/difficulty")
-    public ResponseEntity<Page<Trail>> searchByDifficulty(@RequestParam String difficulty,
-                                                          @RequestParam(defaultValue = "0") int page,
-                                                          @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Page<Trail>> searchByDifficulty(
+            @RequestParam String difficulty,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "15") int size) {
         Page<Trail> trails = trailService.searchByDifficulty(difficulty, page, size);
         return ResponseEntity.ok(trails);
     }
 
-    @Operation(summary = "소요시간으로 정렬된 둘레길 목록", description = "소요시간을 기준으로 둘레길 목록을 오름차순 또는 내림차순으로 정렬하여 반환합니다.")
+    @Operation(summary = "소요시간순으로 둘레길 정렬", description = "소요시간순으로 둘레길을 페이지네이션으로 정렬합니다.")
     @GetMapping("/sort/time")
-    public ResponseEntity<List<Trail>> getTrailsSortedByTime(@RequestParam(defaultValue = "asc") String direction) {
-        List<Trail> trails = trailService.getTrailsSortedByTime(direction);
+    public ResponseEntity<Page<Trail>> getTrailsSortedByTime(
+            @RequestParam(defaultValue = "asc") String direction,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "15") int size) {
+        Page<Trail> trails = trailService.getTrailsSortedByTime(direction, page, size);
         return ResponseEntity.ok(trails);
     }
 
-    @Operation(summary = "소요거리로 정렬된 둘레길 목록", description = "소요거리를 기준으로 둘레길 목록을 오름차순 또는 내림차순으로 정렬하여 반환합니다.")
+    @Operation(summary = "소요거리순으로 둘레길 정렬", description = "소요거리순으로 둘레길을 페이지네이션으로 정렬합니다.")
     @GetMapping("/sort/length")
-    public ResponseEntity<List<Trail>> getTrailsSortedByLength(@RequestParam(defaultValue = "asc") String direction) {
-        List<Trail> trails = trailService.getTrailsSortedByLength(direction);
+    public ResponseEntity<Page<Trail>> getTrailsSortedByLength(
+            @RequestParam(defaultValue = "asc") String direction,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "15") int size) {
+        Page<Trail> trails = trailService.getTrailsSortedByLength(direction, page, size);
         return ResponseEntity.ok(trails);
     }
 

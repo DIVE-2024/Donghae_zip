@@ -3,6 +3,9 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Map from '../../components/Map/Map';
 import RestaurantImage from '../../components/ImageUrl/RestaurantImage';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import './RestaurantDetailPage.css';  // 새로운 CSS 파일
 
 const Restaurant = () => {
     const { id } = useParams();
@@ -34,34 +37,66 @@ const Restaurant = () => {
     }
 
     return (
-        <div>
-            <h1>{restaurant.hashtag}</h1>
-            <h2>{restaurant.name}</h2>
+        <div className="container mt-5">
+            {/* 식당명 */}
+            <h1 className="restaurant-title text-center mb-2">{restaurant.name}</h1>
 
-            {/* 이미지 갤러리 */}
-            {restaurant.imageUrl && <RestaurantImage imageUrls={restaurant.imageUrl} />}
-
-            {/* 영업시간 */}
-            <p>영업시간:</p>
-            <ul>
-                {restaurant.businessHours.map((hour, index) => (
-                    <li key={index}>{hour}</li>
+            {/* 해시태그 */}
+            <div className="text-center mb-2">
+                {restaurant.tags && restaurant.tags.map((tag, index) => (
+                    <span key={index} className="badge bg-secondary me-1">#{tag}</span>
                 ))}
-            </ul>
+            </div>
 
-            <p>Address: {restaurant.address}</p>
-            <p>Phone: {restaurant.phone}</p>
-
-            {/* 메뉴 정보 */}
-            <p>메뉴정보:</p>
-            <ul>
-                {restaurant.menuInfo.map((menu, index) => (
-                    <li key={index}>{menu}</li>
+            {/* 별 모양 */}
+            <div className="text-center mb-2">
+                {[...Array(4)].map((_, index) => (
+                    <i key={index} className="bi bi-star-fill text-warning"></i>
                 ))}
-            </ul>
+                <i className="bi bi-star text-secondary"></i>
+            </div>
+
+            {/* 이미지 출력 */}
+            <div className="text-center mb-4">
+                {restaurant.imageUrl && <RestaurantImage imageUrls={restaurant.imageUrl} />}
+            </div>
+
+            {/* 좋아요 및 공유 버튼 */}
+            <div className="text-center mb-4">
+                <button className="btn btn-outline-primary me-3">
+                    <i className="bi bi-heart"></i>
+                </button>
+                <button className="btn btn-outline-primary">
+                    <i className="bi bi-share"></i>
+                </button>
+            </div>
+
+            {/* 상세 정보 섹션 */}
+            <div className="detail-info-section p-4 mb-5">
+                <h4>상세 정보</h4>
+                <p><strong>주소:</strong> {restaurant.address}</p>
+                <p><strong>전화번호:</strong> {restaurant.phone}</p>
+                <p><strong>영업시간:</strong></p>
+                <ul>
+                    {restaurant.businessHours.map((hour, index) => (
+                        <li key={index}>{hour}</li>
+                    ))}
+                </ul>
+
+                {/* 메뉴 정보 */}
+                <h4>메뉴 정보</h4>
+                <ul>
+                    {restaurant.menuInfo.map((menu, index) => (
+                        <li key={index}>{menu}</li>
+                    ))}
+                </ul>
+            </div>
 
             {/* 지도 출력 */}
-            <Map latitude={restaurant.latitude} longitude={restaurant.longitude} />
+            <div className="mb-4">
+                <h4>위치</h4>
+                <Map latitude={restaurant.latitude} longitude={restaurant.longitude} />
+            </div>
         </div>
     );
 };

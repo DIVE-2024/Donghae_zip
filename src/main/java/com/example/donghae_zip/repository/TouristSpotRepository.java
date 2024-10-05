@@ -38,6 +38,7 @@ public interface TouristSpotRepository extends JpaRepository<TouristSpot, Long> 
                                                    @Param("longitude") double longitude,
                                                    @Param("radius") double radius,
                                                    Pageable pageable);
+  
     // 특정 좌표와 반경 내에서 카테고리 필터링된 여행지 데이터 가져오기
     @Query("SELECT ts FROM TouristSpot ts WHERE ST_Distance_Sphere(POINT(:longitude, :latitude), POINT(ts.longitude, ts.latitude)) <= :radius AND ts.placeCategory = :placeCategory")
     Page<TouristSpot> findTouristSpotsWithinRadiusAndCategory(@Param("latitude") double latitude, @Param("longitude") double longitude, @Param("radius") double radius, @Param("placeCategory") String placeCategory, Pageable pageable);
@@ -46,8 +47,11 @@ public interface TouristSpotRepository extends JpaRepository<TouristSpot, Long> 
     @Query("SELECT DISTINCT ts.placeCategory FROM TouristSpot ts WHERE ST_Distance_Sphere(POINT(:longitude, :latitude), POINT(ts.longitude, ts.latitude)) <= :radius")
     List<String> findDistinctPlaceCategoriesWithinRadius(@Param("latitude") double latitude, @Param("longitude") double longitude, @Param("radius") double radius);
 
-
-
     Page<TouristSpot> findByTitleContainingAndPlaceCategoryContainingAndRegionContainingAndTagsContaining(
             String title, String placeCategory, String region, String tag, Pageable pageable);  // 통합 검색
+
+    // 여러 필터를 동시 적용한 검색
+    Page<TouristSpot> findByTitleContainingAndRegionContainingAndIndoorOutdoorContainingAndPlaceCategoryContaining(
+            String title, String region, String indoorOutdoor, String placeCategory, Pageable pageable);
+  
 }

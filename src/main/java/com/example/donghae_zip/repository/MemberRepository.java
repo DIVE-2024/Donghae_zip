@@ -18,4 +18,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     // 나이대에 해당하는 사용자들을 조회하는 메서드 추가
     List<Member> findByAgeBetween(int minAge, int maxAge);
+
+    // 리뷰 작성에 필요한 회원 정보를 조회하는 기본 메서드 (userId로 조회)
+    Optional<Member> findByUserId(Long userId);
 }

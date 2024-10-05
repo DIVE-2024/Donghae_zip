@@ -22,13 +22,20 @@ public class TouristSpotService {
     @Autowired
     private TouristSpotRepository touristSpotRepository;
 
-    // 통합 검색 메소드 (제목, 카테고리, 지역, 태그로 검색)
-    public Page<TouristSpot> searchSpots(String title, String category, String region, String tag, Pageable pageable) {
-        return touristSpotRepository.findByTitleContainingAndPlaceCategoryContainingAndRegionContainingAndTagsContaining(
+    // 전체 관광지 조회 (페이지네이션 적용)
+    public Page<TouristSpot> getAllTouristSpots(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return touristSpotRepository.findAll(pageable);
+    }
+
+    // 다중 조건 필터 검색
+    public Page<TouristSpot> searchSpots(String title, String region, String indoorOutdoor, String category, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return touristSpotRepository.findByTitleContainingAndRegionContainingAndIndoorOutdoorContainingAndPlaceCategoryContaining(
                 title != null ? title : "",
-                category != null ? category : "",
                 region != null ? region : "",
-                tag != null ? tag : "",
+                indoorOutdoor != null ? indoorOutdoor : "",
+                category != null ? category : "",
                 pageable);
     }
 

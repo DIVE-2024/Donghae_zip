@@ -8,6 +8,7 @@ import com.example.donghae_zip.security.OAuth2SuccessHandler;
 import com.example.donghae_zip.security.OAuth2FailureHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -47,32 +48,46 @@ public class WebSecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        // Swagger 및 정적 리소스 관련 경로 허용
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api-test-swagger").permitAll()
                         .requestMatchers("/api/members/**").permitAll()
                         .requestMatchers("/oauth2/**", "/login/**").permitAll()
-                        .requestMatchers("/api/weather/**").permitAll() // 날씨 관련 허용
-                        .requestMatchers("/api/accommodations/**").permitAll() // 모든 사용자가 숙박 데이터에 접근할 수 있도록 허용
-                        .requestMatchers("/api/restaurants/**").permitAll() // 모든 사용자가 식당 데이터에 접근할 수 있도록 허용
-                        .requestMatchers("/api/donghae/**").permitAll() // 동해선 정보에 대한 접근 허용
-                        .requestMatchers("/api/donghae_timetable/**").permitAll() // 운행 시간표 접근 허용
-                        .requestMatchers("/api/station-stats/**").permitAll() // 주별 승하차 인원수 접근 허용
-                        .requestMatchers("/api/map/coordinates/**").permitAll() //kakao map 접근 허용
-                        .requestMatchers("/static/**", "/favicon.ico").permitAll()  // 정적 리소스 허용
-                        // 둘레길 관련 API 인증 없이 접근 가능
+                        .requestMatchers("/static/**", "/favicon.ico").permitAll()
+
+                        // 날씨 관련 허용
+                        .requestMatchers("/api/weather/**").permitAll()
+
+                        // 숙박, 식당, 동해선 등 관련 경로 허용
+                        .requestMatchers("/api/accommodations/**").permitAll()
+                        .requestMatchers("/api/restaurants/**").permitAll()
+                        .requestMatchers("/api/donghae/**").permitAll()
+                        .requestMatchers("/api/donghae_timetable/**").permitAll()
+                        .requestMatchers("/api/station-stats/**").permitAll()
+                        .requestMatchers("/api/map/coordinates/**").permitAll()
+
+                        // 둘레길, 여행지, 축제 관련 API 허용
                         .requestMatchers("/api/trails/**").permitAll()
-                        // 여행지 관련 API 인증 없이 접근 가능
                         .requestMatchers("/api/tourist-spots/**").permitAll()
-                        // 축제 관련 API 인증 없이 접근 가능
                         .requestMatchers("/api/festivals/**").permitAll()
-                        // 인증이 필요한 찜 API 경로
+
+                        // 찜 API는 인증 필요
                         .requestMatchers("/api/favorites/auth/**").authenticated()
-                        // 인증 없이 나이대별 인기 여행지 조회 가능
+
+                        // 나이대별 인기 여행지 조회는 인증 없이 가능
                         .requestMatchers("/api/favorites/public/**").permitAll()
+
+                        // Comment 관련 설정
+                        .requestMatchers("/api/comments/**").permitAll() // 평점 조회는 인증 없이 가능
+                        .requestMatchers(HttpMethod.POST, "/api/comments").authenticated() // 리뷰 작성은 인증 필요
+                        .requestMatchers(HttpMethod.PUT, "/api/comments/{commentId}").authenticated() // 리뷰 수정은 인증 필요
+                        .requestMatchers(HttpMethod.DELETE, "/api/comments/{commentId}").authenticated() // 리뷰 삭제는 인증 필요
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -91,5 +106,4 @@ public class WebSecurityConfig {
                 );
         return http.build();
     }
-
 }
