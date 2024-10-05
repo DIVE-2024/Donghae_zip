@@ -112,9 +112,9 @@ public class FavoriteController {
     }
 
     @Operation(summary = "찜한 관광지 조회", description = "특정 사용자가 찜한 관광지를 페이지네이션으로 조회합니다.")
-    @GetMapping("/auth/tourist-spots")
+    @GetMapping("/auth/tourist-spots/{userId}")
     public ResponseEntity<Page<Favorite>> getFavoriteTouristSpots(
-            @Parameter(description = "사용자 ID", required = true) @RequestParam Long userId,
+            @Parameter(description = "사용자 ID", required = true) @PathVariable Long userId,
             @Parameter(description = "페이지 번호", example = "0") @RequestParam int page,
             @Parameter(description = "페이지당 항목 수", example = "10") @RequestParam int size) {
         Page<Favorite> favorites = favoriteService.getFavoriteTouristSpots(userId, page, size);
@@ -122,9 +122,9 @@ public class FavoriteController {
     }
 
     @Operation(summary = "찜한 숙박시설 조회", description = "특정 사용자가 찜한 숙박시설을 페이지네이션으로 조회합니다.")
-    @GetMapping("/auth/accommodations")
+    @GetMapping("/auth/accommodations/{userId}")
     public ResponseEntity<Page<Favorite>> getFavoriteAccommodations(
-            @Parameter(description = "사용자 ID", required = true) @RequestParam Long userId,
+            @Parameter(description = "사용자 ID", required = true) @PathVariable Long userId,
             @Parameter(description = "페이지 번호", example = "0") @RequestParam int page,
             @Parameter(description = "페이지당 항목 수", example = "10") @RequestParam int size) {
         Page<Favorite> favorites = favoriteService.getFavoriteAccommodations(userId, page, size);
@@ -132,9 +132,9 @@ public class FavoriteController {
     }
 
     @Operation(summary = "찜한 음식점 조회", description = "특정 사용자가 찜한 음식점을 페이지네이션으로 조회합니다.")
-    @GetMapping("/auth/restaurants")
+    @GetMapping("/auth/restaurants/{userId}")
     public ResponseEntity<Page<Favorite>> getFavoriteRestaurants(
-            @Parameter(description = "사용자 ID", required = true) @RequestParam Long userId,
+            @Parameter(description = "사용자 ID", required = true) @PathVariable Long userId,
             @Parameter(description = "페이지 번호", example = "0") @RequestParam int page,
             @Parameter(description = "페이지당 항목 수", example = "10") @RequestParam int size) {
         Page<Favorite> favorites = favoriteService.getFavoriteRestaurants(userId, page, size);
@@ -142,14 +142,16 @@ public class FavoriteController {
     }
 
     @Operation(summary = "찜한 둘레길 조회", description = "특정 사용자가 찜한 둘레길을 페이지네이션으로 조회합니다.")
-    @GetMapping("/auth/trails")
+    @GetMapping("/auth/trails/{userId}")
     public ResponseEntity<Page<Favorite>> getFavoriteTrails(
-            @Parameter(description = "사용자 ID", required = true) @RequestParam Long userId,
-            @Parameter(description = "페이지 번호", example = "0") @RequestParam int page,
-            @Parameter(description = "페이지당 항목 수", example = "10") @RequestParam int size) {
+            @PathVariable Long userId,
+            @RequestParam int page,
+            @RequestParam int size) {
+
         Page<Favorite> favorites = favoriteService.getFavoriteTrails(userId, page, size);
         return ResponseEntity.ok(favorites);
     }
+
 
     @Operation(summary = "협업 필터링을 통한 여행지 추천", description = "사용자 기반 협업 필터링(사용자와 비슷한 찜을 한 상위 5명 사용자의 찜)을 통해 추천된 여행지를 페이지네이션으로 조회합니다.")
     @GetMapping("/auth/recommend")

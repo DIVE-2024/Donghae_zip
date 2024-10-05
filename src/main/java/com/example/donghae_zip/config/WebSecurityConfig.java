@@ -77,16 +77,16 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/festivals/**").permitAll()
 
                         // 찜 API는 인증 필요
-                        .requestMatchers("/api/favorites/auth/**").authenticated()
+                        .requestMatchers("/api/favorites/auth/**").permitAll()
 
                         // 나이대별 인기 여행지 조회는 인증 없이 가능
                         .requestMatchers("/api/favorites/public/**").permitAll()
 
                         // Comment 관련 설정
                         .requestMatchers("/api/comments/**").permitAll() // 평점 조회는 인증 없이 가능
-                        .requestMatchers(HttpMethod.POST, "/api/comments").authenticated() // 리뷰 작성은 인증 필요
-                        .requestMatchers(HttpMethod.PUT, "/api/comments/{commentId}").authenticated() // 리뷰 수정은 인증 필요
-                        .requestMatchers(HttpMethod.DELETE, "/api/comments/{commentId}").authenticated() // 리뷰 삭제는 인증 필요
+                        .requestMatchers(HttpMethod.POST, "/api/comments").permitAll() // 리뷰 작성은 인증 필요
+                        .requestMatchers(HttpMethod.PUT, "/api/comments/{commentId}").permitAll() // 리뷰 수정은 인증 필요
+                        .requestMatchers(HttpMethod.DELETE, "/api/comments/{commentId}").permitAll() // 리뷰 삭제는 인증 필요
 
                         .anyRequest().authenticated()
                 )

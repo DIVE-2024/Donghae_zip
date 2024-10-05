@@ -35,6 +35,15 @@ public class CommentService {
     @Autowired
     private TrailRepository trailRepository;
 
+    // 특정 사용자가 작성한 모든 리뷰를 조회하는 메서드
+    public List<Comment> getCommentsByMember(Long userId) {
+        // 해당 사용자가 존재하는지 확인
+        memberRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Member not found with ID: " + userId));
+
+        // 해당 사용자의 리뷰 목록 조회
+        return commentRepository.findAllByMemberUserId(userId);
+    }
 
     // 숙소별 평점 평균 계산 (unique_id 사용)
     public Double getAverageRatingForAccommodation(Long accommodationId) {

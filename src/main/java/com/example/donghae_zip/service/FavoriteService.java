@@ -235,7 +235,10 @@ public class FavoriteService {
                 .collect(Collectors.toSet());
 
         // 아직 찜하지 않은, 유사한 카테고리의 장소 찾기
-        List<TouristSpot> similarCategorySpots = touristSpotRepository.findByPlaceCategoryIn(favoriteCategories).stream()
+        List<TouristSpot> similarCategorySpots = touristSpotRepository.findByPlaceCategoryIn(
+                        new ArrayList<>(favoriteCategories),
+                        Pageable.unpaged()  // 페이징이 필요 없으면 unpaged(), 필요하면 Pageable 객체 전달
+                ).stream()
                 .filter(spot -> !userFavoriteSpots.contains(spot))  // 이미 찜한 여행지 제외
                 .distinct()
                 .collect(Collectors.toList());

@@ -32,9 +32,10 @@
     object-fit: cover;
 }
 
-.spot-title {
+.spot-list-title {
     font-weight: bold;
 }
+
 
 .spot-info {
     font-size: 14px;

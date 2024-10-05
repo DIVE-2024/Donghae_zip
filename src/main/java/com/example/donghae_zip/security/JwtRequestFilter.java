@@ -37,8 +37,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         // 요청 경로를 확인
         String requestURI = request.getRequestURI();
 
-        // /api/restaurants/** 요청은 JWT 검증을 우회
-        if (requestURI.startsWith("/api/restaurants/")) {
+        // 인증이 필요 없는 경로들은 JWT 검증을 우회
+        if (requestURI.startsWith("/api/restaurants/") ||
+                requestURI.startsWith("/api/donghae/") ||   // 동해선 관련 경로 우회
+                requestURI.startsWith("/api/accommodations/") ||
+                requestURI.startsWith("/api/tourist-spots/") ||
+                requestURI.startsWith("/api/festivals/") ||
+                requestURI.startsWith("/api/trails/")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -50,7 +55,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String jwt = null;
 
         // Authorization 헤더가 존재하고, Bearer로 시작하는지 확인
-
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
             try {
