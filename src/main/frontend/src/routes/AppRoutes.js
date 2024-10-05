@@ -8,7 +8,7 @@ import Login from '../pages/Login/Login';
 import LoginSuccess from "../services/LoginSuccess";
 import RestaurantList from "../pages/Restaurant/RestaurantList";
 import RestaurantListByHashtag from "../pages/Restaurant/RestaurantListByHashtag";
-import DonghaeHotPlace from "../Donghae/DonghaeHotPlace";
+import DonghaeMapPlace from "../Donghae/DonghaeMapPlace";
 import StationStatsChart from "../Chart/StationStatsChart";
 import DonghaeSubway from "../Donghae/DonghaeSubway";
 import ImageMapWithCoordinates from "../Donghae/ImageMapWithCoordinates";
@@ -33,7 +33,7 @@ const AppRoutes = () => {
             {/* 차트 페이지 추가 */}
             <Route path="/station-stats" element={<StationStatsChart />} />
             {/* 동해선 핫플레이스 페이지 추가 */}
-            <Route path="/donghae-hotplace" element={<DonghaeHotPlace />} />
+            <Route path="/donghae-hotplace" element={<DonghaeMapPlace />} />
             {/* 동해선 노선도 페이지 추가 */}
             <Route path="/donghae-subway" element={<DonghaeSubway />} />
 

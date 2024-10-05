@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -73,4 +74,19 @@ public class AccommodationController {
             Pageable pageable) {
         return accommodationService.getAccommodationsByRegionDistrictAndPriceRange(region, district, minPrice, maxPrice, pageable);
     }
+
+    // 경위도를 기준으로 반경 내 숙박시설 검색 (페이징 처리)
+    @GetMapping("/radius")
+    public Page<Accommodation> getAccommodationsWithinRadius(
+            @RequestParam("latitude") BigDecimal latitude,
+            @RequestParam("longitude") BigDecimal longitude,
+            @RequestParam("radius") double radius,
+            Pageable pageable) {
+        System.out.println(latitude);
+        System.out.println(longitude);
+        System.out.println(radius);
+        return accommodationService.getAccommodationsWithinRadius(latitude, longitude, radius, pageable);
+    }
+
+
 }
