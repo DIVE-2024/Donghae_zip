@@ -14,11 +14,39 @@ const TouristSpotList = () => {
     const [indoorOutdoor, setIndoorOutdoor] = useState("");  // 실내/실외 필터
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
+    const [favoriteSpots, setFavoriteSpots] = useState([]);  // 찜한 관광지 목록
 
     const itemsPerPage = 15;
     const maxPageButtons = 5; // 페이지 버튼을 5개로 제한
 
-    // API 호출 함수: 제목, 카테고리, 지역, 실내/실외 필터에 따라 다르게 호출
+    // 찜 목록 가져오기
+    const fetchFavoriteSpots = useCallback(() => {
+        const token = sessionStorage.getItem('token');
+        const userId = sessionStorage.getItem('userId');
+
+        if (!token || !userId) {
+            return; // 토큰이나 userId가 없으면 찜 목록을 가져오지 않음
+        }
+
+        axios.get(`/api/favorites/auth/tourist-spots/${userId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            params: {
+                page: 0,
+                size: 100  // 찜 목록 크기
+            }
+        })
+            .then(response => {
+                const favoriteSpotIds = response.data.content.map(fav => fav.spot.spotId);
+                setFavoriteSpots(favoriteSpotIds);  // 찜 목록에 있는 관광지 ID 저장
+            })
+            .catch(error => {
+                console.error('찜 목록을 가져오는 중 오류 발생:', error);
+            });
+    }, []);
+
+    // 관광지 목록 API 호출 함수
     const fetchSpots = useCallback(() => {
         let apiUrl = `/api/tourist-spots/all?page=${page}&size=${itemsPerPage}`;
 
@@ -45,7 +73,8 @@ const TouristSpotList = () => {
 
     useEffect(() => {
         fetchSpots();
-    }, [fetchSpots]);
+        fetchFavoriteSpots();  // 찜 목록도 함께 가져옴
+    }, [fetchSpots, fetchFavoriteSpots]);
 
     // 카테고리 필터를 버튼 클릭 시 적용
     const handleCategoryClick = (selectedCategory) => {
@@ -153,7 +182,7 @@ const TouristSpotList = () => {
                             <div className="card h-100 tourist-spot-card">
                                 <img src={spot.imageUrls[0]} className="card-img-top img-fixed" alt={spot.title} />
                                 <div className="card-body d-flex flex-column">
-                                    <h5 className="card-title spot-title">{spot.title}</h5>
+                                    <h5 className="card-title spot-list-title">{spot.title}</h5>
                                     <p className="card-text spot-overview">{spot.oneLineDesc}</p>
                                     <p className="spot-info">
                                         {spot.address}
@@ -164,7 +193,10 @@ const TouristSpotList = () => {
                                         <Link to={`/tourist-spot/${spot.spotId}`} className="btn btn-primary review-btn me-2">
                                             리뷰 {spot.reviewCount}개
                                         </Link>
-                                        <i className="bi bi-heart heart-icon"></i>
+                                        {/* 하트 아이콘: 찜한 코스는 채워진 하트, 그렇지 않은 코스는 빈 하트 */}
+                                        <i
+                                            className={`bi bi-heart${favoriteSpots.includes(spot.spotId) ? '-fill' : ''} heart-icon`}
+                                        ></i>
                                     </div>
                                 </div>
                             </div>

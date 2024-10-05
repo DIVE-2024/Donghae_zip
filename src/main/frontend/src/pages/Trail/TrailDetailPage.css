@@ -33,3 +33,11 @@ body {
 .btn-outline-primary {
     font-size: 1.5rem;
 }
+
+/* 댓글 박스 스타일 */
+.comment {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

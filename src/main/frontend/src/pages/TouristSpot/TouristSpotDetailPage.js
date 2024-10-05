@@ -38,7 +38,7 @@ const TouristSpotDetailPage = () => {
     return (
         <Container className="tourist-spot-detail-container mt-5">
             {/* 여행지 제목 */}
-            <h1 className="spot-title text-center mb-4">{spot.title}</h1>
+            <h1 className="spot-detail-title text-center mb-4">{spot.title}</h1>
 
             {/* 별점 표시 */}
             <div className="text-center mb-2">

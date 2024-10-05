@@ -25,8 +25,16 @@ export const login = async (loginData) => {
         console.log('로그인 응답 전체:', response);  // 전체 응답을 콘솔에 출력
         console.log('로그인 응답 데이터:', response.data);  // 응답 데이터만 출력
 
+        // 서버 응답에서 필요한 정보 추출
         const { token, nickname, member } = response.data;
+
+        // member 객체에서 userId 가져오기
+        const userId = member.userId;
+
+        // 토큰과 userId를 세션 스토리지에 저장
         sessionStorage.setItem('token', token);  // 토큰 저장
+        sessionStorage.setItem('userId', userId);  // userId 저장
+
         return { nickname, member, token };
     } catch (error) {
         console.error("로그인 실패", error);
@@ -58,4 +66,15 @@ export const isLoggedIn = () => {
     // sessionStorage에 토큰이 존재하는지 확인
     const token = sessionStorage.getItem('token');
     return !!token;  // 토큰이 있으면 true 반환, 없으면 false 반환
+};
+
+// 사용자 정보를 가져오는 함수
+export const getUserInfo = () => {
+    const token = sessionStorage.getItem('token');
+    const userId = sessionStorage.getItem('userId');
+    if (token && userId) {
+        return { token, userId };
+    } else {
+        return null;  // 로그인되지 않은 상태
+    }
 };

@@ -13,10 +13,40 @@ const TrailListPage = () => {
     const [title, setTitle] = useState("");
     const [difficulty, setDifficulty] = useState("");
     const [sortOption, setSortOption] = useState("");
+    const [favoriteTrails, setFavoriteTrails] = useState([]);  // 사용자의 찜 목록
 
     const itemsPerPage = 15;
 
-    // API 호출 함수: 제목 검색, 난이도 필터, 정렬 옵션에 따라 다르게 호출
+    // 사용자 찜 목록 가져오기
+    const fetchFavoriteTrails = useCallback(() => {
+        const token = sessionStorage.getItem('token');
+        const userId = sessionStorage.getItem('userId');
+
+        if (!userId) {
+            console.error('userId가 세션에 저장되지 않았습니다.');
+            return;
+        }
+
+        axios.get(`/api/favorites/auth/trails/${userId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            params: {
+                page: 0,
+                size: 10
+            }
+        })
+            .then(response => {
+                console.log('찜 목록 데이터:', response.data);
+                const favoriteTrailIds = response.data.content.map(fav => fav.trail.trailId);  // trailId 배열로 변환
+                setFavoriteTrails(favoriteTrailIds);  // 찜 목록을 상태로 저장
+            })
+            .catch(error => {
+                console.error('Error fetching trails:', error);
+            });
+    }, []);
+
+    // 트레일 목록 API 호출 함수
     const fetchTrails = useCallback(() => {
         let apiUrl = `/api/trails?page=${currentPage}&size=${itemsPerPage}`;
 
@@ -42,14 +72,10 @@ const TrailListPage = () => {
             });
     }, [title, difficulty, sortOption, currentPage]);
 
-    // 데이터가 변경될 때마다 콘솔에서 확인
-    useEffect(() => {
-        console.log("Fetched trails data:", trails);  // 데이터를 제대로 받고 있는지 확인
-    }, [trails]);
-
     useEffect(() => {
         fetchTrails();
-    }, [fetchTrails]);
+        fetchFavoriteTrails();  // 사용자의 찜 목록도 가져옴
+    }, [fetchTrails, fetchFavoriteTrails]);
 
     // 필터가 변경되면 다시 API 호출
     const handleFilterChange = () => {
@@ -134,7 +160,10 @@ const TrailListPage = () => {
                                             <Link to={`/trails/${trail.trailId}`} className="btn btn-primary review-btn me-2">
                                                 리뷰 {trail.reviewCount}개
                                             </Link>
-                                            <i className="bi bi-heart heart-icon"></i>
+                                            {/* 하트 아이콘: 찜한 코스는 채워진 하트, 그렇지 않은 코스는 빈 하트 */}
+                                            <i
+                                                className={`bi bi-heart${favoriteTrails.includes(trail.trailId) ? '-fill' : ''} heart-icon`}
+                                            ></i>
                                         </div>
                                     </div>
                                 </div>

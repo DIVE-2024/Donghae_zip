@@ -27,6 +27,12 @@ public class CommentController {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @GetMapping("/auth/my-reviews")
+    public ResponseEntity<List<Comment>> getMyReviews(@RequestParam Long userId) {
+        List<Comment> reviews = commentService.getCommentsByMember(userId);
+        return ResponseEntity.ok(reviews);
+    }
+
     @Operation(summary = "리뷰 생성", description = "새로운 리뷰를 생성하고 DB에 저장합니다.")
     @PostMapping
     public ResponseEntity<String> createComment(HttpServletRequest request, @RequestParam Long userId) {

@@ -36,7 +36,7 @@ const Header = () => {
                 <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul className="navbar-nav">
                         <li className="nav-item">
-                            <Link className="nav-link" to="/station-info">역내 정보</Link>
+                            <Link className="nav-link" to="/donghae-subway">역내 정보</Link>
                         </li>
                         <li className="nav-item dropdown">
                             <a className="nav-link" href="/travel-info">여행 정보</a>
@@ -54,7 +54,7 @@ const Header = () => {
                         <li className="nav-item dropdown mypage">
                             <Link className="nav-link" to="/mypage">MyPage</Link>
                             <ul className="dropdown-menu" aria-labelledby="mypageDropdown">
-                                <li><Link className="dropdown-item" to="/wishlist">찜 목록</Link></li>
+                                <li><Link className="dropdown-item" to="/wishList">찜 목록</Link></li>
                                 <li><Link className="dropdown-item" to="/myreviews">내가 쓴 리뷰</Link></li>
                             </ul>
                         </li>
