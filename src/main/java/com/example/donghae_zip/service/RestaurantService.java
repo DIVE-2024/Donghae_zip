@@ -165,4 +165,21 @@ public class RestaurantService {
     public Page<Restaurant> getAllRestaurantsByRegionAndHashtag(Region region, String hashtag, Pageable pageable) {
         return restaurantRepository.findAllByRegionAndHashtag(region, hashtag, pageable);
     }
+
+    // 좌표와 반경을 기반으로 식당 검색
+    public Page<Restaurant> getRestaurantsWithinRadius(double latitude, double longitude, double radius, Pageable pageable) {
+        return restaurantRepository.findRestaurantsWithinRadius(latitude, longitude, radius, pageable);
+    }
+
+    // 좌표와 반경, 해시태그로 식당 검색
+    public Page<Restaurant> getRestaurantsWithinRadiusAndHashtag(double latitude, double longitude, double radius, String hashtag, Pageable pageable) {
+        return restaurantRepository.findRestaurantsWithinRadiusAndHashtag(latitude, longitude, radius, hashtag, pageable);
+    }
+
+    // 특정 좌표와 반경, 카테고리 내의 식당 데이터 가져오는 메서드
+    public Page<Restaurant> getRestaurantsWithinRadiusAndCategory(double latitude, double longitude, double radius, String category, Pageable pageable) {
+        // Repository에서 경위도와 반경, 카테고리를 기준으로 식당 데이터를 조회
+        return restaurantRepository.findRestaurantsWithinRadiusAndCategory(latitude, longitude, radius, category, pageable);
+    }
+
 }
