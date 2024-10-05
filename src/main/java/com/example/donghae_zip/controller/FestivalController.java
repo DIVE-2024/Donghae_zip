@@ -27,6 +27,16 @@ public class FestivalController {
     @Autowired
     private FestivalRepository festivalRepository;  // 주입된 festivalRepository
 
+    // 전체 축제 조회
+    @Operation(summary = "전체 축제 조회", description = "모든 축제를 페이지네이션으로 조회합니다.")
+    @GetMapping("/all")
+    public ResponseEntity<Page<Festival>> getAllFestivals(
+            @Parameter(description = "페이지 번호", example = "0") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "페이지당 항목 수", example = "10") @RequestParam(defaultValue = "10") int size) {
+        Page<Festival> festivals = festivalService.getAllFestivals(page, size);
+        return ResponseEntity.ok(festivals);
+    }
+
     // ID로 축제 조회
     @Operation(summary = "ID로 축제 조회", description = "ID를 통해 특정 축제 정보를 조회합니다.")
     @GetMapping("/{id}")
@@ -47,14 +57,16 @@ public class FestivalController {
         return ResponseEntity.ok(festivals);
     }
 
-    // 년/월별로 축제 조회 (2024년 12월 등)
-    @Operation(summary = "년/월별로 축제 조회", description = "년/월을 기준으로 축제를 검색합니다 (예: 2024년 12월).")
+    // 년/월별로 축제 조회 (페이징 적용)
+    @Operation(summary = "년/월별로 축제 조회", description = "년/월을 기준으로 축제를 페이지네이션으로 검색합니다 (예: 2024년 12월).")
     @GetMapping("/search/year-month")
-    public ResponseEntity<List<Festival>> searchFestivalsByYearAndMonth(
+    public ResponseEntity<Page<Festival>> searchFestivalsByYearAndMonth(
             @Parameter(description = "검색할 년도", required = true) @RequestParam int year,
-            @Parameter(description = "검색할 월", required = true) @RequestParam int month) {
+            @Parameter(description = "검색할 월", required = true) @RequestParam int month,
+            @Parameter(description = "페이지 번호", example = "0") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "페이지당 항목 수", example = "10") @RequestParam(defaultValue = "10") int size) {
 
-        List<Festival> festivals = festivalService.searchFestivalsByYearAndMonth(year, month);
+        Page<Festival> festivals = festivalService.searchFestivalsByYearAndMonth(year, month, page, size);
         return ResponseEntity.ok(festivals);
     }
 
@@ -117,5 +129,21 @@ public class FestivalController {
             @Parameter(description = "삭제할 축제의 ID", required = true) @PathVariable Long id) {
         festivalService.deleteFestival(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // 필터링된 축제 목록을 가져오는 엔드포인트 추가
+    @GetMapping("/filter")
+    public ResponseEntity<Page<Festival>> filterFestivals(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String region,
+            @RequestParam(required = false) FestivalStatus status,
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Integer month,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        // FestivalService에서 필터링 로직 처리
+        Page<Festival> festivals = festivalService.filterFestivals(title, region, status, year, month, page, size);
+        return ResponseEntity.ok(festivals);
     }
 }

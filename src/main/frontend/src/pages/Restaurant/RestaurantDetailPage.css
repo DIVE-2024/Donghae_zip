@@ -1,0 +1,56 @@
+/* 페이지 배경색 */
+body {
+    background-color: #B4C2D7;
+}
+
+/* 제목 스타일 */
+.restaurant-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+/* 상세 이미지 크기 */
+.detail-image {
+    max-width: 800px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 별점 아이콘 */
+.star-rating .bi {
+    font-size: 1.5rem;
+}
+
+/* 상세 정보 섹션 */
+.detail-info-section {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 좋아요, 공유 버튼 */
+.btn-outline-primary {
+    font-size: 1.5rem;
+}
+
+/* 메뉴, 영업시간 목록 스타일 */
+.detail-info-section ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.detail-info-section li {
+    margin-bottom: 10px;
+}
+
+/* 지도 섹션 */
+.map-section {
+    margin-top: 30px;
+}
+
+/* 이미지의 모서리를 둥글게 만드는 스타일 */
+.rounded-image {
+    border-radius: 15px;  /* 둥근 모서리 설정 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* 그림자 효과 추가 */
+}

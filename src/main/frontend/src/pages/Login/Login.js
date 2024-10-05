@@ -29,7 +29,7 @@ const Login = () => {
     };
 
     return (
-        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', minWidth: '100vw', backgroundColor: '#D9E2EC' }}>
+        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', minWidth: '100vw', backgroundColor: '#B4C2D7' }}>
             <div className="card p-4 shadow-lg" style={{ width: '400px', backgroundColor: '#F7FAFC' }}>
                 <h2 className="text-center mb-4">로그인</h2>
                 <form>

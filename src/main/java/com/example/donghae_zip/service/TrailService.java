@@ -21,6 +21,12 @@ public class TrailService {
     @Autowired
     private TrailRepository trailRepository;
 
+    // 전체 둘레길 조회
+    public Page<Trail> getAllTrails(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return trailRepository.findAll(pageable);
+    }
+
     // ID로 둘레길 조회
     public Trail getTrailById(Long id) {
         return trailRepository.findById(id)
@@ -42,16 +48,18 @@ public class TrailService {
 
     // 소요시간으로 정렬된 둘레길 목록을 페이지네이션과 함께 반환
     // 소요시간으로 정렬된 둘레길 목록을 반환
-    public List<Trail> getTrailsSortedByTime(String direction) {
+    public Page<Trail> getTrailsSortedByTime(String direction, int page, int size) {
         Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by("timeInMinutes").ascending() : Sort.by("timeInMinutes").descending();
-        return trailRepository.findAll(sort);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return trailRepository.findAll(pageable);
     }
 
     // 소요거리로 정렬된 둘레길 목록을 페이지네이션과 함께 반환
     // 소요거리로 정렬된 둘레길 목록을 반환
-    public List<Trail> getTrailsSortedByLength(String direction) {
+    public Page<Trail> getTrailsSortedByLength(String direction, int page, int size) {
         Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by("lengthInKm").ascending() : Sort.by("lengthInKm").descending();
-        return trailRepository.findAll(sort);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return trailRepository.findAll(pageable);
     }
 
     @Transactional

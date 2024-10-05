@@ -24,7 +24,10 @@ public interface FestivalRepository extends JpaRepository<Festival, Long> {
 
     Page<Festival> findByStatus(FestivalStatus status, Pageable pageable);  // 상태별로 조회
 
-    // date 필드를 기준으로 년/월이 포함된 축제를 조회하는 메소드
-    List<Festival> findFestivalsByDateContaining(String date);
+    // date 필드를 기준으로 년/월이 포함된 축제를 조회하는 메소드 (페이징 처리)
+    Page<Festival> findFestivalsByDateContaining(String date, Pageable pageable);
+
+    Page<Festival> findByTitleContainingAndRegionContainingAndStatusAndDateContaining(
+            String title, String region, FestivalStatus status, String date, Pageable pageable);
 
 }

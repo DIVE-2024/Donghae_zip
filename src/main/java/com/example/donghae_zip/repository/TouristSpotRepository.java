@@ -27,7 +27,7 @@ public interface TouristSpotRepository extends JpaRepository<TouristSpot, Long> 
     // 태그로 검색 (한 개 이상의 태그 포함 시, 페이지네이션 적용)
     Page<TouristSpot> findByTagsIn(List<String> tags, Pageable pageable);
 
-
-    Page<TouristSpot> findByTitleContainingAndPlaceCategoryContainingAndRegionContainingAndTagsContaining(
-            String title, String placeCategory, String region, String tag, Pageable pageable);  // 통합 검색
+    // 여러 필터를 동시 적용한 검색
+    Page<TouristSpot> findByTitleContainingAndRegionContainingAndIndoorOutdoorContainingAndPlaceCategoryContaining(
+            String title, String region, String indoorOutdoor, String placeCategory, Pageable pageable);
 }

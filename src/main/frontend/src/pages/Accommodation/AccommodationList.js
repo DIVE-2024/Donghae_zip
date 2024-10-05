@@ -1,66 +1,91 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import '../Trail/TrailListPage.css';
 
 const AccommodationList = () => {
     const [accommodations, setAccommodations] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [region, setRegion] = useState(''); // 지역 상태 추가
-    const [priceRange, setPriceRange] = useState(''); // 가격대 상태 추가
-    const [page, setPage] = useState(0);
-    const [totalPages, setTotalPages] = useState(0);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalAccommodations, setTotalAccommodations] = useState(0); // 총 숙박 수 상태 추가
+    const [currentPage, setCurrentPage] = useState(0);
+    const [region, setRegion] = useState('');
+    const [priceRange, setPriceRange] = useState('');
 
     const itemsPerPage = 15;
 
-    useEffect(() => {
-        const getMinMaxPrice = () => {
-            switch (priceRange) {
-                case '0-30000':
-                    return { minPrice: 0, maxPrice: 30000 };
-                case '30000-50000':
-                    return { minPrice: 30000, maxPrice: 50000 };
-                case '50000-80000':
-                    return { minPrice: 50000, maxPrice: 80000 };
-                case '80000-100000':
-                    return { minPrice: 80000, maxPrice: 100000 };
-                case '100000-':
-                    return { minPrice: 100000, maxPrice: 10000000 }; // Set a reasonable upper limit
-                default:
-                    return { minPrice: 0, maxPrice: Number.MAX_SAFE_INTEGER };
-            }
-        };
+    // 페이지네이션에서 1에서 5까지만 표시되도록 설정
+    const maxPageNumbersToShow = 5;
 
-        setLoading(true);
-        const { minPrice, maxPrice } = getMinMaxPrice(); // 가격대별 최소, 최대 가격을 가져옴
-        let url = `/api/accommodations?page=${page}&size=${itemsPerPage}`;
+    const fetchAccommodations = useCallback(() => {
+        let apiUrl = `/api/accommodations?page=${currentPage}&size=${itemsPerPage}`;
 
-        // 지역과 가격대를 사용한 API 호출
-        if (region && priceRange) {
-            url = `/api/accommodations/region/${region}/price-range?page=${page}&size=${itemsPerPage}&minPrice=${minPrice}&maxPrice=${maxPrice}`;
-        } else if (region) {
-            url = `/api/accommodations/region/${region}?page=${page}&size=${itemsPerPage}`;
+        if (region) {
+            apiUrl = `/api/accommodations/region/${region}?page=${currentPage}&size=${itemsPerPage}`;
         }
 
-        axios.get(url)
+        if (region && priceRange) {
+            const [minPrice, maxPrice] = priceRange.split('-');
+            apiUrl = `/api/accommodations/region/${region}/price-range?page=${currentPage}&size=${itemsPerPage}&minPrice=${minPrice}&maxPrice=${maxPrice}`;
+        }
+
+        axios.get(apiUrl)
             .then(response => {
                 setAccommodations(response.data.content);
                 setTotalPages(response.data.totalPages);
-                setLoading(false);
+                setTotalAccommodations(response.data.totalElements); // 총 숙박 수 설정
             })
             .catch(error => {
                 console.error('Error fetching accommodation data:', error);
-                setLoading(false);
             });
-    }, [page, region, priceRange]);
+    }, [region, priceRange, currentPage]);
 
-    if (loading) {
-        return <p>Loading...</p>;
-    }
+    useEffect(() => {
+        fetchAccommodations();
+    }, [fetchAccommodations]);
+
+    // 페이지 번호 렌더링
+    const renderPagination = () => {
+        const pages = [];
+        const startPage = Math.max(0, currentPage - Math.floor(maxPageNumbersToShow / 2));
+        const endPage = Math.min(startPage + maxPageNumbersToShow - 1, totalPages - 1);
+
+        for (let i = startPage; i <= endPage; i++) {
+            pages.push(
+                <li key={i} className={`page-item ${currentPage === i ? 'active' : ''}`}>
+                    <button className="page-link" onClick={() => setCurrentPage(i)}>
+                        {i + 1}
+                    </button>
+                </li>
+            );
+        }
+
+        return (
+            <nav>
+                <ul className="pagination justify-content-center">
+                    <li className={`page-item ${currentPage === 0 ? 'disabled' : ''}`}>
+                        <button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>
+                            이전
+                        </button>
+                    </li>
+                    {pages}
+                    <li className={`page-item ${currentPage === totalPages - 1 ? 'disabled' : ''}`}>
+                        <button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>
+                            다음
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        );
+    };
 
     return (
-        <div className="container">
-            {/* 지역 필터 드롭다운 */}
-            <div className="my-3">
+        <div className="container mt-5">
+            {/* 결과 총 숙박 수 표시 */}
+            <h1 className="page-title">결과 총 {totalAccommodations}개</h1>
+
+            <div className="input-group filter-group mb-4">
                 <select
                     className="form-select"
                     value={region}
@@ -70,74 +95,58 @@ const AccommodationList = () => {
                     <option value="부산">부산</option>
                     <option value="울산">울산</option>
                 </select>
-            </div>
 
-            {/* 가격대 필터 드롭다운 */}
-            <div className="my-3">
                 <select
                     className="form-select"
                     value={priceRange}
                     onChange={(e) => setPriceRange(e.target.value)}
                 >
-                    <option value="">All Prices</option>
+                    <option value="">가격대 선택</option>
                     <option value="0-30000">0 ~ 30,000원</option>
                     <option value="30000-50000">30,000 ~ 50,000원</option>
                     <option value="50000-80000">50,000 ~ 80,000원</option>
                     <option value="80000-100000">80,000 ~ 100,000원</option>
                     <option value="100000-">100,000원 이상</option>
                 </select>
+
+                <button className="btn btn-secondary" onClick={() => {
+                    setRegion('');
+                    setPriceRange('');
+                    fetchAccommodations();
+                }}>초기화</button>
             </div>
 
-            {/* 숙박 목록 */}
             <div className="row">
-                {accommodations.map(accommodation => (
-                    <div className="col-md-4" key={accommodation.uniqueId}>
-                        <div className="card mb-4 shadow-sm">
-                            <img
-                                src={accommodation.imageUrl && accommodation.imageUrl !== '이미지 없음' ? accommodation.imageUrl : '/image/default_image.png'}
-                                className="card-img-top"
-                                alt={accommodation.name}
-                                style={{
-                                    height: '200px',
-                                    width: '100%',
-                                    objectFit: accommodation.imageUrl && accommodation.imageUrl !== '이미지 없음' ? 'cover' : 'contain'
-                                }}
-                            />
-                            <div className="card-body">
-                                <h5 className="card-title">{accommodation.name}</h5>
-                                <p>{accommodation.address}</p>
-                                <p style={{ fontWeight: 'bold', color: '#2c3e50', fontSize: '1rem' }}>
-                                    평균 1일 숙박 비용: {accommodation.averagePrice.toLocaleString()}원
-                                </p>
-                                <Link to={`/accommodation/${accommodation.uniqueId}`} className="btn btn-primary">
-                                    View Details
-                                </Link>
-                            </div>
+                {accommodations && accommodations.length > 0 ? (
+                    accommodations.map((accommodation) => (
+                        <div key={accommodation.uniqueId} className="col-md-4 mb-4">
+                            <Link to={`/accommodation/${accommodation.uniqueId}`} className="card-link">
+                                <div className="card h-100 trail-card">
+                                    <img src={accommodation.imageUrl || '/image/default_image.png'} className="card-img-top img-fixed" alt={accommodation.name} />
+                                    <div className="card-body d-flex flex-column">
+                                        <h5 className="card-title course-title">{accommodation.name}</h5>
+                                        <p className="card-text course-overview">{accommodation.address}</p>
+                                        <p className="trail-info">
+                                            {accommodation.averagePrice.toLocaleString()}원
+                                        </p>
+                                        <div className="mt-auto d-flex justify-content-end align-items-center">
+                                            <Link to={`/accommodation/${accommodation.uniqueId}`} className="btn btn-primary review-btn me-2">
+                                                상세 보기
+                                            </Link>
+                                            <i className="bi bi-heart heart-icon"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Link>
                         </div>
-                    </div>
-                ))}
+                    ))
+                ) : (
+                    <p>No accommodations found</p>
+                )}
             </div>
 
-            {/* Pagination */}
-            <div className="d-flex justify-content-center">
-                <nav>
-                    <ul className="pagination">
-                        <li className={`page-item ${page === 0 ? 'disabled' : ''}`}>
-                            <button className="page-link" onClick={() => setPage(page - 1)}>Previous</button>
-                        </li>
-                        {[...Array(totalPages)].map((_, index) => (
-                            <li key={index} className={`page-item ${index === page ? 'active' : ''}`}>
-                                <button className="page-link" onClick={() => setPage(index)}>
-                                    {index + 1}
-                                </button>
-                            </li>
-                        ))}
-                        <li className={`page-item ${page === totalPages - 1 ? 'disabled' : ''}`}>
-                            <button className="page-link" onClick={() => setPage(page + 1)}>Next</button>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
+            {/* 페이지네이션 */}
+            {totalPages > 1 && renderPagination()}
         </div>
     );
 };

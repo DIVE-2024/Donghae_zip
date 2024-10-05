@@ -22,6 +22,15 @@ public class TouristSpotController {
     @Autowired
     private TouristSpotService touristSpotService;
 
+    @Operation(summary = "전체 관광지 조회", description = "모든 관광지 정보를 페이지네이션으로 제공합니다.")
+    @GetMapping("/all")
+    public ResponseEntity<Page<TouristSpot>> getAllTouristSpots(
+            @Parameter(description = "페이지 번호", example = "0") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "페이지당 항목 수", example = "10") @RequestParam(defaultValue = "10") int size) {
+        Page<TouristSpot> spots = touristSpotService.getAllTouristSpots(page, size);
+        return ResponseEntity.ok(spots);
+    }
+
     @Operation(summary = "여행지 ID로 조회", description = "ID를 통해 특정 여행지 정보를 조회합니다.")
     @GetMapping("/{id}")
     public ResponseEntity<TouristSpot> getTouristSpotById(
@@ -78,17 +87,18 @@ public class TouristSpotController {
         return ResponseEntity.ok(spots);
     }
 
-    @Operation(summary = "다중 조건으로 여행지 검색", description = "제목, 카테고리, 지역, 태그를 기준으로 여행지를 페이지네이션으로 검색합니다.")
+    // 다중 필터 검색 API
+    @Operation(summary = "다중 조건으로 여행지 검색", description = "제목, 지역, 실내/실외, 카테고리로 여행지를 검색합니다.")
     @GetMapping("/search")
     public ResponseEntity<Page<TouristSpot>> searchByMultipleCriteria(
-            @Parameter(description = "검색할 제목") @RequestParam(required = false) String title,
-            @Parameter(description = "검색할 카테고리") @RequestParam(required = false) String category,
-            @Parameter(description = "검색할 지역") @RequestParam(required = false) String region,
-            @Parameter(description = "검색할 태그") @RequestParam(required = false) String tag,
-            @Parameter(description = "페이지 번호", example = "0") @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "페이지당 항목 수", example = "10") @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<TouristSpot> spots = touristSpotService.searchSpots(title, category, region, tag, pageable);
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String region,
+            @RequestParam(required = false) String indoorOutdoor,
+            @RequestParam(required = false) String category,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Page<TouristSpot> spots = touristSpotService.searchSpots(title, region, indoorOutdoor, category, page, size);
         return ResponseEntity.ok(spots);
     }
 }

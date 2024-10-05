@@ -8,23 +8,43 @@ import Login from '../pages/Login/Login';
 import LoginSuccess from "../services/LoginSuccess";
 import RestaurantList from "../pages/Restaurant/RestaurantList";
 import RestaurantListByHashtag from "../pages/Restaurant/RestaurantListByHashtag";
+import TrailListPage from "../pages/Trail/TrailListPage";
+import TrailDetailPage from "../pages/Trail/TrailDetailPage";
+import TouristSpotList from "../pages/TouristSpot/TouristSpotList";
+import FestivalListPage from "../pages/Festival/FestivalListPage";
+import FestivalDetailPage from "../pages/Festival/FestivalDetailPage";
+import TouristSpotDetailPage from "../pages/TouristSpot/TouristSpotDetailPage";
 
 const AppRoutes = () => {
     return (
         <Routes>
+            {/* 로그인 및 회원가입 */}
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/loginSuccess" element={<LoginSuccess />} />
+
+            {/* 여행지 */}
+            <Route path="/travelspots" element={<TouristSpotList />} />
+            <Route path="/tourist-spot/:spotId" element={<TouristSpotDetailPage />} />
+
+            {/* 축제 */}
+            <Route path="/festivals" element={<FestivalListPage />} />
+            <Route path="/festival/:id" element={<FestivalDetailPage />} />
+
             {/* 식당 */}
             <Route path="/restaurants" element={<RestaurantList />} />
             <Route path="/restaurant/:id" element={<Restaurant />} />
             <Route path="/restaurants/region/:region" element={<RestaurantList />} />
             <Route path="/restaurants/:region/hashtag/:hashtag" element={<RestaurantListByHashtag />} />
+
             {/* 숙소 */}
-            <Route path="/accommodation/:uniqueId" element={<Accommodation />} />
             <Route path="/accommodations" element={<AccommodationList />} />
+            <Route path="/accommodation/:uniqueId" element={<Accommodation />} />
             <Route path="/accommodations/region/:region" element={<AccommodationList />} />
-            {/* 로그인 및 회원가입 */}
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/loginSuccess" element={<LoginSuccess />} />
+
+            {/* 둘레길 */}
+            <Route path="/trails" element={<TrailListPage />} />
+            <Route path="/trails/:id" element={<TrailDetailPage />} />
         </Routes>
     );
 };

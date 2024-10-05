@@ -1,0 +1,85 @@
+.festival-count {
+    text-align: left;
+    font-weight: bold;
+    margin-top: 100px;
+    margin-bottom: 50px; /* 아래쪽 여백 추가 */
+}
+
+.festival-filter-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 800px;
+}
+
+.festival-card {
+    margin-bottom: 30px;
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: 0.3s ease-in-out;
+}
+
+.festival-card-img {
+    height: 200px;
+    object-fit: contain;
+    width: 100%;
+}
+
+.festival-card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transform: scale(1.03);
+}
+
+.festival-card-title {
+    font-weight: bold;
+}
+
+.festival-card-text {
+    font-size: 14px;
+    color: #333;
+}
+
+.card-bottom-right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.festival-review-btn {
+    font-size: 14px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    margin-right: 10px;
+}
+
+.heart-btn {
+    border: none;
+    color: #ff4d4d;
+    cursor: pointer;
+}
+
+.heart-btn:hover {
+    color: #ff8080;
+}
+
+.pagination {
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+.page-link {
+    color: #007bff;
+}
+
+.page-link:hover {
+    color: #0056b3;
+}
