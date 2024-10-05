@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { logout } from '../services/authService';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Header.css'; // 커스텀 CSS 파일
@@ -29,39 +29,39 @@ const Header = () => {
     return (
         <nav className="navbar navbar-expand-lg navbar-light custom-navbar">
             <div className="container-fluid">
-                <a className="navbar-brand custom-logo" href="/">Donghae.zip</a>
+                <Link className="navbar-brand custom-logo" to="/">Donghae.zip</Link>
                 <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>
                 </button>
                 <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul className="navbar-nav">
                         <li className="nav-item">
-                            <a className="nav-link" href="/station-info">역내 정보</a>
+                            <Link className="nav-link" to="/station-info">역내 정보</Link>
                         </li>
                         <li className="nav-item dropdown">
                             <a className="nav-link" href="/travel-info">여행 정보</a>
                             <ul className="dropdown-menu" aria-labelledby="travelDropdown">
-                                <li><a className="dropdown-item" href="/travel-donghae">동해선 여행지.zip</a></li>
-                                <li><a className="dropdown-item" href="/food-donghae">동해선 맛집.zip</a></li>
-                                <li><a className="dropdown-item" href="/festival-donghae">동해선 축제.zip</a></li>
-                                <li><a className="dropdown-item" href="/accommodation-donghae">동해선 숙소.zip</a></li>
-                                <li><a className="dropdown-item" href="/trail-donghae">동해선 둘레길.zip</a></li>
+                                <li><Link className="dropdown-item" to="/travelspots">동해선 여행지.zip</Link></li>
+                                <li><Link className="dropdown-item" to="/restaurants">동해선 맛집.zip</Link></li>
+                                <li><Link className="dropdown-item" to="/festivals">동해선 축제.zip</Link></li>
+                                <li><Link className="dropdown-item" to="/accommodations">동해선 숙소.zip</Link></li>
+                                <li><Link className="dropdown-item" to="/trails">동해선 둘레길.zip</Link></li>
                             </ul>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="/departures">동해 출동해</a>
+                            <Link className="nav-link" to="/departures">동해 출동해</Link>
                         </li>
                         <li className="nav-item dropdown mypage">
-                            <a className="nav-link" href="/mypage">MyPage</a>
+                            <Link className="nav-link" to="/mypage">MyPage</Link>
                             <ul className="dropdown-menu" aria-labelledby="mypageDropdown">
-                                <li><a className="dropdown-item" href="/wishlist">찜 목록</a></li>
-                                <li><a className="dropdown-item" href="/myreviews">내가 쓴 리뷰</a></li>
+                                <li><Link className="dropdown-item" to="/wishlist">찜 목록</Link></li>
+                                <li><Link className="dropdown-item" to="/myreviews">내가 쓴 리뷰</Link></li>
                             </ul>
                         </li>
                         {!isLoggedIn ? (
                             <>
                                 <li className="nav-item">
-                                    <a className="nav-link" href="/signup">회원가입</a>
+                                    <Link className="nav-link" to="/signup">회원가입</Link>
                                 </li>
                                 <li className="nav-item">
                                     <button className="btn btn-primary custom-login-btn" onClick={handleLoginClick}>Log In</button>
@@ -69,7 +69,7 @@ const Header = () => {
                             </>
                         ) : (
                             <li className="nav-item">
-                                <button className="btn btn-primary custom-login-btn" onClick={handleLogoutClick}>Log Out</button> {/* 여기서 btn-primary로 변경 */}
+                                <button className="btn btn-primary custom-login-btn" onClick={handleLogoutClick}>Log Out</button>
                             </li>
                         )}
                     </ul>

@@ -1,0 +1,35 @@
+/* 페이지 배경색 */
+body {
+    background-color: #B4C2D7;
+}
+
+/* 제목 스타일 */
+.trail-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+/* 상세 이미지 크기 */
+.detail-image {
+    max-width: 800px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 별점 아이콘 */
+.star-rating .bi {
+    font-size: 1.5rem;
+}
+
+/* 상세 정보 섹션 */
+.detail-info-section {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 좋아요, 리뷰 버튼 */
+.btn-outline-primary {
+    font-size: 1.5rem;
+}

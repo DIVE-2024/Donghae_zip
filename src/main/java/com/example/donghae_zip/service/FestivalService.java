@@ -27,6 +27,12 @@ public class FestivalService {
     @Autowired
     private FestivalRepository festivalRepository;
 
+    // 모든 축제를 조회 (페이지네이션 적용)
+    public Page<Festival> getAllFestivals(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return festivalRepository.findAll(pageable);
+    }
+
     // ID로 축제 조회
     public Festival getFestivalById(Long id) {
         return festivalRepository.findById(id)
@@ -39,14 +45,15 @@ public class FestivalService {
         return festivalRepository.findByTitleContaining(title, pageable);
     }
 
-    // 년/월을 기준으로 축제 조회
-    public List<Festival> searchFestivalsByYearAndMonth(int year, int month) {
+    // 년/월을 기준으로 축제 조회 (페이징 적용)
+    public Page<Festival> searchFestivalsByYearAndMonth(int year, int month, int page, int size) {
         // 요청된 년/월을 형식에 맞춰 생성 (예: "2024년 12월")
         String monthString = String.format("%04d년 %d월", year, month);
-        // 해당 년/월이 포함된 축제를 조회
-        return festivalRepository.findFestivalsByDateContaining(monthString);
-    }
 
+        Pageable pageable = PageRequest.of(page, size);  // 페이지네이션 설정
+        // 해당 년/월이 포함된 축제를 조회 (페이징 적용)
+        return festivalRepository.findFestivalsByDateContaining(monthString, pageable);
+    }
 
 
     // 지역별로 축제 조회 (페이지네이션 적용)
@@ -224,5 +231,23 @@ public class FestivalService {
     // 축제 삭제 (관리자 기능)
     public void deleteFestival(Long id) {
         festivalRepository.deleteById(id);
+    }
+
+
+    public Page<Festival> filterFestivals(String title, String region, FestivalStatus status, Integer year, Integer month, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        // 년/월 필터가 존재하는 경우 해당 날짜로 축제를 필터링
+        if (year != null && month != null) {
+            String dateFilter = String.format("%04d년 %02d월", year, month);
+            return festivalRepository.findByTitleContainingAndRegionContainingAndStatusAndDateContaining(
+                    title != null ? title : "",
+                    region != null ? region : "",
+                    status != null ? status : FestivalStatus.PENDING,
+                    dateFilter, pageable);
+        }
+
+        // 필터가 없으면 기본적으로 모든 축제를 반환
+        return festivalRepository.findAll(pageable);
     }
 }

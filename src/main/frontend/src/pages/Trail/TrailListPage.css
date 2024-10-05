@@ -1,0 +1,122 @@
+.page-title {
+    font-weight: bold;
+    margin-top: 100px;
+    margin-bottom: 50px;
+}
+
+.filter-group {
+    max-width: 600px;
+}
+
+/* 코스 갯수 표시 */
+.trail-count {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+.course-title {
+    font-weight: bold;
+}
+
+body {
+    background-color: #B4C2D7;
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* 카드 hover 효과 */
+.trail-card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transform: scale(1.03);
+    transition: 0.3s ease-in-out;
+}
+
+/* 카드 클릭 시 링크 스타일 제거 */
+.card-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* 이미지 크기 통일 */
+.img-fixed {
+    height: 200px;
+    object-fit: cover;
+}
+
+/* 초록색 원 */
+.dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin: 0 8px;
+    background-color: green;
+    border-radius: 50%;
+}
+
+.trail-info {
+    font-size: 14px;
+    color: #333;
+}
+
+/* 리뷰 버튼 */
+.review-btn {
+    font-size: 14px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+}
+
+/* 하트 아이콘 */
+.heart-icon {
+    font-size: 24px;
+    color: #ff4d4d;
+    cursor: pointer;
+}
+
+/* 하트 hover 효과 */
+.heart-icon:hover {
+    color: #ff8080;
+}
+
+/* 텍스트 두 줄로 제한 */
+.course-overview {
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* 두 줄로 제한 */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+}
+
+/* 페이징 스타일 */
+.pagination {
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+.page-link {
+    color: #007bff;
+}
+
+.page-link:hover {
+    color: #0056b3;
+    text-decoration: none;
+    background-color: #e9ecef;
+}
