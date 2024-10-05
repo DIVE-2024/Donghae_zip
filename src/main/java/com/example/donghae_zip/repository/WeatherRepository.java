@@ -31,6 +31,9 @@ public interface WeatherRepository extends JpaRepository<Weather, Long> {
     // 중기 예보 저장을 위한 메서드
     Optional<Weather> findFirstByRegionAndForecastDate(String region, String forecastDate);
 
+    // 특정 지역과 날짜에 해당하는 forecastTime이 null인 중기예보 데이터 조회
+    List<Weather> findByRegionAndForecastDateAndForecastTimeIsNull(String region, String forecastDate);
+
 
 }
 

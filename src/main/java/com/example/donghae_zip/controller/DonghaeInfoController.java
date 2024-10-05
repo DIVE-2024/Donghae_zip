@@ -16,11 +16,18 @@ public class DonghaeInfoController {
     @Autowired
     private DonghaeInfoService donghaeInfoService;
 
-    // 모든 동해선 역 정보 가져오기
-    @GetMapping
+    // 동해선 노선의 모든 역 정보 가져오기
+    @GetMapping("/donghae-line") // 경로를 구분해서 충돌 방지
+    public List<DonghaeInfo> getAllDonghaeStations() {
+        return donghaeInfoService.getAllDonghaeLineStations();
+    }
+
+    // 모든 역 정보 가져오기
+    @GetMapping("/all") // 경로를 구분해서 충돌 방지
     public List<DonghaeInfo> getAllStations() {
         return donghaeInfoService.getAllStations();
     }
+
 
     // 특정 역 정보 가져오기
     @GetMapping("/{stationName}")
@@ -56,5 +63,4 @@ public class DonghaeInfoController {
     public StationWithTimetableInfo getStationInfoWithTimetable(@PathVariable String stationName) {
         return donghaeInfoService.getStationInfoWithTimetable(stationName);
     }
-
 }

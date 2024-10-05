@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Set;
 
 public interface TouristSpotRepository extends JpaRepository<TouristSpot, Long> {
 
@@ -30,4 +31,5 @@ public interface TouristSpotRepository extends JpaRepository<TouristSpot, Long> 
     // 여러 필터를 동시 적용한 검색
     Page<TouristSpot> findByTitleContainingAndRegionContainingAndIndoorOutdoorContainingAndPlaceCategoryContaining(
             String title, String region, String indoorOutdoor, String placeCategory, Pageable pageable);
+  
 }

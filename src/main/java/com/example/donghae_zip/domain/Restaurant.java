@@ -41,4 +41,6 @@ public class Restaurant {
 
     // 구,군
     private String district;
+
+    private String category;
 }

@@ -25,7 +25,16 @@ public class WeeklyStationStatsService {
 
     // 특정 역과 주차에 해당하는 시간대별 데이터 가져오기
     public List<WeeklyStationStats> getStatsByStationAndWeek(String stationName, String year, String month, String week) {
-        String weekPattern = year + "년 " + month + "월 " + week + "주차";
+        // 이미 year, month, week에 '년', '월', '주차'가 포함되어 있으므로, 그대로 사용
+        String weekPattern = year + " " + month + " " + week; // 중복 없이 결합
+        System.out.println("Querying with weekPattern: " + weekPattern); // 올바른 패턴 로깅
         return weeklyStationStatsRepository.findByStationNameAndWeek(stationName, weekPattern);
+    }
+
+
+
+    // 모든 역 이름 가져오기
+    public List<String> getAllStations() {
+        return weeklyStationStatsRepository.findDistinctStationNames();
     }
 }

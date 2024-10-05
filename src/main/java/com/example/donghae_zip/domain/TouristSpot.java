@@ -61,4 +61,6 @@ public class TouristSpot { //여행지 엔티티
 
     @Column(name = "indoor_outdoor", nullable = true, length = 255)
     private String indoorOutdoor;  // 실내/실외 정보 (컬럼 매핑)
+
+    private String category;
 }

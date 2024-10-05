@@ -101,4 +101,6 @@ public class TouristSpotController {
         Page<TouristSpot> spots = touristSpotService.searchSpots(title, region, indoorOutdoor, category, page, size);
         return ResponseEntity.ok(spots);
     }
+
+
 }

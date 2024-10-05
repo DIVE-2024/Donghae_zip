@@ -13,6 +13,10 @@ public interface WeeklyStationStatsRepository extends JpaRepository<WeeklyStatio
     @Query("SELECT DISTINCT SUBSTRING(week, 1, 9) FROM WeeklyStationStats")
     List<String> findDistinctYearsAndMonths();
 
+    // 중복 없이 역 이름 가져오기
+    @Query("SELECT DISTINCT w.stationName FROM WeeklyStationStats w")
+    List<String> findDistinctStationNames();
+
     // 특정 연도와 월에 해당하는 주차 정보를 가져오기
     @Query("SELECT DISTINCT week FROM WeeklyStationStats WHERE week LIKE :yearAndMonth%")
     List<String> findDistinctWeeksByYearAndMonth(@Param("yearAndMonth") String yearAndMonth);

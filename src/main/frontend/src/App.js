@@ -6,8 +6,11 @@ import MainPage from "./pages/MainPage/MainPage"; // 메인 페이지 컴포넌�
 import AppRoutes from './routes/AppRoutes';  // 로그인, 회원가입, 기타 경로 처리
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+
+
 function App() {
     return (
+
         <div className="App">
             <Router>
                 <Header />  {/* Header는 항상 렌더링 */}

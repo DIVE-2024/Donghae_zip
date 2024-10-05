@@ -8,8 +8,13 @@ import java.util.List;
 
 @Repository
 public interface DonghaeInfoRepository extends JpaRepository<DonghaeInfo, String> {
+
+    // 특정 노선의 역 정보 가져오기 (동해선에 속한 역들만 가져오기)
+    List<DonghaeInfo> findByLineName(String lineName);
+
     // 환승 가능한 동해선 역 정보 가져오기
     List<DonghaeInfo> findByTransferAvailable(String transferAvailable);
+
 
     // 2022년 승차 인원 기준 상위 5개 역 가져오기
     List<DonghaeInfo> findTop5ByOrderByBoarding2022Desc();

@@ -14,6 +14,11 @@ import TouristSpotList from "../pages/TouristSpot/TouristSpotList";
 import FestivalListPage from "../pages/Festival/FestivalListPage";
 import FestivalDetailPage from "../pages/Festival/FestivalDetailPage";
 import TouristSpotDetailPage from "../pages/TouristSpot/TouristSpotDetailPage";
+import DonghaeMapPlace from "../Donghae/DonghaeMapPlace";
+import StationStatsChart from "../Chart/StationStatsChart";
+import DonghaeSubway from "../Donghae/DonghaeSubway";
+import ImageMapWithCoordinates from "../Donghae/ImageMapWithCoordinates";
+
 
 const AppRoutes = () => {
     return (
@@ -31,6 +36,8 @@ const AppRoutes = () => {
             <Route path="/festivals" element={<FestivalListPage />} />
             <Route path="/festival/:id" element={<FestivalDetailPage />} />
 
+            <Route path="/image-cord" element={<ImageMapWithCoordinates/>} />
+
             {/* 식당 */}
             <Route path="/restaurants" element={<RestaurantList />} />
             <Route path="/restaurant/:id" element={<Restaurant />} />
@@ -45,6 +52,15 @@ const AppRoutes = () => {
             {/* 둘레길 */}
             <Route path="/trails" element={<TrailListPage />} />
             <Route path="/trails/:id" element={<TrailDetailPage />} />
+
+            {/* 차트 페이지 추가 */}
+            <Route path="/station-stats" element={<StationStatsChart />} />
+
+            {/* 동해선 핫플레이스 페이지 추가 */}
+            <Route path="/donghae-hotplace" element={<DonghaeMapPlace />} />
+
+            {/* 동해선 노선도 페이지 추가 */}
+            <Route path="/donghae-subway" element={<DonghaeSubway />} />
         </Routes>
     );
 };
