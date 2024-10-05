@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-const DonghaeMap = ({ stations = [], accommodations = [], onStationClick, selectedAccommodation }) => {
+const DonghaeMap = ({ stations = [], accommodations = [], restaurants = [], touristSpots = [], onStationClick }) => {
     const mapRef = useRef(null); // 지도 객체 참조
+    const markersRef = useRef([]); // 생성된 마커 배열 관리
     const [isMapLoaded, setIsMapLoaded] = useState(false); // 지도 로드 상태 관리
     const apiKey = process.env.REACT_APP_KAKAO_API_KEY;
 
@@ -35,8 +36,15 @@ const DonghaeMap = ({ stations = [], accommodations = [], onStationClick, select
         loadKakaoMapScript(apiKey, initializeMap);
     }, [apiKey]);
 
+    const clearMarkers = () => {
+        // 모든 마커를 지도에서 제거
+        markersRef.current.forEach(marker => marker.setMap(null));
+        markersRef.current = []; // 마커 배열 초기화
+    };
+
     useEffect(() => {
         if (isMapLoaded && mapRef.current) {
+            // 마커 생성 함수
             const createMarker = (latitude, longitude, name, onClick, markerType = 'station') => {
                 const markerPosition = new window.kakao.maps.LatLng(latitude, longitude);
 
@@ -46,6 +54,10 @@ const DonghaeMap = ({ stations = [], accommodations = [], onStationClick, select
                     markerImageSrc = '/image/marker.png'; // 역 마커 이미지 경로
                 } else if (markerType === 'accommodation') {
                     markerImageSrc = '/image/AccommodaionMarker.png'; // 숙박시설 마커 이미지 경로
+                } else if (markerType === 'restaurant') {
+                    markerImageSrc = '/image/RestaurantMarker.png'; // 식당 마커 이미지 경로
+                } else if (markerType === 'touristSpot') {
+                    markerImageSrc = '/image/TouristSpotMarker.png'; // 여행지 마커 이미지 경로
                 }
 
                 const imageSize = new window.kakao.maps.Size(40, 40); // 마커 크기
@@ -60,6 +72,9 @@ const DonghaeMap = ({ stations = [], accommodations = [], onStationClick, select
                     image: markerImage // 커스텀 마커 이미지 적용
                 });
                 marker.setMap(mapRef.current);
+
+                // 마커 배열에 추가
+                markersRef.current.push(marker);
 
                 // 마커 클릭 이벤트
                 window.kakao.maps.event.addListener(marker, 'click', () => {
@@ -119,6 +134,9 @@ const DonghaeMap = ({ stations = [], accommodations = [], onStationClick, select
                 polyline.setMap(mapRef.current);
             };
 
+            // 이전 마커 제거
+            clearMarkers();
+
             // 지도에 역 마커와 폴리라인 추가
             const filteredStations = stations
                 .filter(station => station.region.includes('부산') || station.region.includes('울산'))
@@ -136,10 +154,24 @@ const DonghaeMap = ({ stations = [], accommodations = [], onStationClick, select
                     console.log(`숙박시설: ${accommodation.name} 클릭됨`);
                 }, 'accommodation');
             });
-        }
-    }, [isMapLoaded, stations, accommodations, onStationClick]);
 
-    return <div id="donghae-map" style={{ width: '50%', height: '1000px' }}></div>;
+            // 식당 마커 생성
+            restaurants.forEach((restaurant) => {
+                createMarker(restaurant.latitude, restaurant.longitude, restaurant.name, () => {
+                    console.log(`식당: ${restaurant.name} 클릭됨`);
+                }, 'restaurant');
+            });
+
+            // **여행지 마커 생성**
+            touristSpots.forEach((touristSpot) => {
+                createMarker(touristSpot.latitude, touristSpot.longitude, touristSpot.title, () => {
+                    console.log(`여행지: ${touristSpot.title} 클릭됨`);
+                }, 'touristSpot');
+            });
+        }
+    }, [isMapLoaded, stations, accommodations, restaurants, touristSpots, onStationClick]);
+
+    return <div id="donghae-map" style={{ width: '45%', height: '850px',marginBottom:'12rem' }}></div>;
 };
 
 export default DonghaeMap;

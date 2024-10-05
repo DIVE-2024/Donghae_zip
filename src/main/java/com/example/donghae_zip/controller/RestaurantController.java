@@ -2,6 +2,7 @@ package com.example.donghae_zip.controller;
 
 import com.example.donghae_zip.domain.Region;
 import com.example.donghae_zip.domain.Restaurant;
+import com.example.donghae_zip.repository.RestaurantRepository;
 import com.example.donghae_zip.service.RestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,9 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @CrossOrigin(origins = "http://localhost:3000")  // 프론트엔드 도메인 허용
 @RestController
@@ -23,6 +22,9 @@ public class RestaurantController {
 
     @Autowired
     private RestaurantService restaurantService;
+
+    @Autowired
+    private RestaurantRepository restaurantRepository;
 
     // 모든 식당 데이터 가져오기
     @GetMapping
@@ -134,6 +136,58 @@ public class RestaurantController {
         restaurantService.updateAllRestaurantCoordinates();
         return ResponseEntity.ok("Coordinates updated successfully for all restaurants.");
     }
+
+    // 특정 좌표와 반경 내의 식당 데이터 가져오기
+    @GetMapping("/radius")
+    public Page<Restaurant> getRestaurantsWithinRadius(
+            @RequestParam("latitude") double latitude,
+            @RequestParam("longitude") double longitude,
+            @RequestParam("radius") double radius,
+            Pageable pageable) {
+        return restaurantService.getRestaurantsWithinRadius(latitude, longitude, radius, pageable);
+    }
+
+    // 특정 좌표와 반경, 카테고리 내의 식당 데이터 가져오기
+    @GetMapping("/radius/category")
+    public Page<Restaurant> getRestaurantsWithinRadiusAndCategory(
+            @RequestParam("latitude") double latitude,
+            @RequestParam("longitude") double longitude,
+            @RequestParam("radius") double radius,
+            @RequestParam("category") String category,  // 카테고리 필터 추가
+            Pageable pageable) {
+
+        return restaurantService.getRestaurantsWithinRadiusAndCategory(latitude, longitude, radius, category, pageable);
+    }
+
+    // 특정 좌표와 반경, 해시태그 내의 식당 데이터 가져오기
+    @GetMapping("/radius/hashtag")
+    public Page<Restaurant> getRestaurantsWithinRadiusAndHashtag(
+            @RequestParam("latitude") double latitude,
+            @RequestParam("longitude") double longitude,
+            @RequestParam("radius") double radius,
+            @RequestParam("hashtag") String hashtag,
+            Pageable pageable) {
+        return restaurantService.getRestaurantsWithinRadiusAndHashtag(latitude, longitude, radius, hashtag, pageable);
+    }
+
+    // 반경 내에 존재하는 식당의 해시태그 목록 제공
+    @GetMapping("/radius/hashtags")
+    public List<String> getHashtagsWithinRadius(
+            @RequestParam("latitude") double latitude,
+            @RequestParam("longitude") double longitude,
+            @RequestParam("radius") double radius,
+            Pageable pageable) {  // Pageable 파라미터 추가
+
+        List<Restaurant> restaurants = restaurantRepository.findRestaurantsWithinRadius(latitude, longitude, radius, pageable).getContent(); // Pageable 사용
+
+        Set<String> uniqueHashtags = new HashSet<>();
+        for (Restaurant restaurant : restaurants) {
+            uniqueHashtags.add(restaurant.getHashtag());
+        }
+
+        return new ArrayList<>(uniqueHashtags);
+    }
+
 
 
 }

@@ -133,4 +133,24 @@ public class TouristSpotService {
             touristSpotRepository.save(touristSpot);
         }
     }
+
+    public Page<TouristSpot> getTouristSpotsWithinRadius(double latitude, double longitude, double radius, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return touristSpotRepository.findTouristSpotsWithinRadius(latitude, longitude, radius, pageable);
+    }
+
+    public Page<TouristSpot> getTouristSpotsWithinRadiusAndCategory(double latitude, double longitude, double radius, String placeCategory, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        if (placeCategory != null && !placeCategory.isEmpty()) {
+            return touristSpotRepository.findTouristSpotsWithinRadiusAndCategory(latitude, longitude, radius, placeCategory, pageable);
+        } else {
+            return touristSpotRepository.findTouristSpotsWithinRadius(latitude, longitude, radius, pageable);
+        }
+    }
+
+    // 특정 좌표와 반경 내에서 고유한 카테고리 목록을 가져오는 메소드
+    public List<String> getDistinctPlaceCategoriesWithinRadius(double latitude, double longitude, double radius) {
+        return touristSpotRepository.findDistinctPlaceCategoriesWithinRadius(latitude, longitude, radius);
+    }
+
 }
