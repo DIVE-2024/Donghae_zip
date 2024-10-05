@@ -1,6 +1,5 @@
 package com.example.donghae_zip.domain;
 
-
 import jakarta.persistence.*;
 import lombok.Data;
 import java.math.BigDecimal;

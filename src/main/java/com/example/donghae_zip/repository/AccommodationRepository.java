@@ -27,6 +27,4 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
 
     // ID로 특정 숙박시설 조회
     Optional<Accommodation> findById(Long uniqueId);
-
-
 }

@@ -63,5 +63,4 @@ public class DonghaeInfoController {
     public StationWithTimetableInfo getStationInfoWithTimetable(@PathVariable String stationName) {
         return donghaeInfoService.getStationInfoWithTimetable(stationName);
     }
-
 }
