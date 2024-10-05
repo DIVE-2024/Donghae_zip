@@ -40,7 +40,4 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
             Pageable pageable);
 
     Optional<Accommodation> findById(Long uniqueId);
-
-
-
 }
