@@ -222,7 +222,7 @@ const DonghaeMap = ({stations = [], accommodations = [], restaurants = [], touri
     return (
         <div id="donghae-map"
              style={{
-                 width: '100%',
+                 width: '43%',
                  height: '60rem',
                  marginBottom: '12rem',
                  borderRadius: '20px', // 둥근 모서리 적용

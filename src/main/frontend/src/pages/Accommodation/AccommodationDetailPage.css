@@ -17,6 +17,11 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.AccommodationList.img-fixed {
+    height: 200px;
+    object-fit: contain;
+}
+
 /* 별점 아이콘 */
 .star-rating .bi {
     font-size: 1.5rem;

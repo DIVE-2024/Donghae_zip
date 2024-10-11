@@ -1,163 +1,209 @@
-body {
-    font-family: 'Jua', sans-serif;
-}
+/*body {*/
+/*    font-family: 'Jua', sans-serif;*/
+/*}*/
 
 
-.main-container {
-    display: flex;
-    flex-direction: column;
-    background-color: #edf2f7;
-    min-height: 100vh; /* 페이지가 화면보다 짧을 때도 전체 높이를 차지하게 */
-}
+/*.main-container {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    background-color: #edf2f7;*/
+/*    min-height: 100vh; !* 페이지가 화면보다 짧을 때도 전체 높이를 차지하게 *!*/
+/*}*/
 
-.top-section {
-    display: flex;
-    justify-content: space-between;
-    padding: 80px 0 0 50px; /* 위쪽에 80px 패딩 추가 */
-    box-sizing: border-box;
-    height: auto; /* 고정 높이 제거 */
-    flex-wrap: nowrap; /* 줄바꿈 방지 */
-}
+/*.top-section {*/
+/*    display: flex;*/
+/*    justify-content: space-between;*/
+/*    box-sizing: border-box;*/
+/*    height: 57rem;*/
+/*    flex-wrap: nowrap; !* 줄바꿈 방지 *!*/
+/*}*/
 
-.text-section {
-    flex: 0.5;
-    padding-right: 20px;
-    color: white;
-    margin-right: 60px; /* 문구와 사진 사이 여백 추가 */
-}
-.text-section h3{
-    text-shadow: 2px 4px 6px rgba(0, 0, 0, 0.8);
-}
-.text-section h1 {
-    text-shadow: 2px 4px 6px rgba(0, 0, 0, 0.5);
-    font-size: 3.5rem;
-    margin-bottom: 10px;
-    font-weight: normal; /* 텍스트 굵게 처리 */
-}
+/*.text-section {*/
+/*    width: 70rem;*/
+/*    padding-right: 20px;*/
+/*    padding-top: 150px;*/
+/*    color: white;*/
+/*    margin-right: 50px; !* 문구와 사진 사이 여백 추가 *!*/
+/*    margin-left: 70px;*/
+/*}*/
+/*.text-section h3{*/
+/*    text-shadow: 2px 4px 6px rgba(0, 0, 0, 0.8);*/
+/*}*/
+/*.text-section h1 {*/
+/*    text-shadow: 2px 4px 6px rgba(0, 0, 0, 0.5);*/
+/*    font-size: 3.5rem;*/
+/*    margin-bottom: 10px;*/
+/*    font-weight: normal; !* 텍스트 굵게 처리 *!*/
+/*}*/
 
-.text-section h5 {
-    text-shadow: 2px 4px 6px rgba(0, 0, 0, 0.5);
-    font-size: 1rem;
-    margin-bottom: 40px;
-    color: #e0e0e0;
-}
+/*.text-section h5 {*/
+/*    text-shadow: 2px 4px 6px rgba(0, 0, 0, 0.5);*/
+/*    font-size: 1rem;*/
+/*    margin-bottom: 40px;*/
+/*    color: #e0e0e0;*/
+/*}*/
 
-.text-section p {
-    text-shadow: 2px 4px 6px rgba(0, 0, 0, 0.5);
-    font-size: 1.5rem;
-    margin-top: 40px;
-    margin-bottom: 40px;
-}
+/*.text-section p {*/
+/*    text-shadow: 2px 4px 6px rgba(0, 0, 0, 0.5);*/
+/*    font-size: 1.5rem;*/
+/*    margin-top: 40px;*/
+/*    margin-bottom: 40px;*/
+/*}*/
 
-/* 부모 요소의 넓이 제한 */
-.search-bar {
-    display: flex;
-    justify-content: center; /* 수평 중앙 정렬 */
-    align-items: center;     /* 수직 중앙 정렬 */
-    margin-top: 20px;
-    width: 100%;  /* 검색 바의 전체 너비 */
-}
+/*!* 부모 요소의 넓이 제한 *!*/
+/*.search-bar {*/
+/*    display: flex;*/
+/*    justify-content: center; !* 수평 중앙 정렬 *!*/
+/*    align-items: center;     !* 수직 중앙 정렬 *!*/
+/*    margin-top: 20px;*/
+/*    width: 100%;  !* 검색 바의 전체 너비 *!*/
+/*}*/
 
-.input-group {
-    width: 35rem; /* 검색 바의 고정 너비 */
-    height: 4rem;
-}
+/*.input-group {*/
+/*    width: 35rem; !* 검색 바의 고정 너비 *!*/
+/*    height: 4rem;*/
+/*}*/
 
-.search-bar .form-control {
-    width: 80%; /* 검색창의 너비를 줄이기 */
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    margin-right: 10px;
-    font-size: 1.5rem;
-}
+/*.search-bar .form-control {*/
+/*    width: 80%; !* 검색창의 너비를 줄이기 *!*/
+/*    padding: 10px;*/
+/*    border-radius: 5px;*/
+/*    border: 1px solid #ccc;*/
+/*    margin-right: 10px;*/
+/*    font-size: 1.5rem;*/
+/*}*/
 
-.search-bar .btn-primary {
-    padding: 10px 15px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+/*.search-bar .btn-primary {*/
+/*    padding: 10px 15px;*/
+/*    background-color: #007bff;*/
+/*    color: white;*/
+/*    border: none;*/
+/*    border-radius: 5px;*/
+/*    cursor: pointer;*/
+/*}*/
 
-.image-section {
-    flex: 0.5;
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-end;
-    height: auto; /* 고정 높이 제거 */
-}
+/*.image-section {*/
+/*    width: 110%;                 !* 부모 요소의 가로 너비를 100%로 설정 *!*/
+/*    max-width: 60rem;            !* 최대 너비를 설정하여 너무 넓어지지 않게 함 *!*/
+/*    margin:auto;           !* 페이지 중앙에 배치 *!*/
+/*    padding: 1rem;*/
+/*    background-color: white;     !* 배경색 설정 *!*/
+/*    border-radius: 15px;         !* 부드러운 둥근 모서리 *!*/
+/*    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8); !* 그림자 효과 *!*/
+/*}*/
 
-.placeholder-image {
-    width: 100%;
-    height: 113%;
-    border-top-left-radius: 20px; /* 부모 컨테이너에 둥근 모서리 적용 */
-    overflow: hidden; /* 이미지를 컨테이너 안에 맞게 자름 */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
+/*.image-section .carousel-item {*/
+/*    width: 100%;                 !* 가로 크기를 섹션에 맞춤 *!*/
+/*    height: 850px;               !* 고정된 높이를 설정하여 이미지 비율을 유지 *!*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); !* 그림자 효과 *!*/
+/*    border-radius: 15px;         !* 모서리를 둥글게 설정 *!*/
+/*    overflow: visible;            !* 섹션을 넘치는 이미지가 잘리도록 설정 *!*/
+/*}*/
 
-.placeholder-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50px; /* 이미지 자체에도 둥근 모서리 적용 */
-}
+/*.image-section .carousel-item img {*/
+/*    width: 100%;                 !* 이미지의 가로폭을 100%로 설정 *!*/
+/*    height: 100%;                !* 이미지의 세로 높이를 100%로 설정 *!*/
+/*    object-fit: fill;           !* 이미지의 비율을 유지하면서 고정된 크기에 맞춤 *!*/
+/*}*/
 
-.bottom-section {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
-    background-color: #B4C2D7;
-    height: auto; /* 고정 높이 제거 */
-}
 
-.half-section {
-    flex: 1;
-    padding: 20px;
-    margin: 0 10px;
-    background-color: #B4C2D7;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    height: auto; /* 필요에 따라 자동 높이 */
-}
 
-.half-section h3 {
-    font-size: 1.5rem;
-    font-weight: bold; /* Bold 처리 */
-    margin-bottom: 20px;
-}
+/*.placeholder-image {*/
+/*    width: 100%;*/
+/*    height: 113%;*/
+/*    border-top-left-radius: 20px; !* 부모 컨테이너에 둥근 모서리 적용 *!*/
+/*    overflow: hidden; !* 이미지를 컨테이너 안에 맞게 자름 *!*/
+/*    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);*/
+/*}*/
 
-.half-section.left-section{
-    height: 100%;
-}
+/*.placeholder-image img {*/
+/*    width: 100%;*/
+/*    height: 100%;*/
+/*    object-fit: cover;*/
+/*    border-radius: 50px; !* 이미지 자체에도 둥근 모서리 적용 *!*/
+/*}*/
 
-.half-section.right-section{
-    width: 55%;
-}
+/*.bottom-section {*/
+/*    display: flex;*/
+/*    justify-content: space-between;*/
+/*    padding: 10px;*/
+/*    background-color: #B4C2D7;*/
+/*    height: auto; !* 고정 높이 제거 *!*/
+/*}*/
 
-.map-placeholder{
-    width: 100%;
-    height: 49rem;
-    background-color: #cbd5e0;
-    border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+/*.half-section {*/
+/*    flex: 1;*/
+/*    padding: 20px;*/
+/*    margin: 0 10px;*/
+/*    background-color: #B4C2D7;*/
+/*    border-radius: 10px;*/
+/*    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
+/*    height: auto; !* 필요에 따라 자동 높이 *!*/
+/*}*/
 
-.chart-placeholder {
-    width: 100%;
-    height: 60rem;
-    background-color: #cbd5e0;
-    border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+/*.half-section h3 {*/
+/*    font-size: 1.5rem;*/
+/*    font-weight: bold; !* Bold 처리 *!*/
+/*    margin-bottom: 20px;*/
+/*}*/
 
-.map-placeholder img, .chart-placeholder img {
-    width: 100%;
-    object-fit: cover;
-    border-radius: 10px;
-}
+/*.half-section.left-section{*/
+/*    height: 100%;*/
+/*}*/
+
+/*.half-section.right-section{*/
+/*    width: 55%;*/
+/*}*/
+
+/*.map-placeholder{*/
+/*    width: 100%;*/
+/*    height: 49rem;*/
+/*    background-color: #cbd5e0;*/
+/*    border-radius: 10px;*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*}*/
+
+/*.chart-placeholder {*/
+/*    width: 100%;*/
+/*    height: 60rem;*/
+/*    background-color: #cbd5e0;*/
+/*    border-radius: 10px;*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*}*/
+
+/*.map-placeholder img, .chart-placeholder img {*/
+/*    width: 100%;*/
+/*    object-fit: cover;*/
+/*    border-radius: 10px;*/
+/*}*/
+
+/*.carousel-control-prev-icon,*/
+/*.carousel-control-next-icon {*/
+/*    background-color: rgba(0, 0, 0, 0.6);  !* 어두운 배경색 추가 *!*/
+/*    border-radius: 50%;                    !* 원형으로 만들기 *!*/
+/*    width: 50px;                           !* 화살표 크기 조정 *!*/
+/*    height: 50px;                          !* 화살표 크기 조정 *!*/
+/*    background-size: 70%;                  !* 화살표 아이콘 크기 조정 *!*/
+/*}*/
+
+/*.carousel-control-prev,*/
+/*.carousel-control-next {*/
+/*    width: 9%;                             !* 화살표 영역을 더 크게 설정 *!*/
+/*}*/
+
+/*.carousel-control-prev-icon:hover,*/
+/*.carousel-control-next-icon:hover {*/
+/*    background-color: rgba(0, 0, 0, 0.8);  !* 호버 시 더 진한 배경색 *!*/
+/*}*/
+
+/*.carousel-control-prev-icon::before,*/
+/*.carousel-control-next-icon::before {*/
+/*    font-size: 2rem;                       !* 화살표 아이콘 크기를 크게 조정 *!*/
+/*    color: white;                          !* 화살표 색상을 흰색으로 변경 *!*/
+/*}*/

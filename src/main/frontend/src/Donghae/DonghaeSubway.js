@@ -34,8 +34,8 @@ const DonghaeSubway = () => {
     const handleMouseEnter = (stationData, event) => {
         setHoveredStation(stationData);
         setTooltipPosition({
-            x: event.clientX - 250, // 툴팁이 호버된 위치의 왼쪽에 나타나도록 조정
-            y: event.clientY - 80  // 툴팁이 상단에서 약간 떨어진 위치에 나타나도록 조정
+            x: event.clientX - 510, // 툴팁이 호버된 위치의 왼쪽에 나타나도록 조정
+            y: event.clientY - 150  // 툴팁이 상단에서 약간 떨어진 위치에 나타나도록 조정
         });
     };
 
@@ -122,27 +122,35 @@ const DonghaeSubway = () => {
                         left: `${tooltipPosition.x}px`,
                         top: `${tooltipPosition.y}px`,
                         backgroundColor: 'white',
-                        padding: '15px', // 여백을 늘려서 시각적으로 여유 공간을 추가
-                        border: '1px solid #ddd', // 더 부드러운 회색 테두리
-                        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', // 그림자 추가
-                        borderRadius: '8px', // 모서리를 둥글게 처리
+                        padding: '20px', // 여백을 더 늘려서 보기 쉽게 함
+                        border: '1px solid #ddd',
+                        boxShadow: '0px 6px 18px rgba(0, 0, 0, 0.15)', // 그림자 강화
+                        borderRadius: '12px', // 모서리를 더 둥글게 처리
                         zIndex: 10,
-                        width: '220px' // 툴팁 크기를 좀 더 넓힘
+                        width: '500px', // 툴팁 크기 확대
+                        maxHeight: '500px', // 최대 높이 지정
+                        overflowY: 'auto', // 정보가 넘칠 경우 스크롤 가능하게 처리
                     }}
                 >
-                    <h3 style={{ margin: '0 0 10px 0', fontSize: '16px' }}>{hoveredStation.stationName}</h3>
+                    <p style={{margin: '0 0 15px 0', fontSize: '2rem'}}>{hoveredStation.stationName}</p>
                     {hoveredStation.stationImageUrl && (
-                        <img src={hoveredStation.stationImageUrl} alt={`${hoveredStation.stationName} 이미지`} style={{ width: '100%', borderRadius: '4px' }} />
+                        <img src={hoveredStation.stationImageUrl} alt={`${hoveredStation.stationName} 이미지`}
+                             style={{width: '100%', height: 'auto', borderRadius: '6px', marginBottom: '10px'}}/>
                     )}
-                    <p style={{ margin: '10px 0 5px 0', fontSize: '14px' }}><strong>지역:</strong> {hoveredStation.region}</p>
-                    <p style={{ margin: '0', fontSize: '14px' }}><strong>화장실 이용 가능 여부:</strong> {hoveredStation.toiletAvailability}</p>
+                    <p style={{margin: '10px 0 5px 0', fontSize: '1.3rem'}}><strong>지역:</strong> {hoveredStation.region}
+                    </p>
+                    <p style={{margin: '0', fontSize: '1.3rem'}}><strong>화장실 이용 가능
+                        여부:</strong> {hoveredStation.toiletAvailability}</p>
+                    <p style={{margin: '0', fontSize: '1.3rem'}}><strong>주소
+                        :</strong> {hoveredStation.address}</p>
                 </div>
             )}
+
 
             {/* 선택된 역 정보 표시 */}
             {selectedStation && (
                 <div>
-                    <h2>{selectedStation.stationName} 역 정보</h2>
+                <h2>{selectedStation.stationName} 역 정보</h2>
                     <img src={selectedStation.stationImageUrl} alt={`${selectedStation.stationName} 이미지`}
                          width="300px"/>
                     <p><strong>노선:</strong> {selectedStation.lineName}</p>

@@ -1,17 +1,183 @@
-import React, {useEffect, useState} from 'react';
-import './MainPage.css';
-import placeholderImage from '../../assets/images/동해선.png'; // 업로드한 이미지
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { Carousel } from 'react-bootstrap';
+import axios from "axios";
 import donghaeLineImage from '../../assets/images/Donghae_Line.png';
 import oceanImage from '../../assets/images/ocean.png'; // 이미지 가져오기
 import StationStatsChart from '../../Chart/StationStatsChart';
-import DonghaeMap from "../../Donghae/DonghaeMap";
-import axios from "axios";
+
+const MainContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  background-color: #edf2f7;
+  min-height: 100vh;
+`;
+
+const TopSection = styled.div`
+  display: flex;
+  justify-content: space-between;
+  box-sizing: border-box;
+  height: 57rem;
+  background-image: url(${props => props.backgroundImage});
+  background-size: cover;
+  background-position: center;
+`;
+
+const TextSection = styled.div`
+  width: 70rem;
+  padding-right: 20px;
+  padding-top: 150px;
+  color: white;
+  margin-right: 50px;
+  margin-left: 70px;
+`;
+
+const Heading3 = styled.h3`
+  text-shadow: 2px 4px 6px rgba(0, 0, 0, 0.8);
+  margin-bottom: 1rem;
+`;
+
+const Heading1 = styled.h1`
+  text-shadow: 2px 4px 6px rgba(0, 0, 0, 0.5);
+  font-size: 3.5rem;
+  margin-bottom: 10px;
+  font-weight: normal;
+`;
+
+const Paragraph = styled.p`
+  text-shadow: 2px 4px 6px rgba(0, 0, 0, 0.5);
+  font-size: 1.5rem;
+  margin-top: 40px;
+  margin-bottom: 40px;
+`;
+
+const SearchBar = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  width: 100%;
+`;
+
+const InputGroup = styled.div`
+  width: 35rem;
+  height: 4rem;
+`;
+
+const FormControl = styled.input`
+  width: 80%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-right: 10px;
+  font-size: 1.5rem;
+`;
+
+const ButtonPrimary = styled.button`
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+`;
+
+// 이미지 섹션 전체 스타일
+const ImageSection = styled.div`
+  width: 120%;
+  max-width: 60rem;
+  margin: auto;
+  padding: 1rem;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+`;
+
+// 캐러셀 아이템 스타일
+const CarouselItemWrapper = styled.div`
+  width: 100%;
+  height: 850px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 15px;
+  overflow: hidden;  /* 이미지가 넘어가지 않도록 설정 */
+`;
+
+// 캐러셀 아이템 내 이미지 스타일
+const CarouselImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: fill;  /* 이미지 비율을 유지하면서 크기에 맞춤 */
+`;
+
+const BottomSection = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #b4c2d7;
+`;
+
+const HalfSection = styled.div`
+  flex: 1;
+  padding: 20px;
+  margin: 0 10px;
+  background-color: #cbd5e0;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+`;
+
+// 이전/다음 버튼 커스터마이징
+const CarouselControlPrevIcon = styled.span`
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  background-size: 70%;
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+
+  &::before {
+    font-size: 2rem;
+    color: white;
+  }
+`;
+
+const CarouselControlNextIcon = styled.span`
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  background-size: 70%;
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+
+  &::before {
+    font-size: 2rem;
+    color: white;
+  }
+`;
+
+const CarouselControlPrev = styled.a`
+  width: 9%;
+`;
+
+const CarouselControlNext = styled.a`
+  width: 9%;
+`;
+
 const MainPage = () => {
     const [stationsData, setStationsData] = useState([]);
+    const [ongoingFestivals, setOngoingFestivals] = useState([]);
 
-    // 동해선 역 데이터를 API에서 가져오는 로직
+    // 동해선 역 데이터 및 진행 중인 축제 데이터를 API에서 가져오는 로직
     useEffect(() => {
-        // 상태 업데이트가 무한 루프에 빠지지 않도록 의존성 배열 추가
+        // 동해선 역 데이터 가져오기
         axios.get("/api/donghae/donghae-line")
             .then(response => {
                 const filteredStations = response.data.filter(station => station.lineName === "동해선");
@@ -20,55 +186,81 @@ const MainPage = () => {
             .catch(error => {
                 console.error("Error fetching station data:", error);
             });
+
+        // 진행 중인 축제 데이터 가져오기
+        axios.get("/api/festivals/status", {
+            params: {
+                status: 'ONGOING',  // 진행 중인 축제만 필터링
+                page: 0,
+                size: 10  // 한 번에 최대 10개의 축제를 가져옴
+            }
+        })
+            .then(response => {
+                setOngoingFestivals(response.data.content);  // 축제 데이터를 설정 (페이지네이션의 content 배열)
+            })
+            .catch(error => {
+                console.error("Error fetching ongoing festival data:", error);
+            });
     }, []);  // 빈 배열 []로 설정하여 최초 렌더링 시 한 번만 실행
 
     return (
-        <div className="main-container">
+        <MainContainer>
             {/* 상단 메인 섹션 */}
-            <div className="top-section" style={{ backgroundImage: `url(${oceanImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
-                <div className="text-section">
+            <TopSection backgroundImage={oceanImage}>
+                <TextSection>
                     <img src={donghaeLineImage} alt="Donghae Line" style={{width: '100px', height: '100px',marginBottom:'2rem'}}/>
-                    <h3 style={{marginBottom:'1rem'}}>부산 대표 광역 전철 '동해선'</h3>
-                    <h1>동해선 주위의 모든 여행지에 대한</h1>
-                    <h1>계획을 세우세요!</h1>
-                    <p>부산부터 울산까지 코레일의 광역 전철 ‘동해선’ 주위의 모든 관광지, 먹거리, 축제/행사 등의 정보를 이곳 “Donghae.zip”에서 제공합니다.</p>
-                    <div className="search-bar">
-                        <div className="input-group mb-3">
-                            <input type="text" className="form-control" placeholder="여행지를 검색하세요..."
-                                   aria-label="Search"/>
-                            <button className="btn btn-primary" type="button">검색</button>
-                        </div>
-                    </div>
-                </div>
-                <div className="image-section">
-                    <div className="placeholder-image">
-                        <img src={placeholderImage} alt="Placeholder" />
-                    </div>
-                </div>
-            </div>
+                    <Heading3>부산 대표 광역 전철 '동해선'</Heading3>
+                    <Heading1>동해선 주위의 모든 여행지에 대한</Heading1>
+                    <Heading1>계획을 세우세요!</Heading1>
+                    <Paragraph>부산부터 울산까지 코레일의 광역 전철 ‘동해선’ 주위의 모든 관광지, 먹거리, 축제/행사 등의 정보를 이곳 “Donghae.zip”에서 제공합니다.</Paragraph>
+                    <SearchBar>
+                        <InputGroup>
+                            <FormControl
+                                type="text"
+                                placeholder="여행지를 검색하세요..."
+                                aria-label="Search"
+                            />
+                            <ButtonPrimary type="button">검색</ButtonPrimary>
+                        </InputGroup>
+                    </SearchBar>
+                </TextSection>
+                {/* 진행 중인 축제를 보여주는 캐러셀 */}
+                <ImageSection>
+                    <Carousel
+                        prevIcon={<CarouselControlPrev><CarouselControlPrevIcon /></CarouselControlPrev>}
+                        nextIcon={<CarouselControlNext><CarouselControlNextIcon /></CarouselControlNext>}
+                    >
+                        {ongoingFestivals.map((festival, index) => (
+                            <Carousel.Item key={index}>
+                                <CarouselItemWrapper>
+                                    <CarouselImage
+                                        src={festival.images && festival.images.length > 0 ? festival.images[0] : 'path/to/default_image.png'}
+                                        alt={festival.title}
+                                    />
+                                </CarouselItemWrapper>
+                                <Carousel.Caption style={{ fontSize: '1.5rem', textShadow: '2px 2px 4px rgba(0, 0, 0, 0.7)' }}>
+                                    <h3>{festival.title}</h3>
+                                    <p>{festival.period}</p>
+                                </Carousel.Caption>
+                            </Carousel.Item>
+                        ))}
+                    </Carousel>
+                </ImageSection>
+            </TopSection>
 
             {/* 하단 추가 섹션 */}
-            <div className="bottom-section">
-                <div className="half-section left-section">
+            <BottomSection>
+                <HalfSection>
                     <p style={{fontSize:'2.2rem',marginBottom:'14.1rem'}}>동해선 역을 클릭해 보세요!</p>
-                    <div className="map-placeholder" style={{marginTop:'9rem'}}>
-                        <DonghaeMap
-                            stations={stationsData}
-                            accommodations={[]}
-                            restaurants={[]}
-                            touristSpots={[]}
-                            onStationClick={(name) => console.log(`${name} 역 클릭됨`)} />
-                    </div>
-                </div>
-                <div className="half-section right-section">
+                </HalfSection>
+                <HalfSection>
                     <p style={{fontSize:'2.2rem',marginBottom:'3rem'}}>동해선 시간대 별 승하차자 수 정보</p>
                     <div className="chart-placeholder">
                         <StationStatsChart />
-                        />
                     </div>
-                </div>
-            </div>
-        </div>
+                </HalfSection>
+            </BottomSection>
+        </MainContainer>
     );
 };
 
