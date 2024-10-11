@@ -1,0 +1,61 @@
+/*body {*/
+/*    background-color: #B4C2D7; !* 전체 배경 색상 *!*/
+/*}*/
+
+/*.card {*/
+/*    width: 1000px; !* 넓은 화면에 맞게 카드의 넓이를 크게 설정 *!*/
+/*    max-width: 100%; !* 최대 너비는 화면에 맞추어 조정 *!*/
+/*    height: 800px; !* 높이를 넓게 설정 *!*/
+/*    background-color: #F7FAFC;*/
+/*    padding: 40px; !* 여유있는 패딩을 추가 *!*/
+/*    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2); !* 그림자 추가 *!*/
+/*    border-radius: 16px; !* 카드 모서리 둥글게 *!*/
+/*}*/
+
+/*h2 {*/
+/*    font-size: 36px; !* 큰 폰트 크기로 변경 *!*/
+/*    margin-bottom: 30px; !* 제목 아래 여백 *!*/
+/*    text-align: center; !* 가운데 정렬 *!*/
+/*}*/
+
+/*.form-group label {*/
+/*    font-size: 20px; !* 라벨 크기 증가 *!*/
+/*    margin-bottom: 10px; !* 입력 필드 위 라벨과 간격 추가 *!*/
+/*}*/
+
+/*.form-control {*/
+/*    font-size: 18px; !* 입력 필드의 폰트 크기 증가 *!*/
+/*    padding: 12px; !* 입력 필드 여백을 더 늘림 *!*/
+/*    height: 50px; !* 높이 증가 *!*/
+/*}*/
+
+/*.form-check-label {*/
+/*    font-size: 18px; !* 체크박스 라벨 크기 증가 *!*/
+/*}*/
+
+/*.form-check-input {*/
+/*    width: 20px; !* 체크박스 크기 증가 *!*/
+/*    height: 20px; !* 체크박스 크기 증가 *!*/
+/*}*/
+
+/*.btn {*/
+/*    font-size: 18px; !* 버튼의 폰트 크기 증가 *!*/
+/*    height: 55px; !* 버튼의 높이 증가 *!*/
+/*    padding: 12px 0; !* 버튼의 여백 증가 *!*/
+/*    border-radius: 8px; !* 둥근 모서리 *!*/
+/*}*/
+
+/*.btn-light {*/
+/*    font-size: 20px; !* 소셜 로그인 버튼 크기 증가 *!*/
+/*    padding: 12px 20px; !* 내부 여백 증가 *!*/
+/*    height: 55px; !* 버튼의 높이 증가 *!*/
+/*}*/
+
+/*img {*/
+/*    height: 30px; !* 이미지 높이 *!*/
+/*    margin-right: 15px; !* 이미지와 텍스트 사이 간격 *!*/
+/*}*/
+.form-group.mb-3 .form-control {
+    height: 4rem;
+    font-size: 1.8rem;
+}

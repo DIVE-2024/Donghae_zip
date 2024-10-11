@@ -49,7 +49,7 @@ const Header = () => {
                             </ul>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/departures">동해 출동해</Link>
+                            <Link className="nav-link" to="/donghae-hotplace">동해 출동해</Link>
                         </li>
                         <li className="nav-item dropdown mypage">
                             <Link className="nav-link" to="/mypage">MyPage</Link>
@@ -69,7 +69,7 @@ const Header = () => {
                             </>
                         ) : (
                             <li className="nav-item">
-                                <button className="btn btn-primary custom-login-btn" style={{marginTop:'0.3rem',height:'3rem',fontSize:'1.2rem'}} onClick={handleLogoutClick}>Log Out</button>
+                                <button className="btn btn-primary custom-login-btn" style={{marginTop:'0.5rem',height:'3rem',fontSize:'1.2rem'}} onClick={handleLogoutClick}>Log Out</button>
                             </li>
                         )}
                     </ul>

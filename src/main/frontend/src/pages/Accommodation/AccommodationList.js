@@ -122,7 +122,11 @@ const AccommodationList = () => {
                         <div key={accommodation.uniqueId} className="col-md-4 mb-4">
                             <Link to={`/accommodation/${accommodation.uniqueId}`} className="card-link">
                                 <div className="card h-100 trail-card">
-                                    <img src={accommodation.imageUrl || '/image/default_image.png'} className="card-img-top img-fixed" alt={accommodation.name} />
+                                    <img
+                                        src={(accommodation.imageUrl && accommodation.imageUrl !== '이미지 없음') ? accommodation.imageUrl : '/image/default_image.png'}
+                                        className={`card-img-top img-fixed ${!accommodation.imageUrl || accommodation.imageUrl === '이미지 없음' ? 'default-image' : ''}`}
+                                        alt={accommodation.name}
+                                    />
                                     <div className="card-body d-flex flex-column">
                                         <h5 className="card-title course-title">{accommodation.name}</h5>
                                         <p className="card-text course-overview">{accommodation.address}</p>
@@ -130,7 +134,8 @@ const AccommodationList = () => {
                                             {accommodation.averagePrice.toLocaleString()}원
                                         </p>
                                         <div className="mt-auto d-flex justify-content-end align-items-center">
-                                            <Link to={`/accommodation/${accommodation.uniqueId}`} className="btn btn-primary review-btn me-2">
+                                            <Link to={`/accommodation/${accommodation.uniqueId}`}
+                                                  className="btn btn-primary review-btn me-2">
                                                 상세 보기
                                             </Link>
                                             <i className="bi bi-heart heart-icon"></i>
