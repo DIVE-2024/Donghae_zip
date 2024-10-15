@@ -24,10 +24,10 @@
 
 /* 버튼 컨테이너 정렬 */
 .paging-container {
-    width:1150px;
     gap:1rem;
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-left: 25px;
     margin-top: 20px;
 }

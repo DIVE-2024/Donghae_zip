@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import DonghaeMap from './DonghaeMap';
-import './MapList.css';
 import { Link } from 'react-router-dom';  // CSS 파일 임포트
 import './DonghaeMap.css';
 import styled from 'styled-components';
@@ -13,12 +12,12 @@ const ScrollableContainer = styled.div`
   border-radius: 20px;
   background-color: #fff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 50%;
+  width: 65rem;
   height: 60rem;
-  margin-left: 10rem;
-  display: ${(props) => (props.active ? 'block' : 'none')};
+  
+    display: ${(props) => (props.$active ? 'block' : 'none')};
 
-  &::-webkit-scrollbar {
+    &::-webkit-scrollbar {
     width: 8px;
   }
 
@@ -109,8 +108,8 @@ const DonghaeMapPlace = () => {
 
 
     const handleRadiusChange = (e) => {
-        const selectedRadius = e.target.value;
-        console.log(selectedRadius);
+        const selectedRadius = parseInt(e.target.value, 10); // 문자열을 숫자로 변환
+        console.log('Selected radius:', selectedRadius);
         setRadius(selectedRadius); // 선택된 반경 값 업데이트
 
         // 반경이 바뀌면 새로운 반경 값을 가지고 백엔드 API 요청
@@ -412,16 +411,18 @@ const DonghaeMapPlace = () => {
 
     return (
         <div style={{display: 'flex', flexDirection: 'row'}}>
-            <DonghaeMap
-                stations={stations}
-                accommodations={showAccommodations ? accommodations : []}
-                restaurants={showRestaurants ? restaurants : []}
-                touristSpots={showTouristSpots ? touristSpots : []}  // 여행지 전달
-                onStationClick={handleStationClick}  // 클릭 이벤트 핸들러 연결
-            />
-
+                <DonghaeMap
+                    stations={stations}
+                    accommodations={showAccommodations ? accommodations : []}
+                    restaurants={showRestaurants ? restaurants : []}
+                    touristSpots={showTouristSpots ? touristSpots : []}
+                    onStationClick={handleStationClick}
+                    radius={radius}
+                    selectedStation={selectedStation}
+                    hideMap={selectedStation && showCategory}
+                />
             {/* 전체 목록을 감싸는 스크롤 가능한 컨테이너 */}
-            <ScrollableContainer active={selectedStation && showCategory}>
+            <ScrollableContainer $active={selectedStation && showCategory}>
             {selectedStation && showCategory && (
                     <div>
                         <div style={{fontSize: '2.5rem'}}>{selectedStation.name}역 카테고리 선택</div>
@@ -481,7 +482,7 @@ const DonghaeMapPlace = () => {
                 {/* 숙박시설 리스트 */}
                 {showAccommodations && accommodations.length > 0 && (
                     <div style={{width: '45rem', marginTop: '2rem',margin:'auto'}}>
-                        <p style={{textAlign: 'center', fontSize: '2rem'}}>근처 숙박시설 ({radius / 1000}km
+                        <p style={{textAlign: 'center', fontSize: '2rem',marginTop:'2rem'}}>근처 숙박시설 ({radius / 1000}km
                             반경)
                             총 {totalAccommodationCount}개</p>
                         <div style={{
@@ -494,13 +495,17 @@ const DonghaeMapPlace = () => {
                         }}>
                             {accommodations.map((accommodation, index) => (
                                 <Card key={index} onClick={() => handleAccommodationSelect(accommodation)}>
-                                    <img src={accommodation.imageUrl} alt={accommodation.name}/>
+                                    <img src={accommodation.imageUrl} alt={accommodation.name} />
                                     <CardContent>
                                         <h3>{accommodation.name}</h3>
                                         <p>주소: {accommodation.address}</p>
                                         <p>가격: {accommodation.averagePrice} 원</p>
-                                        <Link to={`/accommodation/${accommodation.uniqueId}`}
-                                              className="btn btn-primary">
+                                        {/* Link 컴포넌트에 클릭 이벤트 전파 방지 */}
+                                        <Link
+                                            to={`/accommodation/${accommodation.uniqueId}`}
+                                            className="btn btn-primary"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
                                             상세 보기
                                         </Link>
                                     </CardContent>
@@ -523,7 +528,7 @@ const DonghaeMapPlace = () => {
                 {/* 식당 리스트 */}
                 {showRestaurants && restaurants.length > 0 && (
                     <div style={{width: '45rem', marginTop: '2rem',margin:'auto'}}>
-                        <p style={{textAlign: 'center', fontSize: '2rem'}}>근처 식당 ({radius / 1000}km 반경)
+                        <p style={{textAlign: 'center', fontSize: '2rem',marginTop:'2rem'}}>근처 식당 ({radius / 1000}km 반경)
                             총 {totalRestaurantCount}개</p>
                         <div style={{
                             display: 'flex',
@@ -548,8 +553,8 @@ const DonghaeMapPlace = () => {
                                         <h3>{restaurant.name}</h3>
                                         <p>주소: {restaurant.address}</p>
                                         <p>해시태그: {restaurant.hashtag}</p>
-                                        <Link to={`/restaurant/${restaurant.id}`} className="btn btn-primary">
-                                            자세히 보기
+                                        <Link to={`/restaurant/${restaurant.id}`} className="btn btn-primary"  onClick={(e) => e.stopPropagation()}>
+                                            상세 보기
                                         </Link>
                                     </CardContent>
                                 </Card>
@@ -574,7 +579,7 @@ const DonghaeMapPlace = () => {
                         <p style={{textAlign: 'center', fontSize: '2rem'}}>카테고리 필터</p>
                         {touristCategories.length > 0 && (
                             <div style={{marginBottom: '1rem', gap: '5px'}}>
-                                <h3 style={{textAlign: 'center'}}>근처 여행지 ({radius / 1000}km 반경) -
+                                <h3 style={{textAlign: 'center',marginTop:'2rem'}}>근처 여행지 ({radius / 1000}km 반경) -
                                     총 {totalTouristSpotCount}개</h3>
                                 <div style={{
                                     display: 'flex',
@@ -620,8 +625,8 @@ const DonghaeMapPlace = () => {
                                         <h3>{spot.title}</h3>
                                         <p>{spot.oneLineDesc}</p>
                                         <p>카테고리: {spot.placeCategory}</p>
-                                        <Link to={`/tourist-spot/${spot.spotId}`} className="btn btn-primary">
-                                            자세히 보기
+                                        <Link to={`/tourist-spot/${spot.spotId}`} className="btn btn-primary" onClick={(e) => e.stopPropagation()}>
+                                            상세 보기
                                         </Link>
                                     </CardContent>
                                 </Card>
