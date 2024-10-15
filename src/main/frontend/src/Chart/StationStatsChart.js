@@ -98,10 +98,10 @@ const StationStatsChart = () => {
 
     // 차트 렌더링
     return (
-        <div>
-            <div>
+        <div className="body-chart" >
+            <div style={{display:'flex',justifyContent:'center'}}>
                 {/* 연도와 월 선택 필터 */}
-                <div className="custom-select-wrapper" style={{display: 'flex', gap: '1rem',marginLeft:'14rem',marginBottom:'4rem'}}>
+                <div className="custom-select-wrapper" style={{gap: '1rem',display:'flex'}}>
                     <select className="custom-select"
                             value={yearAndMonth}  // 기본값 반영
                             onChange={(e) => setYearAndMonth(e.target.value)}
@@ -145,18 +145,18 @@ const StationStatsChart = () => {
 
             {/* 승차/하차 비율 파이 차트 렌더링 */}
             {data.length > 0 && (
-                <div style={{display: 'flex', justifyContent: 'center', marginTop: '2rem'}}>
+                <div style={{display: 'flex', justifyContent: 'center', marginTop: '6rem'}}>
                     <div>
-                        <h3>시간대별 평균 승차 비율</h3>
-                        <PieChart width={600} height={700} className="pie-shadow">
+                        <div style={{fontSize:'2rem',marginBottom:'2rem'}}>시간대별 평균 승차 비율</div>
+                        <PieChart width={550} height={650} className="pie-shadow">
                             <Pie
                                 data={data}
                                 dataKey="boardingPercentage"
                                 nameKey="timePeriod"
                                 cx="50%"
                                 cy="50%"
-                                outerRadius={150}
-                                innerRadius={60}
+                                outerRadius={140}
+                                innerRadius={55}
                                 fill="#8884d8"
                                 labelLine={true}
                                 label={({ percent }) => `${(percent * 100).toFixed(1)}%`}
@@ -176,16 +176,16 @@ const StationStatsChart = () => {
                     </div>
 
                     <div>
-                        <h3>시간대별 평균 하차 비율</h3>
-                        <PieChart width={600} height={700} className="pie-shadow">
+                        <div style={{fontSize:'2rem',marginBottom:'2rem'}}>시간대별 평균 하차 비율</div>
+                        <PieChart width={550} height={650} className="pie-shadow">
                             <Pie
                                 data={data}
                                 dataKey="alightingPercentage"
                                 nameKey="timePeriod"
                                 cx="50%"
                                 cy="50%"
-                                outerRadius={150}
-                                innerRadius={60}
+                                outerRadius={140}
+                                innerRadius={55}
                                 fill="#82ca9d"
                                 label={({ percent }) => `${(percent * 100).toFixed(1)}%`}
                                 minAngle={6}
