@@ -19,7 +19,7 @@ const MainContainer = styled.div`
 // React.memo를 사용하여 TopSection이 캐러셀 상태 변화와 관계없이 렌더링되지 않도록 함
 const TopSection = memo(styled.div`
   box-sizing: border-box;
-  height: 60rem;
+  height: 62rem;
   background-image: url(${props => props.$backgroundImage});
   background-size: cover;
   background-position: center;
@@ -89,7 +89,7 @@ const ImageSection = styled.div`
   width: 120%;
   max-width: 60rem;
   margin: auto;
-    height: 60rem;
+    height: 62rem;
   padding: 1rem;
   background-color: white;
   border-radius: 15px;
@@ -99,7 +99,7 @@ const ImageSection = styled.div`
 // 캐러셀 아이템 스타일
 const CarouselItemWrapper = styled.div`
   width: 100%;
-  height: 58rem;
+  height: 60rem;
   display: flex;
   justify-content: center;
   align-items: center;

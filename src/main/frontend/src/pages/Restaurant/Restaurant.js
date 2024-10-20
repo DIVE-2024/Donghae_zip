@@ -24,6 +24,7 @@ const Restaurant = () => {
                     menuInfo: JSON.parse(data.menuInfo),
                     tags: JSON.parse(data.tags)
                 };
+                console.log(response);
 
                 setRestaurant(parsedRestaurant);
             })
@@ -37,65 +38,113 @@ const Restaurant = () => {
     }
 
     return (
-        <div className="container mt-5">
-            {/* 식당명 */}
-            <h1 className="restaurant-title text-center mb-2">{restaurant.name}</h1>
+        <div style={{backgroundColor:'white',borderRadius:'5rem',width:'90%',padding:'2rem',margin:'auto',boxShadow: '0 4px 8px rgba(0, 0, 0, 0.5)'}}>
+            <div className="container mt-5">
+                {/* 식당명 */}
+                <div style={{fontSize: '4rem'}} className="text-center mb-2">{restaurant.name}</div>
 
-            {/* 해시태그 */}
-            <div className="text-center mb-2">
-                {restaurant.tags && restaurant.tags.map((tag, index) => (
-                    <span key={index} className="badge bg-secondary me-1">#{tag}</span>
-                ))}
-            </div>
-
-            {/* 별 모양 */}
-            <div className="text-center mb-2">
-                {[...Array(4)].map((_, index) => (
-                    <i key={index} className="bi bi-star-fill text-warning"></i>
-                ))}
-                <i className="bi bi-star text-secondary"></i>
-            </div>
-
-            {/* 이미지 출력 */}
-            <div className="text-center mb-4">
-                {restaurant.imageUrl && <RestaurantImage imageUrls={restaurant.imageUrl} />}
-            </div>
-
-            {/* 좋아요 및 공유 버튼 */}
-            <div className="text-center mb-4">
-                <button className="btn btn-outline-primary me-3">
-                    <i className="bi bi-heart"></i>
-                </button>
-                <button className="btn btn-outline-primary">
-                    <i className="bi bi-share"></i>
-                </button>
-            </div>
-
-            {/* 상세 정보 섹션 */}
-            <div className="detail-info-section p-4 mb-5">
-                <h4>상세 정보</h4>
-                <p><strong>주소:</strong> {restaurant.address}</p>
-                <p><strong>전화번호:</strong> {restaurant.phone}</p>
-                <p><strong>영업시간:</strong></p>
-                <ul>
-                    {restaurant.businessHours.map((hour, index) => (
-                        <li key={index}>{hour}</li>
+                {/* 해시태그 */}
+                <div className="text-center mb-2">
+                    {restaurant.tags && restaurant.tags.map((tag, index) => (
+                        <span style={{height: '3rem', fontSize: '1.5rem', padding: '10px', textAlign: 'center'}}
+                              key={index} className="badge bg-secondary me-1">#{tag}</span>
                     ))}
-                </ul>
+                </div>
 
-                {/* 메뉴 정보 */}
-                <h4>메뉴 정보</h4>
-                <ul>
-                    {restaurant.menuInfo.map((menu, index) => (
-                        <li key={index}>{menu}</li>
+                {/* 별 모양 */}
+                <div className="text-center mb-2">
+                    {[...Array(4)].map((_, index) => (
+                        <i key={index} className="bi bi-star-fill text-warning"></i>
                     ))}
-                </ul>
-            </div>
+                    <i className="bi bi-star text-secondary"></i>
+                </div>
 
-            {/* 지도 출력 */}
-            <div className="mb-4">
-                <h4>위치</h4>
-                <Map latitude={restaurant.latitude} longitude={restaurant.longitude} />
+                {/* 이미지 출력 */}
+                <div className="restaurant-detail">
+                    <div className="restaurant-image">
+                        {restaurant.imageUrl && <RestaurantImage imageUrls={restaurant.imageUrl}/>}
+                    </div>
+                </div>
+
+                {/* 좋아요 및 공유 버튼 */}
+                <div className="text-center mb-4">
+                    <button className="btn btn-outline-primary me-3">
+                        <i className="bi bi-heart"></i>
+                    </button>
+                    <button className="btn btn-outline-primary">
+                        <i className="bi bi-share"></i>
+                    </button>
+                </div>
+
+                <div style={{display: 'flex', gap: '8rem', width: '120%', marginLeft: '-3rem'}}>
+                    <div style={{display: 'flex', justifyContent: 'center'}}>
+                        <div className='spot-info-section' style={{
+                            marginBottom: '2rem',
+                            width: '50rem',
+                            lineHeight: '1.6',
+                            textAlign: 'left'
+                        }}>
+                            <div style={{
+                                fontSize: '2.5rem',
+                                fontWeight: 'bold',
+                                marginBottom: '1.5rem',
+                                textAlign: 'center'
+                            }}>상세 정보
+                            </div>
+
+                            <p style={{fontSize: '1.8rem', marginBottom: '1rem'}}>
+                                <strong>해시태그:</strong> {restaurant.hashtag}</p>
+                            <p style={{fontSize: '1.5rem', marginBottom: '1rem'}}>
+                                <strong>식당명:</strong> {restaurant.name}</p>
+                            <p style={{fontSize: '1.5rem', marginBottom: '1rem'}}>
+                                <strong>전화번호:</strong> {restaurant.phone}</p>
+                            <p style={{fontSize: '1.5rem', marginBottom: '1rem'}}><strong>영업시간:</strong></p>
+                            <ul style={{fontSize: '1.5rem', marginBottom: '1rem'}}>
+                                {restaurant.businessHours.map((hour, index) => (
+                                    <li key={index}>{hour}</li>
+                                ))}
+                            </ul>
+
+                            {/* 메뉴 정보 */}
+                            <h4>메뉴 정보</h4>
+                            <ul style={{
+                                maxHeight: '500px',  // 최대 높이를 설정하여 스크롤 가능하게 함
+                                overflowY: 'auto',    // 내용이 많으면 스크롤 추가
+                                fontSize: '1.5rem',
+                                marginBottom: '1rem',
+                                paddingRight: '1rem'  // 스크롤바와 텍스트가 겹치지 않도록 패딩 추가
+                            }}>
+                                {restaurant.menuInfo.map((menu, index) => (
+                                    <li style={{marginBottom: '1rem'}} key={index}>{menu}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                    {/* 지도 출력 */}
+                    <div style={{
+                        backgroundColor: '#fff5f7',
+                        padding: '3rem',
+                        borderRadius: '20px',
+                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.8)',
+                        height: 'fit-content',
+                        margin: 'auto',
+                        width: '40rem'
+                    }}>
+                        <div className="map-style" style={{
+                            flex: 1,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            flexDirection: 'column'
+                        }}>
+                            <div style={{display: 'flex', gap: '1rem', marginBottom: '2rem'}}>
+                                <div style={{fontSize: '2.5rem', textAlign: 'center', fontWeight: 'bold'}}>위치</div>
+                                <div style={{fontSize: '1.5rem', paddingTop: '12px'}}>주소: {restaurant.address}</div>
+                            </div>
+                            <Map latitude={restaurant.latitude} longitude={restaurant.longitude}/>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );

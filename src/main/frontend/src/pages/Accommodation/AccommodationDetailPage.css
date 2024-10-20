@@ -3,38 +3,85 @@ body {
     background-color: #B4C2D7;
 }
 
-/* 숙소명 스타일 */
-.accommodation-title {
-    font-size: 2.5rem;
+/* 여행지 제목 스타일 */
+.spot-detail-title {
+    font-size: 3.5rem;
     font-weight: bold;
+    text-align: center;
+    color: #333333;
+    margin-bottom: 1.5rem;
 }
 
-/* 이미지 크기 */
-.accommodation-image {
-    max-width: 800px;
+/* 이미지 크기 및 둥근 모서리 설정 */
+.spot-image {
+    border-radius: 20px;
     height: auto;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-height: 150rem; /* 이미지 최대 높이 설정 */
+    object-fit: cover; /* 이미지 비율을 유지하며 자르기 */
 }
 
-.AccommodationList.img-fixed {
-    height: 200px;
-    object-fit: contain;
+/* Carousel 중앙 정렬 */
+.carousel-center {
+    width: 100%; /* 너비를 적절히 제한 */
+    margin: 1.5rem auto;
 }
 
-/* 별점 아이콘 */
-.star-rating .bi {
-    font-size: 1.5rem;
+/* 지도와 이미지 섹션을 나란히 배치 */
+.tour-detail {
+    display: flex;
+    width: 500px;
+    gap: 2rem;
+    justify-content: space-between;
+}
+
+/* 지도 및 이미지 섹션 너비 */
+.tour-detail > div {
+    flex: 1;
 }
 
 /* 상세 정보 섹션 */
-.detail-info-section {
+.spot-info-section {
+    padding: 2rem;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-size: 1.2rem;
+    color: #333333;
+    line-height: 1.8;
+    margin-top: 2rem;
 }
 
-/* 좋아요, 공유 버튼 */
+/* 상세 정보 섹션 제목 스타일 */
+.spot-info-section div {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    color: #111;
+}
+
+/* 각 항목 간격 조정 */
+.spot-info-section p {
+    margin-bottom: 1rem;
+}
+
+/* 중요 정보 강조 */
+.spot-info-section p strong {
+    font-weight: bold;
+    color: #444;
+}
+
+/* 태그 배지 스타일 */
+.badge {
+    font-size: 1.2rem;
+    padding: 0.5rem 1rem;
+}
+
+/* 별점 아이콘 스타일 */
+.text-warning, .text-secondary {
+    font-size: 1.8rem;
+}
+
+/* 좋아요, 공유 버튼 (현재 적용되어 있지 않은 부분이지만 만약 추가할 경우 사용 가능) */
 .btn-outline-primary {
     font-size: 1.5rem;
 }
@@ -42,4 +89,30 @@ body {
 /* 편의시설 배지 */
 .badge {
     font-size: 1rem;
+    background-color: #6c757d;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    margin-right: 0.5rem;
+}
+
+/* 지도 섹션의 헤딩 스타일 */
+h4 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.accommodation-detail{
+    width: 100%;
+    display: flex;
+    margin: auto;
+    gap: 3rem;
+    justify-content: center;
+}
+
+.accommodation-image{
+    width: 80rem;
+    height: 50rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }

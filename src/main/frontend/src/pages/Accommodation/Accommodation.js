@@ -15,6 +15,7 @@ const Accommodation = () => {
         axios.get(`/api/accommodations/${uniqueId}`, {})
             .then(response => {
                 const data = response.data;
+                console.log(response);
 
                 // 이미지 URL 필드명 변경 (imageUrl로 처리)
                 const parsedAccommodation = {
@@ -35,56 +36,89 @@ const Accommodation = () => {
     }
 
     return (
-        <div className="container mt-5">
-            {/* 숙소명 */}
-            <h1 className="accommodation-title text-center mb-4">{accommodation.name}</h1>
+        <div style={{backgroundColor:'white',borderRadius:'5rem',width:'90%',padding:'2rem',margin:'auto',boxShadow: '0 4px 8px rgba(0, 0, 0, 0.5)'}}>
+            <div className="container mt-5">
+                {/* 숙소명 */}
+                <div style={{fontSize:'4rem'}} className="accommodation-title text-center mb-4">{accommodation.name}</div>
 
-            {/* 별 모양 */}
-            <div className="text-center mb-2">
-                {[...Array(4)].map((_, index) => (
-                    <i key={index} className="bi bi-star-fill text-warning"></i>
-                ))}
-                <i className="bi bi-star text-secondary"></i>
-            </div>
-
-            {/* 이미지 출력 */}
-            <div className="text-center mb-4">
-                <AccommodationImage imageUrls={accommodation.imageUrl} />
-            </div>
-
-            {/* 좋아요 및 공유 버튼 */}
-            <div className="text-center mb-4">
-                <button className="btn btn-outline-primary me-3">
-                    <i className="bi bi-heart"></i>
-                </button>
-                <button className="btn btn-outline-primary">
-                    <i className="bi bi-share"></i>
-                </button>
-            </div>
-
-            {/* 상세 정보 섹션 - 편의시설 포함 */}
-            <div className="detail-info-section p-4 mb-5">
-                <h4>상세 정보</h4>
-                <p><strong>주소:</strong> {accommodation.address}</p>
-                <p><strong>전화번호:</strong> {accommodation.phoneNumber}</p>
-                <p><strong>웹사이트:</strong> <a href={accommodation.website_url} target="_blank" rel="noopener noreferrer">{accommodation.website_url}</a></p>
-                <p><strong>평균 가격:</strong> {accommodation.averagePrice.toLocaleString()}원</p>
-
-                {/* 편의시설 추가 */}
-                <h4 className="mt-4">편의시설</h4>
-                <ul className="list-inline">
-                    {accommodation.facilities.map((facility, index) => (
-                        <li key={index} className="list-inline-item badge bg-info text-white me-2 p-2">
-                            {facility}
-                        </li>
+                {/* 별 모양 */}
+                <div className="text-center mb-2">
+                    {[...Array(4)].map((_, index) => (
+                        <i key={index} className="bi bi-star-fill text-warning"></i>
                     ))}
-                </ul>
-            </div>
+                    <i className="bi bi-star text-secondary"></i>
+                </div>
 
-            {/* 지도 */}
-            <div className="mb-4">
-                <h4>위치</h4>
-                <Map latitude={accommodation.latitude} longitude={accommodation.longitude} />
+                {/* 이미지 출력 */}
+                <div className="accommodation-detail">
+                    <div className="accommodation-image">
+                        <AccommodationImage imageUrls={accommodation.imageUrl}/>
+                    </div>
+                </div>
+
+                {/* 좋아요 및 공유 버튼 */}
+                <div className="text-center mb-4">
+                    <button className="btn btn-outline-primary me-3">
+                        <i className="bi bi-heart"></i>
+                    </button>
+                    <button className="btn btn-outline-primary">
+                        <i className="bi bi-share"></i>
+                    </button>
+                </div>
+
+                <div style={{display: 'flex',gap:'8rem',width:'120%',marginLeft:'-3rem'}}>
+                    <div style={{display:'flex',justifyContent:'center'}}>
+                        <div className='spot-info-section' style={{
+                            marginBottom: '2rem',
+                            width: '40rem',
+                            lineHeight: '1.6',
+                            textAlign: 'left'
+                        }}>
+                            <div style={{
+                                fontSize: '2.5rem',
+                                fontWeight: 'bold',
+                                marginBottom: '1.5rem',
+                                textAlign: 'center'
+                            }}>상세 정보
+                            </div>
+                            <p style={{fontSize: '1.8rem', marginBottom: '1rem'}}>
+                            <strong>숙소명:</strong> {accommodation.name}</p>
+                            <p style={{fontSize: '1.8rem', marginBottom: '1rem'}}>
+                                <strong>전화번호:</strong> {accommodation.phoneNumber}</p>
+                            <p style={{fontSize: '1.8rem', marginBottom: '1rem'}}><strong>웹사이트:</strong> <a
+                                href={accommodation.website_url} target="_blank"
+                                rel="noopener noreferrer">{accommodation.website_url}</a></p>
+                            <p style={{fontSize: '1.8rem', marginBottom: '1rem'}}><strong>평균
+                                가격:</strong> {accommodation.averagePrice.toLocaleString()}원</p>
+
+                            {/* 편의시설 추가 */}
+                            <h4 className="mt-4">편의시설</h4>
+                            <ul className="list-inline">
+                                {accommodation.facilities.map((facility, index) => (
+                                    <li key={index} style={{fontSize:'1.7rem',margin:'5px'}} className="list-inline-item badge bg-info text-white me-2 p-2">
+                                        {facility}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                    {/* 지도 */}
+                    <div style={{backgroundColor: '#fff5f7',padding:'3rem',borderRadius:'20px',boxShadow: '0 4px 8px rgba(0, 0, 0, 0.8)',height:'fit-content',margin:'auto',width:'40rem'}}>
+                        <div className="map-style" style={{
+                            flex: 1,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            flexDirection: 'column'
+                        }}>
+                            <div style={{display: 'flex', gap: '1rem', marginBottom: '2rem'}}>
+                                <div style={{fontSize: '2.5rem', textAlign: 'center', fontWeight: 'bold'}}>위치</div>
+                                <div style={{fontSize: '1.5rem', paddingTop: '12px'}}>주소:{accommodation.address}</div>
+                            </div>
+                                <Map latitude={accommodation.latitude} longitude={accommodation.longitude}/>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );
