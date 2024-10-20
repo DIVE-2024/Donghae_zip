@@ -9,13 +9,6 @@ body {
     font-weight: bold;
 }
 
-/* 상세 이미지 크기 */
-.detail-image {
-    max-width: 800px;
-    height: auto;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
 
 /* 별점 아이콘 */
 .star-rating .bi {
@@ -53,4 +46,20 @@ body {
 .rounded-image {
     border-radius: 15px;  /* 둥근 모서리 설정 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* 그림자 효과 추가 */
+}
+
+/* 상세 이미지 크기 */
+.restaurant-image {
+    width: 80rem;
+    height: 50rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.restaurant-detail {
+    width: 100%;
+    display: flex;
+    margin: auto;
+    gap: 3rem;
+    justify-content: center;
 }
