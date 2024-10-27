@@ -63,7 +63,6 @@ public class WeatherService {
             // 중기 예보 데이터가 존재하면 해당 날짜의 중기 예보 데이터를 삭제
             List<Weather> midTermForecasts = weatherRepository.findByRegionAndForecastDateAndForecastTimeIsNull(region, fcstDate);
             if (!midTermForecasts.isEmpty()) {
-                System.out.println("중기 예보 데이터 존재 확인 - 삭제 예정: " + midTermForecasts.size() + " 개 데이터");
                 weatherRepository.deleteAll(midTermForecasts);
                 System.out.println(fcstDate + " 중기예보 데이터가 삭제되었습니다.");
             } else {

@@ -50,7 +50,7 @@ body {
 
 /* 이미지 크기 통일 */
 .img-fixed {
-    height: 200px;
+    height: 15rem;
     object-fit: cover;
 }
 

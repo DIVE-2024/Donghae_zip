@@ -51,22 +51,31 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         // Authorization 헤더에서 JWT 토큰을 가져옴 (Bearer 토큰 형태)
         final String authorizationHeader = request.getHeader("Authorization");
 
-        String username = null;
+        String email = null;
         String jwt = null;
 
-        // Authorization 헤더가 존재하고, Bearer로 시작하는지 확인
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
             try {
-                username = jwtTokenUtil.extractUsername(jwt);
+                email = jwtTokenUtil.extractEmail(jwt);
             } catch (ExpiredJwtException e) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token has expired");
+                return;
+            } catch (io.jsonwebtoken.SignatureException e) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT signature");
+                return;
+            } catch (io.jsonwebtoken.MalformedJwtException e) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid JWT token");
+                return;
+            } catch (Exception e) {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "JWT token processing error");
                 return;
             }
         }
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
 
             if (jwtTokenUtil.validateToken(jwt, userDetails.getUsername())) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(

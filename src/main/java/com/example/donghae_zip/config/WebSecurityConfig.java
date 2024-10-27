@@ -84,9 +84,10 @@ public class WebSecurityConfig {
 
                         // Comment 관련 설정
                         .requestMatchers("/api/comments/**").permitAll() // 평점 조회는 인증 없이 가능
-                        .requestMatchers(HttpMethod.POST, "/api/comments").permitAll() // 리뷰 작성은 인증 필요
-                        .requestMatchers(HttpMethod.PUT, "/api/comments/{commentId}").permitAll() // 리뷰 수정은 인증 필요
-                        .requestMatchers(HttpMethod.DELETE, "/api/comments/{commentId}").permitAll() // 리뷰 삭제는 인증 필요
+                        .requestMatchers(HttpMethod.POST, "/api/comments").authenticated() // 리뷰 작성은 인증 필요
+                        .requestMatchers(HttpMethod.PUT, "/api/comments/{commentId}").authenticated() // 리뷰 수정은 인증 필요
+                        .requestMatchers(HttpMethod.DELETE, "/api/comments/{commentId}").authenticated() // 리뷰 삭제는 인증 필요
+
 
                         .anyRequest().authenticated()
                 )

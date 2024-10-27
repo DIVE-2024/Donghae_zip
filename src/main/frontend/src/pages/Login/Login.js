@@ -17,13 +17,13 @@ const Login = () => {
         try {
             const loginData = { email, password };
             const { nickname, member, token } = await login(loginData);  // 백엔드로 로그인 요청
-            console.log("로그인 성공:", nickname, member, token);
 
             // JWT 토큰을 저장
             sessionStorage.setItem('token', token);
 
             // 로그인 성공 후 메인 페이지로 리다이렉트
             window.location.href = '/';
+            console.log("로그인 성공:", nickname, member, token);
         } catch (error) {
             console.error("로그인 에러:", error);
         }

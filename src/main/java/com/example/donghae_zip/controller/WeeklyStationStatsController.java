@@ -36,14 +36,10 @@ public class WeeklyStationStatsController {
             @PathVariable String month,
             @PathVariable String week) {
 
-        // 파라미터 확인을 위한 로그 출력
-        System.out.println("Station: " + stationName + ", Year: " + year + ", Month: " + month + ", Week: " + week);
 
         // 주입된 서비스 인스턴스를 사용하여 데이터 조회
         List<WeeklyStationStats> stats = weeklyStationStatsService.getStatsByStationAndWeek(stationName, year, month, week);
 
-        // 결과 로그 출력
-        System.out.println("Returned stats: " + stats);
 
         return stats;
     }

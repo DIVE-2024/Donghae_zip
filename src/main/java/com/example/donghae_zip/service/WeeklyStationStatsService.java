@@ -27,7 +27,6 @@ public class WeeklyStationStatsService {
     public List<WeeklyStationStats> getStatsByStationAndWeek(String stationName, String year, String month, String week) {
         // 이미 year, month, week에 '년', '월', '주차'가 포함되어 있으므로, 그대로 사용
         String weekPattern = year + " " + month + " " + week; // 중복 없이 결합
-        System.out.println("Querying with weekPattern: " + weekPattern); // 올바른 패턴 로깅
         return weeklyStationStatsRepository.findByStationNameAndWeek(stationName, weekPattern);
     }
 

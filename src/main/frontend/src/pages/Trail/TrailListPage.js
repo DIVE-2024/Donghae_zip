@@ -4,6 +4,7 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './TrailListPage.css';
+import ReviewCount from "../../components/Comment/ReviewCount";
 
 const TrailListPage = () => {
     const [trails, setTrails] = useState([]);
@@ -96,9 +97,9 @@ const TrailListPage = () => {
     };
 
     return (
-        <div className="container mt-5">
+        <div className="container custom-container mt-5">
             {/* "결과 총 00개" */}
-            <h1 className="page-title">결과 총 {trailCount}개</h1>
+            <div className="page-title">결과 총 {trailCount}개</div>
 
             {/* 필터 그룹: 제목 검색, 난이도 선택, 정렬 선택 */}
             <div className="input-group filter-group mb-4">
@@ -147,9 +148,9 @@ const TrailListPage = () => {
                                 <div className="card h-100 trail-card">
                                     <img src={trail.imageUrls[0]} className="card-img-top img-fixed" alt={trail.courseName} />
                                     <div className="card-body d-flex flex-column">
-                                        <h5 className="card-title course-title">{trail.courseName}</h5>
-                                        <p className="card-text course-overview">{trail.courseOverview}</p>
-                                        <p className="trail-info">
+                                        <div style={{fontSize:'1.9rem'}} className="card-title course-title">{trail.courseName}</div>
+                                        <p style={{fontSize:'1.1rem'}} className="card-text course-overview">{trail.courseOverview}</p>
+                                        <p className="trail-info" style={{fontSize:'1.2rem'}}>
                                             {trail.lengthInKm}km
                                             <span className="dot"></span>
                                             {Math.floor(trail.timeInMinutes / 60)}시간 {trail.timeInMinutes % 60}분
@@ -157,9 +158,7 @@ const TrailListPage = () => {
                                             {trail.difficulty}
                                         </p>
                                         <div className="mt-auto d-flex justify-content-end align-items-center">
-                                            <Link to={`/trails/${trail.trailId}`} className="btn btn-primary review-btn me-2">
-                                                리뷰 {trail.reviewCount}개
-                                            </Link>
+                                            <ReviewCount className="btn btn-primary review-btn me-2" entityType="trails" id={trail.trailId} />
                                             {/* 하트 아이콘: 찜한 코스는 채워진 하트, 그렇지 않은 코스는 빈 하트 */}
                                             <i
                                                 className={`bi bi-heart${favoriteTrails.includes(trail.trailId) ? '-fill' : ''} heart-icon`}

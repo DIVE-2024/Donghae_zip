@@ -3,6 +3,7 @@ import { Card, Container, Row, Col, Button, Pagination } from 'react-bootstrap';
 import axios from 'axios';
 import './FestivalListPage.css';
 import { Link } from 'react-router-dom';
+import ReviewCount from "../../components/Comment/ReviewCount";
 
 const FestivalListPage = () => {
     const [festivals, setFestivals] = useState([]);
@@ -72,11 +73,11 @@ const FestivalListPage = () => {
     };
 
     return (
-        <Container className="festival-list-page">
-            <h1 className="festival-count">결과 총 {totalElements}개</h1>
+        <div className="container custom-container mt-5">
+            <div className="page-title">결과 총 {totalElements}개</div>
 
             {/* 필터 그룹: 제목 검색, 지역 선택, 상태 선택, 년도 선택, 월 선택 */}
-            <div className="input-group festival-filter-group mb-4">
+            <div className="input-group festival-filter-group mb-4" style={{margin:'auto'}}>
                 {/* 제목 검색 */}
                 <input
                     type="text"
@@ -91,7 +92,10 @@ const FestivalListPage = () => {
                 <select
                     className="form-select"
                     value={region}
-                    onChange={(e) => { setRegion(e.target.value); handleFilterChange(); }}
+                    onChange={(e) => {
+                        setRegion(e.target.value);
+                        handleFilterChange();
+                    }}
                 >
                     <option value="">지역 선택</option>
                     <option value="울산">울산</option>
@@ -103,7 +107,10 @@ const FestivalListPage = () => {
                 <select
                     className="form-select"
                     value={status}
-                    onChange={(e) => { setStatus(e.target.value); handleFilterChange(); }}
+                    onChange={(e) => {
+                        setStatus(e.target.value);
+                        handleFilterChange();
+                    }}
                 >
                     <option value="">상태 선택</option>
                     <option value="PENDING">예정</option>
@@ -125,7 +132,10 @@ const FestivalListPage = () => {
                 <select
                     className="form-select"
                     value={month}
-                    onChange={(e) => { setMonth(e.target.value); handleFilterChange(); }}
+                    onChange={(e) => {
+                        setMonth(e.target.value);
+                        handleFilterChange();
+                    }}
                 >
                     <option value="">월 선택</option>
                     <option value="1">1월</option>
@@ -152,14 +162,15 @@ const FestivalListPage = () => {
                 {festivals.map((festival) => (
                     <Col key={festival.festivalId} md={4} className="mb-4">
                         <Card className="festival-card">
-                                <Link to={`/festival/${festival.festivalId}`}> {/* 각 카드를 클릭하면 해당 상세 페이지로 이동 */}
-                                    <Card.Img className="festival-card-img" variant="top" src={festival.images[0] || 'default-image-url'} />
-                                </Link>
+                            <Link to={`/festival/${festival.festivalId}`}> {/* 각 카드를 클릭하면 해당 상세 페이지로 이동 */}
+                                <Card.Img className="festival-card-img" variant="top"
+                                          src={festival.images[0] || 'default-image-url'}/>
+                            </Link>
                             <Card.Body>
-                                <Card.Title className="festival-card-title">{festival.title}</Card.Title>
-                                <Card.Text className="festival-card-text">{festival.period}</Card.Text>
+                                <Card.Title className="festival-card-title" style={{fontSize:'1.9rem'}}>{festival.title}</Card.Title>
+                                <Card.Text className="festival-card-text" style={{fontSize:'1.3rem'}}>{festival.period}</Card.Text>
                                 <div className="card-bottom-right">
-                                    <Button className="festival-review-btn">리뷰 {festival.reviewCount || 0}개</Button>
+                                    <ReviewCount className="btn btn-primary review-btn me-2" entityType="festivals" id={festival.festivalId} />
                                     <Button variant="outline-danger" className="heart-btn">
                                         <i className="bi bi-heart"></i>
                                     </Button>
@@ -197,7 +208,7 @@ const FestivalListPage = () => {
                     </Pagination>
                 </Col>
             </Row>
-        </Container>
+        </div>
     );
 };
 

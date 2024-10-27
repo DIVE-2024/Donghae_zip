@@ -58,7 +58,7 @@ const AppRoutes = () => {
                     {/* 역내 정보 */}
                     {/* 동해선 노선도 페이지 추가 */}
                     <Route path="/donghae-subway" element={<DonghaeSubway />} />
-                    <Route path="/image-cord" element={<ImageMapWithCoordinates />} />
+
 
                     {/* 마이 페이지 */}
                     {/* 찜 목록과 내가 쓴 리뷰 페이지 추가 */}
