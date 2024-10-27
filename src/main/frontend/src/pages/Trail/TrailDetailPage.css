@@ -9,6 +9,11 @@ body {
     font-weight: bold;
 }
 
+.trail-image{
+    width:100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
 /* 상세 이미지 크기 */
 .detail-image {
     max-width: 800px;
@@ -24,9 +29,8 @@ body {
 
 /* 상세 정보 섹션 */
 .detail-info-section {
-    background-color: #fff;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 /* 좋아요, 리뷰 버튼 */

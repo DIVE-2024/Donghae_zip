@@ -158,20 +158,20 @@ const DonghaeSubway = () => {
                     );
                 })}
 
-                {/* 호버된 역 정보 표시 */}
                 {hoveredStation && (
                     <div
                         style={{
                             position: 'fixed',
-                            left: '10px',
-                            top: '10px',
+                            left: '30px', // 고정된 왼쪽 위치
+                            top: '50%', // 화면 중간에 나타나도록
+                            transform: 'translateY(-50%)', // 수직 중앙 정렬
                             backgroundColor: 'white',
                             padding: '20px',
                             border: '1px solid #ddd',
                             boxShadow: '0px 6px 18px rgba(0, 0, 0, 0.15)',
                             borderRadius: '12px',
                             zIndex: 10,
-                            width: '500px',
+                            width: '300px', // 고정된 너비 설정
                             maxHeight: '600px',
                         }}
                     >
@@ -180,7 +180,7 @@ const DonghaeSubway = () => {
                             <img
                                 src={hoveredStation.stationImageUrl}
                                 alt={`${hoveredStation.stationName} 이미지`}
-                                style={{ width: '330px', height: '250px', borderRadius: '6px', marginBottom: '10px' }}
+                                style={{ width: '250px', height: '180px', borderRadius: '6px', marginBottom: '10px' }}
                             />
                         )}
                         <p style={{ margin: '10px 0 5px 0', fontSize: '1.3rem' }}><strong>지역:</strong> {hoveredStation.region}</p>
@@ -189,10 +189,11 @@ const DonghaeSubway = () => {
                     </div>
                 )}
 
+
                 <div style={{ marginLeft: '5rem', width: '100%', backgroundColor: '#fff5f7', borderRadius: '2rem' }}>
                     {/* 선택된 역 정보 표시 */}
                     {selectedStation && (
-                        <div style={{width: '60rem'}}>
+                        <div style={{width: '60rem',height:'65rem'}}>
                             <div style={{
                                 fontSize: '3rem',
                                 textAlign: 'center',

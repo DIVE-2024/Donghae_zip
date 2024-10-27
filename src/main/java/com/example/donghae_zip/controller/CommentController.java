@@ -1,28 +1,66 @@
 package com.example.donghae_zip.controller;
 
-import com.example.donghae_zip.domain.Comment;
-import com.example.donghae_zip.domain.CommentRequest;
+import com.example.donghae_zip.domain.*;
+import com.example.donghae_zip.exception.ResourceNotFoundException;
+import com.example.donghae_zip.repository.*;
 import com.example.donghae_zip.service.CommentService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+import com.example.donghae_zip.util.JwtTokenUtil;
 
 import java.io.BufferedReader;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/comments")
 @Tag(name = "Comment API", description = "리뷰와 평점 관련 API")
 public class CommentController {
 
+    private final JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
+
+
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private TrailRepository trailRepository;  // 소문자로 시작해야 함
+
+    @Autowired
+    private TouristSpotRepository touristSpotRepository;
+
+    @Autowired
+    private RestaurantRepository restaurantRepository;
+
+    @Autowired
+    private AccommodationRepository accommodationRepository;
+
+    @Autowired
+    private FestivalRepository festivalRepository;
+
+
+    // 생성자 주입
+    @Autowired
+    public CommentController(JwtTokenUtil jwtTokenUtil) {
+        this.jwtTokenUtil = jwtTokenUtil;
+    }
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -33,41 +71,75 @@ public class CommentController {
         return ResponseEntity.ok(reviews);
     }
 
-    @Operation(summary = "리뷰 생성", description = "새로운 리뷰를 생성하고 DB에 저장합니다.")
+
     @PostMapping
-    public ResponseEntity<String> createComment(HttpServletRequest request, @RequestParam Long userId) {
+    public ResponseEntity<Comment> createComment(HttpServletRequest request) {
         try {
-            // 요청 데이터 전체를 수동으로 읽어 들임
-            StringBuilder stringBuilder = new StringBuilder();
-            BufferedReader reader = request.getReader();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                stringBuilder.append(line);
+            // HttpServletRequest로부터 JSON 문자열을 직접 읽어옴
+            String jsonRequestBody = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+
+            // JSON을 CommentRequest로 변환
+            CommentRequest commentRequest = objectMapper.readValue(jsonRequestBody, CommentRequest.class);
+
+            // 받은 데이터를 출력하여 확인
+            System.out.println("Received commentRequest: " + commentRequest.toString());
+            System.out.println("content: " + commentRequest.getContent());
+            System.out.println("rating: " + commentRequest.getRating());
+            System.out.println("trailId: " + commentRequest.getTrailId());
+            System.out.println("touristSpotId: "+ commentRequest.getTouristSpotId());
+
+            // JWT 토큰에서 사용자 정보 추출
+            String token = request.getHeader("Authorization").substring(7);
+            String email = jwtTokenUtil.extractEmail(token);
+            Member member = memberRepository.findByEmail(email)
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + email));
+
+            // Comment 엔티티로 변환
+            Comment comment = new Comment();
+            comment.setContent(commentRequest.getContent());
+            comment.setRating(commentRequest.getRating());
+            comment.setMember(member);  // 작성자 정보 설정
+            comment.setCreatedAt(LocalDateTime.now());
+            comment.setImageUrls(commentRequest.getImageUrls());
+
+            // 연관 관계 매핑
+            if (commentRequest.getTrailId() != null) {
+                Trail trail = trailRepository.findById(commentRequest.getTrailId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Trail not found"));
+                comment.setTrail(trail);
             }
+            if(commentRequest.getTouristSpotId() != null) {
+                TouristSpot touristSpot = touristSpotRepository.findById(commentRequest.getTouristSpotId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Tourist not found"));
+                comment.setTouristSpot(touristSpot);
+            }
+            if(commentRequest.getRestaurantId() != null) {
+                Restaurant restaurant = restaurantRepository.findById(commentRequest.getRestaurantId())
+                        .orElseThrow(() -> new ResourceNotFoundException("restaurant not found"));
+                comment.setRestaurant(restaurant);
+            }
+            if(commentRequest.getAccommodationId() != null) {
+                Accommodation accommodation = accommodationRepository.findById((commentRequest.getAccommodationId()))
+                        .orElseThrow(() -> new ResourceNotFoundException("accommdation not found"));
+                comment.setAccommodation(accommodation);
+            }
+            if(commentRequest.getFestivalId() != null ) {
+                Festival festival = festivalRepository.findById((commentRequest.getFestivalId()))
+                        .orElseThrow(() -> new ResourceNotFoundException("Festival not found"));
+                comment.setFestival(festival);
+            }
+            // DB에 Comment 저장
+            Comment savedComment = commentRepository.save(comment);
 
-            // 원본 JSON 데이터를 출력 (디버깅용)
-            String requestBody = stringBuilder.toString();
-            System.out.println("Raw request body: " + requestBody);
-
-            // ObjectMapper를 통해 JSON 데이터를 DTO로 변환
-            ObjectMapper objectMapper = new ObjectMapper();
-            CommentRequest commentRequest = objectMapper.readValue(requestBody, CommentRequest.class);
-
-            // 파싱된 데이터 로그 출력
-            System.out.println("Parsed CommentRequest: ");
-            System.out.println("Content: " + commentRequest.getContent());
-            System.out.println("Rating: " + commentRequest.getRating());
-
-            // CommentService를 통해 리뷰 생성 및 DB 저장
-            Comment createdComment = commentService.createComment(commentRequest, userId);
-
-            return ResponseEntity.status(HttpStatus.CREATED).body("Comment created successfully");
+            // 저장된 댓글 정보를 포함하여 응답 반환
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedComment);
 
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
+
 
 
     // 리뷰 수정 API
@@ -75,22 +147,57 @@ public class CommentController {
     @PutMapping("/{commentId}")
     public ResponseEntity<Comment> updateComment(
             @PathVariable Long commentId,
-            @RequestBody CommentRequest request,
-            @RequestParam Long userId) {  // 로그인된 사용자의 userId
+            HttpServletRequest request,  // JSON을 직접 처리하기 위해 HttpServletRequest 사용
+            @RequestParam String email) {
 
-        Comment updatedComment = commentService.updateComment(commentId, request, userId);
-        return ResponseEntity.ok(updatedComment);
+        try {
+            // HttpServletRequest로부터 JSON 문자열을 직접 읽어옴
+            String jsonRequestBody = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+
+            // JSON을 CommentRequest로 변환
+            CommentRequest commentRequest = objectMapper.readValue(jsonRequestBody, CommentRequest.class);
+
+            // 받은 데이터를 출력하여 확인
+            System.out.println("Received commentRequest: " + commentRequest.toString());
+            System.out.println("content: " + commentRequest.getContent());
+            System.out.println("rating: " + commentRequest.getRating());
+            System.out.println("touristSpotId: " + commentRequest.getTouristSpotId());
+
+            // JWT 토큰에서 사용자 정보 추출
+            String token = request.getHeader("Authorization").substring(7);
+            String tokenEmail = jwtTokenUtil.extractEmail(token);
+
+            // 이메일 확인
+            System.out.println("Token Email: " + tokenEmail);
+            System.out.println("Request Email: " + email);
+
+            if (!tokenEmail.equals(email)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
+            // 댓글 수정 처리
+            Comment updatedComment = commentService.updateComment(commentId, commentRequest, email);
+            return ResponseEntity.ok(updatedComment);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
+
+
+
 
     @Operation(summary = "리뷰 삭제", description = "작성자만이 특정 리뷰를 삭제할 수 있습니다.")
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteComment(
             @PathVariable Long commentId,
-            @RequestParam Long userId) {  // 로그인된 사용자의 userId
+            @RequestParam String email) {  // 이메일로 로그인된 사용자 확인
 
-        commentService.deleteComment(commentId, userId);
+        commentService.deleteComment(commentId, email);  // 이메일을 넘김
         return ResponseEntity.noContent().build();
     }
+
 
     @Operation(summary = "숙소 리뷰 조회", description = "특정 숙소에 대한 모든 리뷰를 조회합니다.")
     @GetMapping("/accommodations/{id}/reviews")
@@ -218,6 +325,8 @@ public class CommentController {
     @GetMapping("/tourist-spots/{id}/review-count")
     public ResponseEntity<Long> countCommentsByTouristSpot(@PathVariable Long id) {
         Long count = commentService.countCommentsByTouristSpot(id);
+        System.out.println("여행지 id: " + id);
+        System.out.println("여행지 관광 리뷰 개수: " + count);
         return ResponseEntity.ok(count);
     }
 

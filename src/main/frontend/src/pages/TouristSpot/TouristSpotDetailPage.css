@@ -3,6 +3,11 @@ body {
     background-color: #B4C2D7;
 }
 
+.custom-container {
+    max-width: 100rem !important;
+}
+
+
 /* 제목 스타일 */
 .spot-detail-title {
     font-size: 3.5rem;
@@ -73,3 +78,4 @@ body {
 .map-style{
     margin-top: 2rem;
 }
+

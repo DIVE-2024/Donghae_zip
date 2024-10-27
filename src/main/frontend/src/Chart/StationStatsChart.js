@@ -74,7 +74,6 @@ const StationStatsChart = () => {
             axios.get(`/api/station-stats/${stationName}/${year}/${month}/${weekWithSuffix}`)
                 .then(response => {
                     const stats = response.data;
-                    console.log("Received stats:", stats);
 
                     // 실제 승차/하차 인원 및 비율 계산
                     const totalBoarding = stats.reduce((acc, curr) => acc + curr.avgBoardingPassengers, 0);

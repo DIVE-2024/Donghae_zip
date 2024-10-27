@@ -2,6 +2,7 @@
     font-weight: bold;
     margin-top: 100px;
     margin-bottom: 50px;
+    font-size: 4rem;
 }
 
 .filter-group {
@@ -56,6 +57,7 @@
 .review-btn {
     font-size: 14px;
     color: #fff;
+    border-radius: 25rem;
     background-color: #007bff;
     border: none;
 }

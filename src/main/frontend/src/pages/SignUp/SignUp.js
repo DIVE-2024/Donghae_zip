@@ -34,8 +34,8 @@ const SignUp = () => {
     };
 
     return (
-        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', minWidth: '100vw', backgroundColor: '#B4C2D7' }}>
-            <div className="card p-4 shadow-lg" style={{ width: '400px', backgroundColor: '#F7FAFC' }}>
+        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', Width: '100vw', backgroundColor: '#B4C2D7' }}>
+            <div className="card p-4 shadow-lg" style={{ width: '40rem', backgroundColor: '#F7FAFC' }}>
                 <h2 className="text-center mb-4">회원가입</h2>
                 <form>
                     <div className="form-group mb-3">

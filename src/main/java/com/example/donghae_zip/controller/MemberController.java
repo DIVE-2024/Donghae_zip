@@ -1,6 +1,7 @@
 package com.example.donghae_zip.controller;
 
 import com.example.donghae_zip.domain.Member;
+import com.example.donghae_zip.domain.MemberResponse;
 import com.example.donghae_zip.service.MemberService;
 import com.example.donghae_zip.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,13 +50,17 @@ public class MemberController {
 
         if (member.isPresent()) {
             // JWT 토큰 생성
-            String token = jwtTokenUtil.generateToken(member.get().getEmail());
+            String token = jwtTokenUtil.generateToken(member.get().getEmail(),member.get().getNickname());
+            System.out.println("token:" + token);
 
             // JSON 형식으로 응답
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);
-            response.put("nickname", member.get().getNickname());
-            response.put("member", member.get());
+
+            // MemberResponse는 직접 생성
+            MemberResponse memberResponse = new MemberResponse(member.get().getEmail(), member.get().getNickname());
+            response.put("member", memberResponse);
+            System.out.println("memberResponse의 값:" + memberResponse);
 
             return ResponseEntity.ok(response);  // JSON 객체로 응답
         } else {
@@ -63,20 +68,31 @@ public class MemberController {
         }
     }
 
+
     // JWT 토큰을 이용해 사용자 정보를 반환하는 메서드 (추가적인 엔드포인트)
     @GetMapping("/profile")
     public ResponseEntity<?> getProfile(@RequestHeader("Authorization") String token) {
         // Bearer 제거하고 토큰 값만 추출
         String jwt = token.substring(7);
-        String email = jwtTokenUtil.extractUsername(jwt);
+        String email = jwtTokenUtil.extractEmail(jwt);
+        String nickname = jwtTokenUtil.extractNickname(jwt);  // 추가된 메서드로 닉네임 추출
 
         Optional<Member> member = memberService.findByEmail(email);
         if (member.isPresent()) {
-            return ResponseEntity.ok().body(member.get());
+            Member memberInfo = member.get();
+
+            // 필요한 정보를 JSON 형식으로 반환
+            Map<String, Object> response = new HashMap<>();
+            response.put("email", memberInfo.getEmail());
+            response.put("nickname", nickname);
+            response.put("name", memberInfo.getName());
+
+            return ResponseEntity.ok().body(response);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자 정보를 찾을 수 없습니다.");
         }
     }
+
 
     // 로그아웃 처리(클라이언트에서 토큰 삭제하도록 안내하는 역할.)
     @PostMapping("/logout")

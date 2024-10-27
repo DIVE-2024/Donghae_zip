@@ -14,7 +14,7 @@
 
 .festival-card {
     margin-bottom: 30px;
-    height: 350px;
+    height: 28rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -22,8 +22,8 @@
 }
 
 .festival-card-img {
-    height: 200px;
-    object-fit: contain;
+    height: 15rem;
+    object-fit: cover;
     width: 100%;
 }
 
