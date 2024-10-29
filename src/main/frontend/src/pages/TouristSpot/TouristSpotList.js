@@ -4,6 +4,7 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './TouristSpotList.css';
+import ReviewCount from "../../components/Comment/ReviewCount";
 
 const TouristSpotList = () => {
     const [spots, setSpots] = useState([]);
@@ -97,9 +98,9 @@ const TouristSpotList = () => {
     const endPage = Math.min(startPage + maxPageButtons, totalPages);
 
     return (
-        <div className="container mt-5">
+        <div className="container custom-container mt-5">
             {/* "결과 총 00개" */}
-            <h1 className="page-title">결과 총 {spotCount}개</h1>
+            <div className="page-title">결과 총 {spotCount}개</div>
 
             {/* 필터 그룹 */}
             <div className="input-group filter-group mb-4">
@@ -182,17 +183,15 @@ const TouristSpotList = () => {
                             <div className="card h-100 tourist-spot-card">
                                 <img src={spot.imageUrls[0]} className="card-img-top img-fixed" alt={spot.title} />
                                 <div className="card-body d-flex flex-column">
-                                    <h5 className="card-title spot-list-title">{spot.title}</h5>
-                                    <p className="card-text spot-overview">{spot.oneLineDesc}</p>
-                                    <p className="spot-info">
+                                    <div style={{fontSize:'1.9rem'}} className="card-title spot-list-title">{spot.title}</div>
+                                    <p style={{fontSize:'1.2rem'}} className="card-text spot-overview">{spot.oneLineDesc}</p>
+                                    <p style={{fontSize:'1.3rem'}} className="spot-info">
                                         {spot.address}
                                         <span className="dot"></span>
                                         {spot.region}
                                     </p>
                                     <div className="mt-auto d-flex justify-content-end align-items-center">
-                                        <Link to={`/tourist-spot/${spot.spotId}`} className="btn btn-primary review-btn me-2">
-                                            리뷰 {spot.reviewCount}개
-                                        </Link>
+                                        <ReviewCount className="btn btn-primary review-btn me-2" entityType="tourist-spots" id={spot.spotId} />
                                         {/* 하트 아이콘: 찜한 코스는 채워진 하트, 그렇지 않은 코스는 빈 하트 */}
                                         <i
                                             className={`bi bi-heart${favoriteSpots.includes(spot.spotId) ? '-fill' : ''} heart-icon`}

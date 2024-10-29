@@ -24,4 +24,5 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         return new User(member.getEmail(), member.getPassword(), Collections.emptyList());
     }
+
 }

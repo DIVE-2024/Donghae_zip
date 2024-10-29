@@ -1,10 +1,10 @@
 .custom-navbar {
-    height: 100px; /* 헤더의 세로 길이 조정 */
+    height: 9.5rem; /* 헤더의 세로 길이 조정 */
     background-color: #5E80B1; /* 헤더 색상 변경 */
 }
 
 .custom-logo {
-    font-size: 2.5rem; /* 글씨 크기 */
+    font-size: 2.8rem; /* 글씨 크기 */
     font-weight: bold; /* bold 적용 */
     margin-right: auto; /* 왼쪽 끝으로 이동 */
     margin-left: 60px; /* 로고 왼쪽에 여백 추가 */
@@ -16,7 +16,7 @@
 }
 
 .nav-link {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     margin-right: 15px; /* 메뉴들 간의 간격 조정 */
     color: white !important; /* 메뉴들 글씨 색상 흰색으로 변경 */
 }
@@ -32,7 +32,7 @@
 .dropdown-menu {
     display: none;
     font-size: 1.2rem;
-    background-color: #CED7E4; /* 드롭다운 메뉴 배경색 변경 */
+    background-color: rgb(22, 125, 143); /* 드롭다운 메뉴 배경색 변경 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* 입체적인 그림자 */
     margin-right: 1.2rem;
 }
@@ -43,7 +43,7 @@
 }
 
 .dropdown-item:hover {
-    background-color: #5E80B1; /* 드롭다운 항목 hover 시 배경색 설정 */
+    background-color: #3F348B; /* 드롭다운 항목 hover 시 배경색 설정 */
 }
 
 /* MyPage와 회원가입 사이에 구분선 및 오른쪽 여백 추가 */

@@ -3,31 +3,61 @@ body {
     background-color: #B4C2D7;
 }
 
+.custom-container {
+    max-width: 100rem !important;
+}
+
+
 /* 제목 스타일 */
 .spot-detail-title {
-    font-size: 2.5rem;
+    font-size: 3.5rem;
     font-weight: bold;
 }
 
 /* 이미지 크기 및 둥근 모서리 설정 */
 .spot-image {
-    border-radius: 10px;
-    max-width: 100%;
+    border-radius: 20px;
+    width: 180rem;
     height: auto;
     object-fit: cover;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 /* Carousel 중앙 정렬 */
 .carousel-center {
-    max-width: 800px; /* 너비를 적절히 제한 */
-    margin: 0 auto; /* 중앙 정렬 */
+    width: 100%; /* 너비를 적절히 제한 */
+    margin: 1.5rem auto; /* 중앙 정렬 */
 }
 
 /* 상세 정보 섹션 */
 .spot-info-section {
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    width: 90%;
+    flex-direction: column;
+    padding: 2rem;
+    background-color: #fff5f7;
+    border-radius: 2rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
+    font-size: 1.2rem; /* 텍스트 크기 증가 */
+    color: #333333; /* 텍스트 색상 변경 */
+    line-height: 1.6; /* 줄 간격 추가 */
+}
+.spot-info-section p {
+    font-size: 1.5rem;
+    line-height: 1.6;
+    margin-bottom: 1.2rem;
+}
+
+.spot-info-section strong {
+    font-weight: bold;
+    color: #333;
+}
+
+.spot-info-section h2 {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #444;
 }
 
 /* 별점 아이콘 스타일 */
@@ -37,3 +67,15 @@ body {
 .text-secondary {
     font-size: 1.5rem;
 }
+
+.tour-detail {
+    width: 95%;
+    display: flex;
+    margin: auto;
+    gap: 3rem;
+}
+
+.map-style{
+    margin-top: 2rem;
+}
+

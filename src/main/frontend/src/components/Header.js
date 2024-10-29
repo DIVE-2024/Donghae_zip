@@ -3,18 +3,35 @@ import { useNavigate, Link } from 'react-router-dom';
 import { logout } from '../services/authService';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Header.css'; // 커스텀 CSS 파일
-
+import Logo from '../assets/images/logo.png';
+import {parseJwt} from "./Util/jwtUtils";
 const Header = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태 관리
     const navigate = useNavigate();
+    const [userId, setUserId] = useState(null);
+    const [nickname, setNickname] = useState(null);
 
     useEffect(() => {
-        // 토큰이 있으면 로그인된 상태로 처리
         const token = sessionStorage.getItem('token');
+        if (token) {
+            const decoded = parseJwt(token);
+            console.log("Decoded JWT:", decoded);
+
+            if (decoded) {
+                setUserId(decoded.sub);        // 이메일
+                setNickname(decoded.nickname); // 닉네임
+            } else {
+                console.log("Decoded JWT is invalid");
+            }
+        } else {
+            console.log("Token not found in session storage");
+        }
+
         if (token) {
             setIsLoggedIn(true);
         }
     }, []);
+
 
     const handleLoginClick = () => {
         navigate('/login');
@@ -29,7 +46,11 @@ const Header = () => {
     return (
         <nav className="navbar navbar-expand-lg navbar-light custom-navbar">
             <div className="container-fluid">
-                <Link className="navbar-brand custom-logo" to="/">Donghae.zip</Link>
+                <Link className="navbar-brand custom-logo" to="/"
+                      style={{display: 'flex', alignItems: 'center', fontSize: '4rem'}}>
+                    Donghae.zip
+                    <img src={Logo} alt="Donghae.zip Logo" style={{width: '6rem', marginLeft: '3px'}}/>
+                </Link>
                 <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>
                 </button>
@@ -49,7 +70,7 @@ const Header = () => {
                             </ul>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/departures">동해 출동해</Link>
+                            <Link className="nav-link" to="/donghae-hotplace">동해 출동해</Link>
                         </li>
                         <li className="nav-item dropdown mypage">
                             <Link className="nav-link" to="/mypage">MyPage</Link>
@@ -58,19 +79,24 @@ const Header = () => {
                                 <li><Link className="dropdown-item" to="/myreviews">내가 쓴 리뷰</Link></li>
                             </ul>
                         </li>
-                        {!isLoggedIn ? (
+                        {isLoggedIn ? (
+                            <>
+                                <li className="nav-item">
+                                    <span className="nav-link">환영합니다, {nickname}님!</span>
+                                </li>
+                                <li className="nav-item">
+                                    <button className="btn btn-primary custom-login-btn" style={{marginTop:'0.5rem',height:'3rem',fontSize:'1.2rem'}} onClick={handleLogoutClick}>Log Out</button>
+                                </li>
+                            </>
+                        ) : (
                             <>
                                 <li className="nav-item">
                                     <Link className="nav-link" to="/signup">회원가입</Link>
                                 </li>
                                 <li className="nav-item">
-                                    <button className="btn btn-primary custom-login-btn" style={{marginTop:'0.2rem',width:'5rem',height:'3rem',fontSize:'1.2rem'}} onClick={handleLoginClick}>Log In</button>
+                                    <button className="btn btn-primary custom-login-btn" style={{marginTop:'0.5rem',width:'6rem',height:'3rem',fontSize:'1.2rem'}} onClick={handleLoginClick}>Log In</button>
                                 </li>
                             </>
-                        ) : (
-                            <li className="nav-item">
-                                <button className="btn btn-primary custom-login-btn" style={{marginTop:'0.3rem',height:'3rem',fontSize:'1.2rem'}} onClick={handleLogoutClick}>Log Out</button>
-                            </li>
                         )}
                     </ul>
                 </div>

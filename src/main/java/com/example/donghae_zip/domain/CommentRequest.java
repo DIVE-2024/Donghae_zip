@@ -1,22 +1,20 @@
 package com.example.donghae_zip.domain;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
+import java.util.List;
 
 @Data
 public class CommentRequest {
 
     @NotNull(message = "리뷰 내용은 필수 항목입니다.")
-    @JsonProperty("content")
+    @JsonProperty("content") // JSON 필드와 매핑
     private String content;
 
     @NotNull(message = "평점은 필수 항목입니다.")
-    @JsonProperty("rating")
+    @JsonProperty("rating") // JSON 필드와 매핑
     private Integer rating;
 
     @JsonProperty("imageUrls")
@@ -37,4 +35,3 @@ public class CommentRequest {
     @JsonProperty("trailId")
     private Long trailId;
 }
-

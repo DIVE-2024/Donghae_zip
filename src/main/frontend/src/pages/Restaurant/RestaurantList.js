@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
-import { Link } from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import '../Trail/TrailListPage.css';
+import ReviewCount from "../../components/Comment/ReviewCount";
 
 const RestaurantList = () => {
     const [restaurants, setRestaurants] = useState([]);
@@ -147,8 +148,8 @@ const RestaurantList = () => {
     }
 
     return (
-        <div className="container mt-5">
-            <h1 className="page-title">결과 총 {restaurantCount}개</h1>
+        <div className="container custom-container mt-5">
+            <div className="page-title">결과 총 {restaurantCount}개</div>
 
             {/* Region Filter */}
             <div className="input-group filter-group mb-4">
@@ -205,13 +206,12 @@ const RestaurantList = () => {
                                     alt={restaurant.name}
                                 />
                                 <div className="card-body d-flex flex-column">
-                                    <h5 className="card-title course-title">{restaurant.name}</h5>
-                                    <p className="card-text course-overview">{restaurant.address}</p>
-                                    <p className="trail-info">전화번호: {restaurant.phone}</p>
+                                    <div style={{fontSize:'1.9rem'}} className="card-title course-title">{restaurant.name}</div>
+                                    <p style={{fontSize:'1.3rem'}} className="card-text course-overview">{restaurant.address}</p>
+                                    <p style={{fontSize:'1.1rem'}} className="trail-info">전화번호: {restaurant.phone}</p>
                                     <div className="mt-auto d-flex justify-content-end align-items-center">
-                                        <Link to={`/restaurant/${restaurant.id}`} className="btn btn-primary review-btn me-2">
-                                            상세 보기
-                                        </Link>
+                                        <ReviewCount className="btn btn-primary review-btn me-2" entityType="restaurants" id={restaurant.id} />
+
                                         {/* 하트 아이콘: 찜한 식당은 채워진 하트, 그렇지 않은 식당은 빈 하트 */}
                                         <i
                                             className={`bi bi-heart${favoriteRestaurants.includes(restaurant.id) ? '-fill' : ''} heart-icon`}

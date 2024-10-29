@@ -125,45 +125,45 @@ public class CommentService {
                 .orElseThrow(() -> new EntityNotFoundException("Trail not found with id " + trailId));
     }
 
-    public Comment createComment(CommentRequest request, Long userId) {
-        // 작성자(Member) 정보 조회 (userId로 Member를 찾음)
-        Member member = findMemberById(userId);  // 여기서 Member가 유효한지 확인
+    public Comment createComment(CommentRequest commentRequest, Long userId) {
+        // 작성자 정보 조회 (userId로 Member를 찾음)
+        Member member = findMemberById(userId);
 
-        // 새로운 리뷰 생성
+        // 새로운 Comment 객체 생성
         Comment comment = new Comment();
-        comment.setContent(request.getContent());
-        comment.setRating(request.getRating());
-        comment.setMember(member);  // Member 엔티티 설정
-        comment.setCreatedAt(LocalDateTime.now());
-        comment.setImageUrls(request.getImageUrls()); // 이미지 URL 저장
+        comment.setContent(commentRequest.getContent());  // DTO에서 content 설정
+        comment.setRating(commentRequest.getRating());    // DTO에서 rating 설정
+        comment.setCreatedAt(LocalDateTime.now());        // 현재 시간으로 작성일자 설정
+        comment.setMember(member);                        // 작성자 정보 설정
+        comment.setImageUrls(commentRequest.getImageUrls());  // 이미지 URL 설정
 
-        // 연결된 엔티티에 따라 설정
-        if (request.getAccommodationId() != null) {
-            Accommodation accommodation = accommodationRepository.findById(request.getAccommodationId())
+        // 연결된 엔티티들 설정 (Optional)
+        if (commentRequest.getAccommodationId() != null) {
+            Accommodation accommodation = accommodationRepository.findById(commentRequest.getAccommodationId())
                     .orElseThrow(() -> new ResourceNotFoundException("Accommodation not found"));
             comment.setAccommodation(accommodation);
         }
 
-        if (request.getFestivalId() != null) {
-            Festival festival = festivalRepository.findById(request.getFestivalId())
+        if (commentRequest.getFestivalId() != null) {
+            Festival festival = festivalRepository.findById(commentRequest.getFestivalId())
                     .orElseThrow(() -> new ResourceNotFoundException("Festival not found"));
             comment.setFestival(festival);
         }
 
-        if (request.getRestaurantId() != null) {
-            Restaurant restaurant = restaurantRepository.findById(request.getRestaurantId())
+        if (commentRequest.getRestaurantId() != null) {
+            Restaurant restaurant = restaurantRepository.findById(commentRequest.getRestaurantId())
                     .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found"));
             comment.setRestaurant(restaurant);
         }
 
-        if (request.getTouristSpotId() != null) {
-            TouristSpot touristSpot = touristSpotRepository.findById(request.getTouristSpotId())
+        if (commentRequest.getTouristSpotId() != null) {
+            TouristSpot touristSpot = touristSpotRepository.findById(commentRequest.getTouristSpotId())
                     .orElseThrow(() -> new ResourceNotFoundException("TouristSpot not found"));
             comment.setTouristSpot(touristSpot);
         }
 
-        if (request.getTrailId() != null) {
-            Trail trail = trailRepository.findById(request.getTrailId())
+        if (commentRequest.getTrailId() != null) {
+            Trail trail = trailRepository.findById(commentRequest.getTrailId())
                     .orElseThrow(() -> new ResourceNotFoundException("Trail not found"));
             comment.setTrail(trail);
         }
@@ -171,6 +171,8 @@ public class CommentService {
         // DB에 Comment 저장
         return commentRepository.save(comment);
     }
+
+
 
 
     public Member findMemberById(Long userId) {
@@ -181,41 +183,73 @@ public class CommentService {
 
 
 
-    // 리뷰 수정 메서드
-    public Comment updateComment(Long commentId, CommentRequest request, Long userId) {
-        // 리뷰 ID로 기존 리뷰 조회
+    public Comment updateComment(Long commentId, CommentRequest request, String email) {
+        // 기존 댓글 조회
         Comment existingComment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException("Comment not found with id " + commentId));
 
         // 작성자와 요청한 사용자가 동일한지 확인
-        if (!existingComment.getMember().getUserId().equals(userId)) {
+        if (!existingComment.getMember().getEmail().equals(email)) {
             throw new AccessDeniedException("You are not authorized to edit this comment.");
         }
 
-        // 리뷰 내용 수정
+        // 댓글 내용 수정
+        if (request.getContent() == null || request.getContent().trim().isEmpty()) {
+            throw new IllegalArgumentException("Content cannot be null or empty");
+        }
         existingComment.setContent(request.getContent());
         existingComment.setRating(request.getRating());
         existingComment.setImageUrls(request.getImageUrls());
         existingComment.setUpdatedAt(LocalDateTime.now());
 
-        // 수정된 리뷰 저장
+        // 연관된 엔티티 업데이트 (관계가 null인 경우 제외)
+        if (request.getAccommodationId() != null) {
+            Accommodation accommodation = accommodationRepository.findById(request.getAccommodationId())
+                    .orElseThrow(() -> new EntityNotFoundException("Accommodation not found"));
+            existingComment.setAccommodation(accommodation);
+        }
+        if (request.getFestivalId() != null) {
+            Festival festival = festivalRepository.findById(request.getFestivalId())
+                    .orElseThrow(() -> new EntityNotFoundException("Festival not found"));
+            existingComment.setFestival(festival);
+        }
+        if (request.getRestaurantId() != null) {
+            Restaurant restaurant = restaurantRepository.findById(request.getRestaurantId())
+                    .orElseThrow(() -> new EntityNotFoundException("Restaurant not found"));
+            existingComment.setRestaurant(restaurant);
+        }
+        if (request.getTouristSpotId() != null) {
+            TouristSpot touristSpot = touristSpotRepository.findById(request.getTouristSpotId())
+                    .orElseThrow(() -> new EntityNotFoundException("Tourist Spot not found"));
+            existingComment.setTouristSpot(touristSpot);
+        }
+        if (request.getTrailId() != null) {
+            Trail trail = trailRepository.findById(request.getTrailId())
+                    .orElseThrow(() -> new EntityNotFoundException("Trail not found"));
+            existingComment.setTrail(trail);
+        }
+
+        // 수정된 댓글 저장
         return commentRepository.save(existingComment);
     }
 
+
+
     // 리뷰 삭제 메서드
-    public void deleteComment(Long commentId, Long userId) {
+    public void deleteComment(Long commentId, String email) {  // userId 대신 String email 사용
         // 리뷰가 존재하는지 확인
         Comment existingComment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException("Comment not found with id " + commentId));
 
-        // 작성자와 요청한 사용자가 동일한지 확인
-        if (!existingComment.getMember().getUserId().equals(userId)) {
+        // 작성자와 요청한 사용자의 이메일이 동일한지 확인
+        if (!existingComment.getMember().getEmail().equals(email)) {
             throw new AccessDeniedException("You are not authorized to delete this comment.");
         }
 
         // 리뷰 삭제
         commentRepository.deleteById(commentId);
     }
+
 
     // 숙소에 대한 모든 리뷰 조회
     public List<Comment> getCommentsByAccommodation(Long accommodationId) {
