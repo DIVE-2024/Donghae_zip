@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageImpl;
 
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -29,6 +30,9 @@ public class FavoriteService {
     private TouristSpotRepository touristSpotRepository;
 
     @Autowired
+    private FestivalRepository festivalRepository;
+
+    @Autowired
     private AccommodationRepository accommodationRepository;
 
     @Autowired
@@ -38,19 +42,17 @@ public class FavoriteService {
     private TrailRepository trailRepository;
 
     // 찜 추가 (관광지)
-    public Favorite addFavoriteSpot(Long userId, Long spotId) {
-        Member member = memberRepository.findById(userId)
+    public Favorite addFavoriteSpot(String email, Long spotId) {
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         TouristSpot spot = touristSpotRepository.findById(spotId)
                 .orElseThrow(() -> new IllegalArgumentException("여행지를 찾을 수 없습니다."));
 
-        // 이미 찜했는지 확인
         favoriteRepository.findByMemberAndTouristSpot(member, spot)
                 .ifPresent(favorite -> {
                     throw new IllegalStateException("이미 찜한 여행지입니다.");
                 });
 
-        // 찜 추가
         Favorite favorite = new Favorite();
         favorite.setMember(member);
         favorite.setTouristSpot(spot);
@@ -58,55 +60,9 @@ public class FavoriteService {
 
         return favoriteRepository.save(favorite);
     }
-
-    // 찜 삭제 (관광지)
-    public void removeFavoriteSpot(Long userId, Long spotId) {
-        Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        TouristSpot spot = touristSpotRepository.findById(spotId)
-                .orElseThrow(() -> new IllegalArgumentException("여행지를 찾을 수 없습니다."));
-
-        // 찜 기록 삭제
-        favoriteRepository.deleteByMemberAndTouristSpot(member, spot);
-    }
-
-    // 찜 추가 (숙박시설)
-    public Favorite addFavoriteAccommodation(Long userId, Long accommodationId) {
-        Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        Accommodation accommodation = accommodationRepository.findById(accommodationId)
-                .orElseThrow(() -> new IllegalArgumentException("숙박시설을 찾을 수 없습니다."));
-
-        // 이미 찜했는지 확인
-        favoriteRepository.findByMemberAndAccommodation(member, accommodation)
-                .ifPresent(favorite -> {
-                    throw new IllegalStateException("이미 찜한 숙박시설입니다.");
-                });
-
-        // 찜 추가
-        Favorite favorite = new Favorite();
-        favorite.setMember(member);
-        favorite.setAccommodation(accommodation);
-        favorite.setCreatedAt(LocalDateTime.now());
-
-        return favoriteRepository.save(favorite);
-    }
-
-    // 찜 삭제 (숙박시설)
-    public void removeFavoriteAccommodation(Long userId, Long accommodationId) {
-        Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        Accommodation accommodation = accommodationRepository.findById(accommodationId)
-                .orElseThrow(() -> new IllegalArgumentException("숙박시설을 찾을 수 없습니다."));
-
-        // 찜 기록 삭제
-        favoriteRepository.deleteByMemberAndAccommodation(member, accommodation);
-    }
-
-
     // 찜 추가 (음식점)
-    public Favorite addFavoriteRestaurant(Long userId, Long restaurantId) {
-        Member member = memberRepository.findById(userId)
+    public Favorite addFavoriteRestaurant(String email, Long restaurantId) {
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
                 .orElseThrow(() -> new IllegalArgumentException("음식점을 찾을 수 없습니다."));
@@ -126,20 +82,53 @@ public class FavoriteService {
         return favoriteRepository.save(favorite);
     }
 
-    // 찜 삭제 (음식점)
-    public void removeFavoriteRestaurant(Long userId, Long restaurantId) {
-        Member member = memberRepository.findById(userId)
+    // 찜 추가 (축제)
+    public Favorite addFavoriteFestival(String email, Long festivalId) {
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+        Festival festival = festivalRepository.findById(festivalId)
                 .orElseThrow(() -> new IllegalArgumentException("음식점을 찾을 수 없습니다."));
 
-        // 찜 기록 삭제
-        favoriteRepository.deleteByMemberAndRestaurant(member, restaurant);
+        // 이미 찜했는지 확인
+        favoriteRepository.findByMemberAndFestival(member, festival)
+                .ifPresent(favorite -> {
+                    throw new IllegalStateException("이미 찜한 축제입니다.");
+                });
+
+        // 찜 추가
+        Favorite favorite = new Favorite();
+        favorite.setMember(member);
+        favorite.setFestival(festival);
+        favorite.setCreatedAt(LocalDateTime.now());
+
+        return favoriteRepository.save(favorite);
+    }
+
+    // 찜 추가 (숙박시설)
+    public Favorite addFavoriteAccommodation(String email, Long accommodationId) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        Accommodation accommodation = accommodationRepository.findById(accommodationId)
+                .orElseThrow(() -> new IllegalArgumentException("숙박시설을 찾을 수 없습니다."));
+
+        // 이미 찜했는지 확인
+        favoriteRepository.findByMemberAndAccommodation(member, accommodation)
+                .ifPresent(favorite -> {
+                    throw new IllegalStateException("이미 찜한 숙박시설입니다.");
+                });
+
+        // 찜 추가
+        Favorite favorite = new Favorite();
+        favorite.setMember(member);
+        favorite.setAccommodation(accommodation);
+        favorite.setCreatedAt(LocalDateTime.now());
+
+        return favoriteRepository.save(favorite);
     }
 
     // 찜 추가 (둘레길)
-    public Favorite addFavoriteTrail(Long userId, Long trailId) {
-        Member member = memberRepository.findById(userId)
+    public Favorite addFavoriteTrail(String email, Long trailId) {
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         Trail trail = trailRepository.findById(trailId)
                 .orElseThrow(() -> new IllegalArgumentException("둘레길을 찾을 수 없습니다."));
@@ -159,9 +148,57 @@ public class FavoriteService {
         return favoriteRepository.save(favorite);
     }
 
+    // 찜 삭제 (관광지)
+    @Transactional
+    public void removeFavoriteSpot(String email, Long spotId) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        TouristSpot spot = touristSpotRepository.findById(spotId)
+                .orElseThrow(() -> new IllegalArgumentException("여행지를 찾을 수 없습니다."));
+
+        favoriteRepository.deleteByMemberAndTouristSpot(member, spot);
+    }
+
+    // 찜 삭제 (음식점)
+    @Transactional
+    public void removeFavoriteRestaurant(String email, Long restaurantId) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new IllegalArgumentException("음식점을 찾을 수 없습니다."));
+
+        // 찜 기록 삭제
+        favoriteRepository.deleteByMemberAndRestaurant(member, restaurant);
+    }
+
+    // 찜 삭제 (축제)
+    @Transactional
+    public void removeFavoriteFestival(String email, Long festivalId) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        Festival festival = festivalRepository.findById(festivalId)
+                .orElseThrow(() -> new IllegalArgumentException("축제를 찾을 수 없습니다."));
+
+        // 찜 기록 삭제
+        favoriteRepository.deleteByMemberAndFestival(member,festival);
+    }
+
+    // 찜 삭제 (숙박시설)
+    @Transactional
+    public void removeFavoriteAccommodation(String email, Long accommodationId) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        Accommodation accommodation = accommodationRepository.findById(accommodationId)
+                .orElseThrow(() -> new IllegalArgumentException("숙박시설을 찾을 수 없습니다."));
+
+        // 찜 기록 삭제
+        favoriteRepository.deleteByMemberAndAccommodation(member, accommodation);
+    }
+
     // 찜 삭제 (둘레길)
-    public void removeFavoriteTrail(Long userId, Long trailId) {
-        Member member = memberRepository.findById(userId)
+    @Transactional
+    public void removeFavoriteTrail(String email, Long trailId) {
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         Trail trail = trailRepository.findById(trailId)
                 .orElseThrow(() -> new IllegalArgumentException("둘레길을 찾을 수 없습니다."));
@@ -182,35 +219,46 @@ public class FavoriteService {
     }
 
     // 특정 사용자가 찜한 여행지를 페이지네이션으로 조회
-    public Page<Favorite> getFavoriteTouristSpots(Long userId, int page, int size) {
-        Member member = memberRepository.findById(userId)
+    public Page<Favorite> getFavoriteTouristSpotsByEmail(String email, int page, int size) {
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
         Pageable pageable = PageRequest.of(page, size);
         return favoriteRepository.findByMemberAndTouristSpotIsNotNull(member, pageable);
     }
 
-    // 특정 사용자가 찜한 숙박 시설을 페이지네이션으로 조회
-    public Page<Favorite> getFavoriteAccommodations(Long userId, int page, int size) {
-        Member member = memberRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-
-        Pageable pageable = PageRequest.of(page, size);
-        return favoriteRepository.findByMemberAndAccommodationIsNotNull(member, pageable);
-    }
-
     // 특정 사용자가 찜한 음식점을 페이지네이션으로 조회
-    public Page<Favorite> getFavoriteRestaurants(Long userId, int page, int size) {
-        Member member = memberRepository.findById(userId)
+    public Page<Favorite> getFavoriteRestaurantsByEmail(String email, int page, int size) {
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
         Pageable pageable = PageRequest.of(page, size);
         return favoriteRepository.findByMemberAndRestaurantIsNotNull(member, pageable);
     }
 
+    // 특정 사용자가 찜한 음식점을 페이지네이션으로 조회
+    public Page<Favorite> getFavoriteFestivalsByEmail(String email, int page, int size) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        Pageable pageable = PageRequest.of(page, size);
+        return favoriteRepository.findByMemberAndFestivalIsNotNull(member, pageable);
+    }
+
+
+    // 특정 사용자가 찜한 숙박 시설을 페이지네이션으로 조회
+    public Page<Favorite> getFavoriteAccommodationsByEmail(String email, int page, int size) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        Pageable pageable = PageRequest.of(page, size);
+        return favoriteRepository.findByMemberAndAccommodationIsNotNull(member, pageable);
+    }
+
+
     // 특정 사용자가 찜한 둘레길을 페이지네이션으로 조회
-    public Page<Favorite> getFavoriteTrails(Long userId, int page, int size) {
-        Member member = memberRepository.findById(userId)
+    public Page<Favorite> getFavoriteTrailsByEmail(String email, int page, int size) {
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
         Pageable pageable = PageRequest.of(page, size);

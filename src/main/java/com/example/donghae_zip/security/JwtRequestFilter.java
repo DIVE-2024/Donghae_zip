@@ -43,7 +43,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 requestURI.startsWith("/api/accommodations/") ||
                 requestURI.startsWith("/api/tourist-spots/") ||
                 requestURI.startsWith("/api/festivals/") ||
-                requestURI.startsWith("/api/trails/")) {
+                requestURI.startsWith("/api/trails/") ||
+                requestURI.startsWith("/api/favorites/public/")) { // 공개 API는 우회
             filterChain.doFilter(request, response);
             return;
         }

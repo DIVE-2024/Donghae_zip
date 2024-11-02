@@ -12,3 +12,19 @@ export const parseJwt = (token) => {
         return null;
     }
 };
+
+export const getUserIdFromToken = () => {
+    const token = sessionStorage.getItem('token');
+    if (!token) {
+        console.log("Token not found in session storage");
+        return null;
+    }
+
+    const decoded = parseJwt(token);
+    if (decoded && decoded.sub) {
+        return decoded.sub;
+    } else {
+        console.log("sub not found in JWT");
+        return null;
+    }
+};

@@ -32,72 +32,98 @@ public class FavoriteController {
     @Operation(summary = "관광지 찜 추가", description = "특정 사용자가 선택한 관광지를 찜 목록에 추가합니다.")
     @PostMapping("/auth/spots/{spotId}")
     public ResponseEntity<Favorite> addFavoriteSpot(
-            @Parameter(description = "사용자 ID", required = true) @RequestParam Long userId,
+            @Parameter(description = "사용자 이메일", required = true) @RequestParam String email,
             @Parameter(description = "관광지 ID", required = true) @PathVariable Long spotId) {
-        Favorite favorite = favoriteService.addFavoriteSpot(userId, spotId);
+        System.out.println("사용자 이메일:"+ email);
+        System.out.println("관광지 ID:" + spotId);
+        Favorite favorite = favoriteService.addFavoriteSpot(email, spotId);
         return ResponseEntity.ok(favorite);
     }
 
     @Operation(summary = "관광지 찜 삭제", description = "특정 사용자가 선택한 관광지를 찜 목록에서 삭제합니다.")
     @DeleteMapping("/auth/spots/{spotId}")
     public ResponseEntity<Void> removeFavoriteSpot(
-            @Parameter(description = "사용자 ID", required = true) @RequestParam Long userId,
+            @Parameter(description = "사용자 이메일", required = true) @RequestParam String email,
             @Parameter(description = "관광지 ID", required = true) @PathVariable Long spotId) {
-        favoriteService.removeFavoriteSpot(userId, spotId);
-        return ResponseEntity.noContent().build();
-    }
-
-    @Operation(summary = "숙박시설 찜 추가", description = "특정 사용자가 선택한 숙박시설을 찜 목록에 추가합니다.")
-    @PostMapping("/auth/accommodations/{accommodationId}")
-    public ResponseEntity<Favorite> addFavoriteAccommodation(
-            @Parameter(description = "사용자 ID", required = true) @RequestParam Long userId,
-            @Parameter(description = "숙박시설 ID", required = true) @PathVariable Long accommodationId) {
-        Favorite favorite = favoriteService.addFavoriteAccommodation(userId, accommodationId);
-        return ResponseEntity.ok(favorite);
-    }
-
-    @Operation(summary = "숙박시설 찜 삭제", description = "특정 사용자가 선택한 숙박시설을 찜 목록에서 삭제합니다.")
-    @DeleteMapping("/auth/accommodations/{accommodationId}")
-    public ResponseEntity<Void> removeFavoriteAccommodation(
-            @Parameter(description = "사용자 ID", required = true) @RequestParam Long userId,
-            @Parameter(description = "숙박시설 ID", required = true) @PathVariable Long accommodationId) {
-        favoriteService.removeFavoriteAccommodation(userId, accommodationId);
+        favoriteService.removeFavoriteSpot(email, spotId);
         return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "음식점 찜 추가", description = "특정 사용자가 선택한 음식점을 찜 목록에 추가합니다.")
     @PostMapping("/auth/restaurants/{restaurantId}")
     public ResponseEntity<Favorite> addFavoriteRestaurant(
-            @Parameter(description = "사용자 ID", required = true) @RequestParam Long userId,
+            @Parameter(description = "사용자 이메일", required = true) @RequestParam String email,
             @Parameter(description = "음식점 ID", required = true) @PathVariable Long restaurantId) {
-        Favorite favorite = favoriteService.addFavoriteRestaurant(userId, restaurantId);
+        System.out.println("사용자 이메일:"+ email);
+        System.out.println("식당 ID:" + restaurantId);
+        Favorite favorite = favoriteService.addFavoriteRestaurant(email, restaurantId);
         return ResponseEntity.ok(favorite);
     }
 
-    @Operation(summary = "음식점 찜 삭제", description = "특정 사용자가 선택한 음식점을 찜 목록에서 삭제합니다.")
-    @DeleteMapping("/auth/restaurants/{restaurantId}")
-    public ResponseEntity<Void> removeFavoriteRestaurant(
-            @Parameter(description = "사용자 ID", required = true) @RequestParam Long userId,
-            @Parameter(description = "음식점 ID", required = true) @PathVariable Long restaurantId) {
-        favoriteService.removeFavoriteRestaurant(userId, restaurantId);
+    @Operation(summary = "음식점 찜 삭제", description = "특정 사용자가 선택한 축제 찜 목록에서 삭제합니다.")
+    @DeleteMapping("/auth/festivals/{festivalId}")
+    public ResponseEntity<Void> removeFavoriteFestival(
+            @Parameter(description = "사용자 이메일", required = true) @RequestParam String email,
+            @Parameter(description = "축제 ID", required = true) @PathVariable Long festivalId) {
+        favoriteService.removeFavoriteFestival(email, festivalId);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "축제 찜 추가", description = "특정 사용자가 선택한 축제 찜 목록에 추가합니다.")
+    @PostMapping("/auth/festivals/{festivalId}")
+    public ResponseEntity<Favorite> addFavoriteFestival(
+            @Parameter(description = "사용자 이메일", required = true) @RequestParam String email,
+            @Parameter(description = "축제 ID", required = true) @PathVariable Long festivalId) {
+        System.out.println("사용자 이메일:"+ email);
+        System.out.println("식당 ID:" + festivalId);
+        Favorite favorite = favoriteService.addFavoriteFestival(email, festivalId);
+        return ResponseEntity.ok(favorite);
+    }
+
+    @Operation(summary = "축제 찜 삭제", description = "특정 사용자가 선택한 음식점을 찜 목록에서 삭제합니다.")
+    @DeleteMapping("/auth/restaurants/{restaurantId}")
+    public ResponseEntity<Void> removeFavoriteRestaurant(
+            @Parameter(description = "사용자 이메일", required = true) @RequestParam String email,
+            @Parameter(description = "음식점 ID", required = true) @PathVariable Long restaurantId) {
+        favoriteService.removeFavoriteRestaurant(email, restaurantId);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @Operation(summary = "숙박시설 찜 추가", description = "특정 사용자가 선택한 숙박시설을 찜 목록에 추가합니다.")
+    @PostMapping("/auth/accommodations/{accommodationId}")
+    public ResponseEntity<Favorite> addFavoriteAccommodation(
+            @Parameter(description = "사용자 ID", required = true) @RequestParam String email,
+            @Parameter(description = "숙박시설 ID", required = true) @PathVariable Long accommodationId) {
+        Favorite favorite = favoriteService.addFavoriteAccommodation(email, accommodationId);
+        return ResponseEntity.ok(favorite);
+    }
+
+    @Operation(summary = "숙박시설 찜 삭제", description = "특정 사용자가 선택한 숙박시설을 찜 목록에서 삭제합니다.")
+    @DeleteMapping("/auth/accommodations/{accommodationId}")
+    public ResponseEntity<Void> removeFavoriteAccommodation(
+            @Parameter(description = "사용자 ID", required = true) @RequestParam String email,
+            @Parameter(description = "숙박시설 ID", required = true) @PathVariable Long accommodationId) {
+        favoriteService.removeFavoriteAccommodation(email, accommodationId);
+        return ResponseEntity.noContent().build();
+    }
+
 
     @Operation(summary = "둘레길 찜 추가", description = "특정 사용자가 선택한 둘레길을 찜 목록에 추가합니다.")
     @PostMapping("/auth/trails/{trailId}")
     public ResponseEntity<Favorite> addFavoriteTrail(
-            @Parameter(description = "사용자 ID", required = true) @RequestParam Long userId,
+            @Parameter(description = "사용자 ID", required = true) @RequestParam String email,
             @Parameter(description = "둘레길 ID", required = true) @PathVariable Long trailId) {
-        Favorite favorite = favoriteService.addFavoriteTrail(userId, trailId);
+        Favorite favorite = favoriteService.addFavoriteTrail(email, trailId);
         return ResponseEntity.ok(favorite);
     }
 
     @Operation(summary = "둘레길 찜 삭제", description = "특정 사용자가 선택한 둘레길을 찜 목록에서 삭제합니다.")
     @DeleteMapping("/auth/trails/{trailId}")
     public ResponseEntity<Void> removeFavoriteTrail(
-            @Parameter(description = "사용자 ID", required = true) @RequestParam Long userId,
+            @Parameter(description = "사용자 ID", required = true) @RequestParam String email,
             @Parameter(description = "둘레길 ID", required = true) @PathVariable Long trailId) {
-        favoriteService.removeFavoriteTrail(userId, trailId);
+        favoriteService.removeFavoriteTrail(email, trailId);
         return ResponseEntity.noContent().build();
     }
 
@@ -112,43 +138,55 @@ public class FavoriteController {
     }
 
     @Operation(summary = "찜한 관광지 조회", description = "특정 사용자가 찜한 관광지를 페이지네이션으로 조회합니다.")
-    @GetMapping("/auth/tourist-spots/{userId}")
+    @GetMapping("/auth/tourist-spots/{email}")
     public ResponseEntity<Page<Favorite>> getFavoriteTouristSpots(
-            @Parameter(description = "사용자 ID", required = true) @PathVariable Long userId,
+            @Parameter(description = "사용자 이메일", required = true) @PathVariable String email,
             @Parameter(description = "페이지 번호", example = "0") @RequestParam int page,
             @Parameter(description = "페이지당 항목 수", example = "10") @RequestParam int size) {
-        Page<Favorite> favorites = favoriteService.getFavoriteTouristSpots(userId, page, size);
-        return ResponseEntity.ok(favorites);
-    }
-
-    @Operation(summary = "찜한 숙박시설 조회", description = "특정 사용자가 찜한 숙박시설을 페이지네이션으로 조회합니다.")
-    @GetMapping("/auth/accommodations/{userId}")
-    public ResponseEntity<Page<Favorite>> getFavoriteAccommodations(
-            @Parameter(description = "사용자 ID", required = true) @PathVariable Long userId,
-            @Parameter(description = "페이지 번호", example = "0") @RequestParam int page,
-            @Parameter(description = "페이지당 항목 수", example = "10") @RequestParam int size) {
-        Page<Favorite> favorites = favoriteService.getFavoriteAccommodations(userId, page, size);
+        Page<Favorite> favorites = favoriteService.getFavoriteTouristSpotsByEmail(email, page, size);
+        System.out.println(favorites);
         return ResponseEntity.ok(favorites);
     }
 
     @Operation(summary = "찜한 음식점 조회", description = "특정 사용자가 찜한 음식점을 페이지네이션으로 조회합니다.")
-    @GetMapping("/auth/restaurants/{userId}")
+    @GetMapping("/auth/restaurants/{email}")
     public ResponseEntity<Page<Favorite>> getFavoriteRestaurants(
-            @Parameter(description = "사용자 ID", required = true) @PathVariable Long userId,
+            @Parameter(description = "사용자 ID", required = true) @PathVariable String email,
             @Parameter(description = "페이지 번호", example = "0") @RequestParam int page,
             @Parameter(description = "페이지당 항목 수", example = "10") @RequestParam int size) {
-        Page<Favorite> favorites = favoriteService.getFavoriteRestaurants(userId, page, size);
+        Page<Favorite> favorites = favoriteService.getFavoriteRestaurantsByEmail(email, page, size);
+        return ResponseEntity.ok(favorites);
+    }
+
+    @Operation(summary = "찜한 축제 조회", description = "특정 사용자가 찜한 축제 페이지네이션으로 조회합니다.")
+    @GetMapping("/auth/festivals/{email}")
+    public ResponseEntity<Page<Favorite>> getFavoriteFestivals(
+            @Parameter(description = "사용자 ID", required = true) @PathVariable String email,
+            @Parameter(description = "페이지 번호", example = "0") @RequestParam int page,
+            @Parameter(description = "페이지당 항목 수", example = "10") @RequestParam int size) {
+        Page<Favorite> favorites = favoriteService.getFavoriteFestivalsByEmail(email, page, size);
+        return ResponseEntity.ok(favorites);
+    }
+
+
+    @Operation(summary = "찜한 숙박시설 조회", description = "특정 사용자가 찜한 숙박시설을 페이지네이션으로 조회합니다.")
+    @GetMapping("/auth/accommodations/{email}")
+    public ResponseEntity<Page<Favorite>> getFavoriteAccommodations(
+            @Parameter(description = "사용자 ID", required = true) @PathVariable String email,
+            @Parameter(description = "페이지 번호", example = "0") @RequestParam int page,
+            @Parameter(description = "페이지당 항목 수", example = "10") @RequestParam int size) {
+        Page<Favorite> favorites = favoriteService.getFavoriteAccommodationsByEmail(email, page, size);
         return ResponseEntity.ok(favorites);
     }
 
     @Operation(summary = "찜한 둘레길 조회", description = "특정 사용자가 찜한 둘레길을 페이지네이션으로 조회합니다.")
-    @GetMapping("/auth/trails/{userId}")
+    @GetMapping("/auth/trails/{email}")
     public ResponseEntity<Page<Favorite>> getFavoriteTrails(
-            @PathVariable Long userId,
+            @PathVariable String email,
             @RequestParam int page,
             @RequestParam int size) {
 
-        Page<Favorite> favorites = favoriteService.getFavoriteTrails(userId, page, size);
+        Page<Favorite> favorites = favoriteService.getFavoriteTrailsByEmail(email, page, size);
         return ResponseEntity.ok(favorites);
     }
 

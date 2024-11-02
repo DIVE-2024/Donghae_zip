@@ -20,6 +20,9 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     // 특정 사용자가 찜한 여행지를 페이지네이션으로 조회
     Page<Favorite> findByMemberAndTouristSpotIsNotNull(Member member, Pageable pageable);
 
+    // 특정 사용자가 찜한 축제 페이지네이션으로 조회
+    Page<Favorite> findByMemberAndFestivalIsNotNull(Member member, Pageable pageable);
+
     // 특정 사용자가 찜한 숙박 시설을 페이지네이션으로 조회
     Page<Favorite> findByMemberAndAccommodationIsNotNull(Member member, Pageable pageable);
 
@@ -39,6 +42,10 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     // 숙박시설 찜 추가 및 삭제
     Optional<Favorite> findByMemberAndAccommodation(Member member, Accommodation accommodation);
     void deleteByMemberAndAccommodation(Member member, Accommodation accommodation);
+
+    // 축제 찜 추가 및 삭제
+    Optional<Favorite> findByMemberAndFestival(Member member, Festival festival);
+    void deleteByMemberAndFestival(Member member, Festival festival);
 
     // 음식점 찜 추가 및 삭제
     Optional<Favorite> findByMemberAndRestaurant(Member member, Restaurant restaurant);

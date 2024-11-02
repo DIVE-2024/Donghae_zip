@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './TouristSpotList.css';
 import ReviewCount from "../../components/Comment/ReviewCount";
+import {getUserIdFromToken } from "../../components/Util/jwtUtils";
 
 const TouristSpotList = () => {
     const [spots, setSpots] = useState([]);
@@ -16,18 +17,19 @@ const TouristSpotList = () => {
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [favoriteSpots, setFavoriteSpots] = useState([]);  // 찜한 관광지 목록
-
+    const [userId,setUserId] = useState(null);
     const itemsPerPage = 15;
     const maxPageButtons = 5; // 페이지 버튼을 5개로 제한
 
-    // 찜 목록 가져오기
+    // 초기 로드 시 JWT에서 userId 설정
+    useEffect(() => {
+        const userId = getUserIdFromToken();  // userId 가져오기
+        if (userId) setUserId(userId);
+    }, []);
+
     const fetchFavoriteSpots = useCallback(() => {
         const token = sessionStorage.getItem('token');
-        const userId = sessionStorage.getItem('userId');
-
-        if (!token || !userId) {
-            return; // 토큰이나 userId가 없으면 찜 목록을 가져오지 않음
-        }
+        if (!userId || !token) return;
 
         axios.get(`/api/favorites/auth/tourist-spots/${userId}`, {
             headers: {
@@ -39,13 +41,24 @@ const TouristSpotList = () => {
             }
         })
             .then(response => {
-                const favoriteSpotIds = response.data.content.map(fav => fav.spot.spotId);
+                // 데이터 구조가 예상대로인지를 확인하기 위한 로그
+                console.log("Fetched favorites data:", response.data);
+
+                // fav.touristSpot이 존재할 때만 spotId를 가져옵니다.
+                const favoriteSpotIds = response.data.content
+                    .filter(fav => fav.touristSpot && fav.touristSpot.spotId) // touristSpot과 spotId가 있는지 필터링
+                    .map(fav => fav.touristSpot.spotId);
+
+                console.log("Favorite spots loaded:", favoriteSpotIds); // 데이터 로딩 확인용 로그
                 setFavoriteSpots(favoriteSpotIds);  // 찜 목록에 있는 관광지 ID 저장
             })
             .catch(error => {
                 console.error('찜 목록을 가져오는 중 오류 발생:', error);
             });
-    }, []);
+    }, [userId]);
+
+
+
 
     // 관광지 목록 API 호출 함수
     const fetchSpots = useCallback(() => {
@@ -72,10 +85,13 @@ const TouristSpotList = () => {
             });
     }, [title, category, region, indoorOutdoor, page]);
 
+    // userId가 설정된 후 관광지 및 찜 목록을 불러옴
     useEffect(() => {
-        fetchSpots();
-        fetchFavoriteSpots();  // 찜 목록도 함께 가져옴
-    }, [fetchSpots, fetchFavoriteSpots]);
+        if (userId) {
+            fetchSpots();
+            fetchFavoriteSpots();
+        }
+    }, [fetchSpots, fetchFavoriteSpots, userId]);
 
     // 카테고리 필터를 버튼 클릭 시 적용
     const handleCategoryClick = (selectedCategory) => {
@@ -97,16 +113,59 @@ const TouristSpotList = () => {
     const startPage = Math.floor(page / maxPageButtons) * maxPageButtons;
     const endPage = Math.min(startPage + maxPageButtons, totalPages);
 
+    const handleFavoriteToggle = (spotId) => {
+        const token = sessionStorage.getItem('token');
+        if (!token || !userId) {
+            alert("로그인이 필요합니다.");
+            return;
+        }
+
+        const isFavorite = favoriteSpots.includes(spotId);
+
+        if (isFavorite) {
+            // 좋아요 삭제 요청
+            axios.delete(`/api/favorites/auth/spots/${spotId}?email=${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(() => {
+                    setFavoriteSpots((prevFavorites) => prevFavorites.filter(id => id !== spotId));
+                })
+                .catch(error => {
+                    console.error("좋아요 삭제 중 오류:", error);
+                    alert("좋아요 삭제에 실패했습니다.");
+                });
+        } else {
+            // 좋아요 추가 요청
+            axios.post(`/api/favorites/auth/spots/${spotId}?email=${userId}`, null, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(() => {
+                    setFavoriteSpots((prevFavorites) => [...prevFavorites, spotId]);
+                })
+                .catch(error => {
+                    console.error("좋아요 추가 중 오류:", error);
+                    alert("좋아요 추가에 실패했습니다.");
+                });
+        }
+    };
+
+
+
     return (
         <div className="container custom-container mt-5">
             {/* "결과 총 00개" */}
-            <div className="page-title">결과 총 {spotCount}개</div>
+            <div className="page-title"> 여행지 결과 총 {spotCount}개</div>
 
             {/* 필터 그룹 */}
-            <div className="input-group filter-group mb-4">
+            <div className="input-group filter-group mb-4" style={{height:'3rem'}}>
                 {/* 제목 검색 필터 */}
                 <input
                     type="text"
+                    style={{fontSize:'1.3rem'}}
                     className="form-control"
                     placeholder="제목 검색"
                     value={title}
@@ -117,6 +176,7 @@ const TouristSpotList = () => {
                 {/* 지역 선택 필터 */}
                 <select
                     className="form-select"
+                    style={{fontSize:'1.3rem'}}
                     value={region}
                     onChange={(e) => { setRegion(e.target.value); setPage(0); fetchSpots(); }}
                 >
@@ -127,6 +187,7 @@ const TouristSpotList = () => {
 
                 {/* 실내/실외 선택 필터 */}
                 <select
+                    style={{fontSize:'1.3rem'}}
                     className="form-select"
                     value={indoorOutdoor}
                     onChange={(e) => { setIndoorOutdoor(e.target.value); setPage(0); fetchSpots(); }}
@@ -137,65 +198,51 @@ const TouristSpotList = () => {
                 </select>
 
                 {/* 필터 초기화 버튼 */}
-                <button className="btn btn-secondary ml-2" onClick={resetFilters}>초기화</button>
+                <button style={{fontSize:'1.3rem'}} className="btn btn-secondary ml-2" onClick={resetFilters}>초기화</button>
             </div>
 
             {/* 카테고리 필터 박스 */}
             <div className="category-box">
-                <h3 className="category-title">카테고리 필터</h3>
+                <div style={{fontSize:'1.8rem'}} className="category-title">카테고리 필터</div>
                 <div className="category-buttons mb-4">
-                    <button className="category-btn" onClick={() => handleCategoryClick('공원')}>공원</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('문화시설')}>문화시설</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('레포츠')}>레포츠</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('테마거리')}>테마거리</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('쇼핑')}>쇼핑</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('문화유산')}>문화유산</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('산책로')}>산책로</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('해수욕장')}>해수욕장</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('시장')}>시장</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('마을')}>마을</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('사찰')}>사찰</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('체험시설')}>체험시설</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('지질공원')}>지질공원</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('테마파크')}>테마파크</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('놀이시설')}>놀이시설</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('키즈카페')}>키즈카페</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('전시관')}>전시관</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('식물원')}>식물원</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('계곡')}>계곡</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('영화관')}>영화관</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('아쿠아리움')}>아쿠아리움</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('해안지역')}>해안지역</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('유적지')}>유적지</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('상점')}>상점</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('도시')}>도시</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('공방')}>공방</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('스파')}>스파</button>
-                    <button className="category-btn" onClick={() => handleCategoryClick('명소')}>명소</button>
+                    {/* 카테고리 버튼 */}
+                    {["공원", "문화시설", "레포츠", "테마거리", "쇼핑", "문화유산", "산책로", "해수욕장", "시장", "마을", "사찰", "체험시설", "지질공원", "테마파크", "놀이시설", "키즈카페", "전시관", "식물원", "계곡", "영화관", "아쿠아리움", "해안지역", "유적지", "상점", "도시", "공방", "스파", "명소"].map((category) => (
+                        <button style={{fontSize:'1.3rem'}} key={category} className="category-btn" onClick={() => handleCategoryClick(category)}>
+                            {category}
+                        </button>
+                    ))}
                 </div>
             </div>
 
             {/* 관광지 목록 */}
             <div className="row">
                 {spots.map((spot) => (
-                    <div key={spot.spotId} className="col-md-4 mb-4">
+                    <div style={{marginBottom:'3rem'}} key={spot.spotId} className="col-md-4">
                         <Link to={`/tourist-spot/${spot.spotId}`} className="card-link">
                             <div className="card h-100 tourist-spot-card">
-                                <img src={spot.imageUrls[0]} className="card-img-top img-fixed" alt={spot.title} />
+                                <img src={spot.imageUrls[0]} className="card-img-top img-fixed" alt={spot.title}/>
                                 <div className="card-body d-flex flex-column">
-                                    <div style={{fontSize:'1.9rem'}} className="card-title spot-list-title">{spot.title}</div>
-                                    <p style={{fontSize:'1.2rem'}} className="card-text spot-overview">{spot.oneLineDesc}</p>
-                                    <p style={{fontSize:'1.3rem'}} className="spot-info">
+                                    <div style={{fontSize: '1.9rem'}}
+                                         className="card-title spot-list-title">{spot.title}</div>
+                                    <p style={{fontSize: '1.2rem'}}
+                                       className="card-text spot-overview">{spot.oneLineDesc}</p>
+                                    <p style={{fontSize: '1.3rem'}} className="spot-info">
                                         {spot.address}
                                         <span className="dot"></span>
                                         {spot.region}
                                     </p>
-                                    <div className="mt-auto d-flex justify-content-end align-items-center">
-                                        <ReviewCount className="btn btn-primary review-btn me-2" entityType="tourist-spots" id={spot.spotId} />
-                                        {/* 하트 아이콘: 찜한 코스는 채워진 하트, 그렇지 않은 코스는 빈 하트 */}
+                                    <div className="mt-auto d-flex align-items-center"
+                                         style={{display: 'flex', justifyContent: 'space-between'}}>
                                         <i
-                                            className={`bi bi-heart${favoriteSpots.includes(spot.spotId) ? '-fill' : ''} heart-icon`}
+                                            className={`bi bi-heart${favoriteSpots.includes(spot.spotId) ? '-fill heart-icon-fill' : ''} heart-icon`}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                handleFavoriteToggle(spot.spotId);
+                                            }}
                                         ></i>
+
+                                        <ReviewCount className="btn btn-primary review-btn me-2"
+                                                     entityType="tourist-spots" id={spot.spotId}/>
                                     </div>
                                 </div>
                             </div>

@@ -77,7 +77,8 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/festivals/**").permitAll()
 
                         // 찜 API는 인증 필요
-                        .requestMatchers("/api/favorites/auth/**").permitAll()
+                        .requestMatchers("/api/favorites/auth/**").authenticated() // 찜 API는 인증 필요
+
 
                         // 나이대별 인기 여행지 조회는 인증 없이 가능
                         .requestMatchers("/api/favorites/public/**").permitAll()
