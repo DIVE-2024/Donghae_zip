@@ -20,6 +20,8 @@ const DonghaeSubway = () => {
             .catch((error) => {
                 console.error("Error fetching station data:", error);
             });
+        // 초기 화면에 "부전역" 정보를 가져오기 위해 handleStationClick 호출
+        handleStationClick("부전");
     }, []);
 
     // 특정 역 정보 가져오기

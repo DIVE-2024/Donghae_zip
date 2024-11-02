@@ -1,0 +1,156 @@
+/* 페이지 배경색 */
+body {
+    background-color: #B4C2D7;
+}
+
+.custom-container {
+    max-width: 100rem !important;
+}
+
+/* 제목 스타일 */
+.spot-detail-title {
+    font-size: 3.5rem;
+    font-weight: bold;
+}
+
+/* 이미지 크기 및 둥근 모서리 설정 */
+.spot-image {
+    border-radius: 20px;
+    width: 180rem;
+    height: auto;
+    object-fit: cover;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Carousel 중앙 정렬 */
+.carousel-center {
+    width: 100%;
+    margin: 1.5rem auto;
+}
+
+/* 상세 정보 섹션 */
+.spot-info-section {
+    display: flex;
+    width: 90%;
+    flex-direction: column;
+    padding: 2rem;
+    background-color: #fff5f7;
+    border-radius: 2rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
+    font-size: 1.2rem;
+    color: #333333;
+    line-height: 1.6;
+}
+
+.spot-info-section p {
+    font-size: 1.5rem;
+    line-height: 1.6;
+    margin-bottom: 1.2rem;
+}
+
+.spot-info-section strong {
+    font-weight: bold;
+    color: #333;
+}
+
+.spot-info-section h2 {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #444;
+}
+
+/* 별점 아이콘 스타일 */
+.text-warning {
+    font-size: 1.5rem;
+}
+
+.text-secondary {
+    font-size: 1.5rem;
+}
+
+.tour-detail {
+    width: 95%;
+    display: flex;
+    margin: auto;
+    gap: 3rem;
+}
+
+.map-style {
+    margin-top: 2rem;
+}
+
+/* ReviewSection 스타일 */
+.comment-section {
+    padding: 20px;
+    background-color: #fff5f7;
+    border-radius: 20px;
+}
+
+.comment-section h2 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.comment {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-size: 1.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.2rem;
+    color: #888;
+}
+
+.comment-header .nickname {
+    font-size: 1.8rem;
+    color: #333;
+    font-weight: bold;
+}
+
+.comment-content {
+    color: #555;
+    font-size: 1.6rem;
+    text-align: left;
+}
+
+.rating-label {
+    font-size: 1.5rem;
+}
+
+.star-rating {
+    font-size: 1.8rem;
+    color: #ffc107;
+}
+
+.comment-input {
+    height: 10rem;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.comment-submit {
+    width: 9rem;
+    height: 3.5rem;
+    font-size: 1.8rem;
+    background-color: #007bff;
+    color: white;
+}
+
+.comment-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 5px;
+}

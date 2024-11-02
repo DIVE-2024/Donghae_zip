@@ -32,6 +32,10 @@ public class Favorite {
     @JoinColumn(name = "unique_id", nullable = true)  // Accommodation 엔티티의 unique_id와 매핑
     private Accommodation accommodation;
 
+    @ManyToOne
+    @JoinColumn(name="festival_id",nullable = true) //favorite 엔티티의 festival_id와 매핑
+    private Festival festival;
+
     // 찜한 음식점과 매핑
     @ManyToOne
     @JoinColumn(name = "id", nullable = true)  // Restaurant 엔티티의 id와 매핑

@@ -7,6 +7,7 @@ import oceanImage from '../../assets/images/ocean.png'; // 이미지 가져오�
 import DonghaeMap from '../../Donghae/DonghaeMap';
 import DonghaeMapPlace from '../../Donghae/DonghaeMapPlace';
 import StationStatsChart from "../../Chart/StationStatsChart";
+import trainImage from "../../assets/images/train.png";
 
 
 const MainContainer = styled.div`
@@ -16,8 +17,8 @@ const MainContainer = styled.div`
   min-height: 100vh;
 `;
 
-// React.memo를 사용하여 TopSection이 캐러셀 상태 변화와 관계없이 렌더링되지 않도록 함
 const TopSection = memo(styled.div`
+    position: relative; 
   box-sizing: border-box;
   height: 65rem;
   background-image: url(${props => props.$backgroundImage});
@@ -25,6 +26,28 @@ const TopSection = memo(styled.div`
   background-position: center;
     padding: 4rem;
 `);
+
+const MovingTrain = styled.div`
+  position: absolute;
+  bottom: 10px; 
+  left: 10px;
+  width: 20rem;
+  height: 8rem;
+  background-image: url(${trainImage});
+  background-size: contain;
+  background-repeat: no-repeat;
+  z-index: 100;
+    animation: moveTrain 10s linear infinite;
+
+    @keyframes moveTrain {
+        0% { transform: translateX(-100%) scaleX(-1); }
+        100% { transform: translateX(100vw) scaleX(-1); }
+    }
+`;
+
+
+
+
 
 const TextSection = styled.div`
   width: 110rem;
@@ -95,6 +118,7 @@ const ImageSection = styled.div`
   background-color: white;
   border-radius: 15px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+    position: relative; // 인디케이터 위치를 위한 설정
 `;
 
 // 캐러셀 아이템 스타일
@@ -112,9 +136,23 @@ const CarouselItemWrapper = styled.div`
 // 캐러셀 아이템 내 이미지 스타일
 const CarouselImage = styled.img`
   width: 100%;
+    border-radius: 15px;
   height: 100%;
   object-fit: fill;  /* 이미지 비율을 유지하면서 크기에 맞춤 */
 `;
+
+const PageIndicator = styled.div`
+  position: absolute;
+  bottom: 20px;
+  right: 20px; /* 오른쪽 하단에 위치시키기 */
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #000;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 5px 10px;
+  border-radius: 5px;
+`;
+
 
 const BottomSection = styled.div`
   padding: 10px;
@@ -122,14 +160,6 @@ const BottomSection = styled.div`
     height: 70rem;
 `;
 
-const HalfSection = styled.div`
-  flex: 1;
-  padding: 20px;
-  margin: 0 10px;
-  background-color: #cbd5e0;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-`;
 
 // 이전/다음 버튼 커스터마이징
 const CarouselControlPrevIcon = styled.span`
@@ -184,6 +214,8 @@ const MainPage = () => {
     const [restaurants, setRestaurants] = useState([]);  // 식당 데이터
     const [touristSpots, setTouristSpots] = useState([]);  // 여행지 데이터
     const [isStationClicked, setIsStationClicked] = useState(false); // 역 클릭 여부 상태
+    const [currentSlide, setCurrentSlide] = useState(0);
+
 
     // 로그인 상태 관리
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -234,7 +266,6 @@ const MainPage = () => {
     };
 
 
-
     // 동해선 역 데이터 및 진행 중인 축제 데이터를 API에서 가져오는 로직
     useEffect(() => {
         // 동해선 역 데이터 가져오기
@@ -263,6 +294,10 @@ const MainPage = () => {
             });
     }, []);  // 빈 배열 []로 설정하여 최초 렌더링 시 한 번만 실행
 
+    const handleSlideChange = (selectedIndex) => {
+        setCurrentSlide(selectedIndex);
+    };
+
     return (
         <MainContainer>
             {/* 상단 메인 섹션 */}
@@ -277,14 +312,18 @@ const MainPage = () => {
                         <SearchBar>
                             <InputGroup>
                                 <FormControl type="text" placeholder="여행지를 검색하세요..." aria-label="Search" />
-                                <ButtonPrimary type="button">검색</ButtonPrimary>
+                                <ButtonPrimary type="button" style={{padding:'13px',fontSize:'1.5rem',width:'5rem'}}>검색</ButtonPrimary>
                             </InputGroup>
                         </SearchBar>
                     </TextSection>
                     {/* 캐러셀 섹션 */}
                     <ImageSection>
-                        <Carousel prevIcon={<CarouselControlPrev><CarouselControlPrevIcon /></CarouselControlPrev>}
-                                  nextIcon={<CarouselControlNext><CarouselControlNextIcon /></CarouselControlNext>}>
+                        <Carousel
+                            activeIndex={currentSlide}
+                            onSelect={handleSlideChange}
+                            prevIcon={<CarouselControlPrev><CarouselControlPrevIcon /></CarouselControlPrev>}
+                            nextIcon={<CarouselControlNext><CarouselControlNextIcon /></CarouselControlNext>}
+                        >
                             {ongoingFestivals.map((festival, index) => (
                                 <Carousel.Item key={festival.id || index}>
                                     <CarouselItemWrapper>
@@ -297,8 +336,12 @@ const MainPage = () => {
                                 </Carousel.Item>
                             ))}
                         </Carousel>
+                        <PageIndicator>
+                            {String(currentSlide + 1).padStart(2, '0')} / {String(ongoingFestivals.length).padStart(2, '0')}
+                        </PageIndicator>
                     </ImageSection>
                 </div>
+                <MovingTrain />
             </TopSection>
 
             {/* 하단 추가 섹션 */}
@@ -322,7 +365,6 @@ const MainPage = () => {
                         <DonghaeMapPlace />
                         )}
                 </div>
-
             </BottomSection>
         </MainContainer>
     );

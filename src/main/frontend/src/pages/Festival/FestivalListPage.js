@@ -4,9 +4,11 @@ import axios from 'axios';
 import './FestivalListPage.css';
 import { Link } from 'react-router-dom';
 import ReviewCount from "../../components/Comment/ReviewCount";
+import {getUserIdFromToken } from "../../components/Util/jwtUtils";
 
 const FestivalListPage = () => {
     const [festivals, setFestivals] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [title, setTitle] = useState('');
     const [region, setRegion] = useState('');
     const [status, setStatus] = useState('');
@@ -14,28 +16,73 @@ const FestivalListPage = () => {
     const [month, setMonth] = useState('');
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
+    const [festivalsCount, setFestivalCount] = useState(0);
     const [totalElements, setTotalElements] = useState(0);
-    const size = 15;
+    const [favoriteFestivals, setFavoriteFestivals] = useState([]); // 사용자의 찜 목록
+    const [userId,setUserId] = useState(null);
+    const itemsPerPage = 15; // 한 페이지에 15개의 식당
+
+    // 초기 로드 시 JWT에서 userId 설정
+    useEffect(() => {
+        const userId = getUserIdFromToken();  // userId 가져오기
+        if (userId) setUserId(userId);
+    }, []);
+
+    // 사용자 찜 목록 가져오기
+    const fetchFavoriteFestivals = useCallback(() => {
+        const token = sessionStorage.getItem('token');
+        const userId = getUserIdFromToken();
+        console.log(userId);
+
+        if (!userId) {
+            console.error('userId가 세션에 저장되지 않았습니다.');
+            return;
+        }
+
+        axios.get(`/api/favorites/auth/festivals/${userId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            params: {
+                page: page,  // 페이지 번호 추가
+                size: itemsPerPage  // 페이지 크기 추가
+            }
+        })
+            .then(response => {
+                // 데이터 구조가 예상대로인지를 확인하기 위한 로그
+                console.log("Fetched favorites data:", response.data);
+
+                const favoriteFestivalsIds = response.data.content.map(fav => fav.festival.festivalId);
+                setFavoriteFestivals(favoriteFestivalsIds); // 찜 목록 상태에 저장
+                setTotalPages(response.data.totalPages); // 전체 페이지 수 설정
+                setFestivalCount(response.data.totalElements); // 전체 식당 수 설정
+                setLoading(false);
+            })
+            .catch(error => {
+                console.error('Error fetching favorite restaurants:', error);
+                setLoading(false);
+            });
+    }, [page]);
 
     const fetchFestivals = useCallback(async () => {
         try {
-            let filterUrl = `/api/festivals/filter?page=${page}&size=${size}`;
+            let filterUrl = `/api/festivals/filter?page=${page}&size=${itemsPerPage}`;
 
             // 제목으로 필터링
             if (title) {
-                filterUrl = `/api/festivals/search/title?title=${encodeURIComponent(title)}&page=${page}&size=${size}`;
+                filterUrl = `/api/festivals/search/title?title=${encodeURIComponent(title)}&page=${page}&size=${itemsPerPage}`;
             }
             // 지역으로 필터링
             else if (region) {
-                filterUrl = `/api/festivals/search/region?region=${encodeURIComponent(region)}&page=${page}&size=${size}`;
+                filterUrl = `/api/festivals/search/region?region=${encodeURIComponent(region)}&page=${page}&size=${itemsPerPage}`;
             }
             // 상태로 필터링 (예정, 진행 중, 완료)
             else if (status) {
-                filterUrl = `/api/festivals/status?status=${status}&page=${page}&size=${size}`;
+                filterUrl = `/api/festivals/status?status=${status}&page=${page}&size=${itemsPerPage}`;
             }
             // 년도/월로 필터링
             else if (year && month) {
-                filterUrl = `/api/festivals/search/year-month?year=${year}&month=${month}&page=${page}&size=${size}`;
+                filterUrl = `/api/festivals/search/year-month?year=${year}&month=${month}&page=${page}&size=${itemsPerPage}`;
             }
 
             // 필터가 없는 경우 기본 데이터 가져오기
@@ -47,10 +94,11 @@ const FestivalListPage = () => {
         } catch (error) {
             console.error('Error fetching festivals', error);
         }
-    }, [page, size, title, region, status, year, month]);
+    }, [page, itemsPerPage, title, region, status, year, month]);
 
     useEffect(() => {
         fetchFestivals();
+        fetchFavoriteFestivals();
     }, [fetchFestivals]);
 
     const handleFilterChange = () => {
@@ -72,9 +120,50 @@ const FestivalListPage = () => {
         setPage(pageNumber - 1);
     };
 
+    const handleFavoriteToggle = (id) => {
+        const token = sessionStorage.getItem('token');
+        if (!token || !userId) {
+            alert("로그인이 필요합니다.");
+            return;
+        }
+
+        const isFavorite = favoriteFestivals.includes(id);
+
+        if (isFavorite) {
+            // 좋아요 삭제 요청
+            axios.delete(`/api/favorites/auth/festivals/${id}?email=${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(() => {
+                    // 기존 코드에서 삭제할 id를 명확히 지정하여 상태를 업데이트합니다
+                    setFavoriteFestivals((prevFavorites) => prevFavorites.filter(favId => favId !== id));
+                })
+                .catch(error => {
+                    console.error("좋아요 삭제 중 오류:", error);
+                    alert("좋아요 삭제에 실패했습니다.");
+                });
+        } else {
+            // 좋아요 추가 요청
+            axios.post(`/api/favorites/auth/festivals/${id}?email=${userId}`, null, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(() => {
+                    setFavoriteFestivals((prevFavorites) => [...prevFavorites, id]);
+                })
+                .catch(error => {
+                    console.error("좋아요 추가 중 오류:", error);
+                    alert("좋아요 추가에 실패했습니다.");
+                });
+        }
+    };
+
     return (
         <div className="container custom-container mt-5">
-            <div className="page-title">결과 총 {totalElements}개</div>
+            <div className="page-title">축제 결과 총 {totalElements}개</div>
 
             {/* 필터 그룹: 제목 검색, 지역 선택, 상태 선택, 년도 선택, 월 선택 */}
             <div className="input-group festival-filter-group mb-4" style={{margin:'auto'}}>
@@ -169,11 +258,17 @@ const FestivalListPage = () => {
                             <Card.Body>
                                 <Card.Title className="festival-card-title" style={{fontSize:'1.9rem'}}>{festival.title}</Card.Title>
                                 <Card.Text className="festival-card-text" style={{fontSize:'1.3rem'}}>{festival.period}</Card.Text>
-                                <div className="card-bottom-right">
-                                    <ReviewCount className="btn btn-primary review-btn me-2" entityType="festivals" id={festival.festivalId} />
-                                    <Button variant="outline-danger" className="heart-btn">
-                                        <i className="bi bi-heart"></i>
-                                    </Button>
+                                <div className="mt-auto d-flex align-items-center"
+                                     style={{display: 'flex', justifyContent: 'space-between'}}>
+                                    <i
+                                        className={`bi bi-heart${favoriteFestivals.includes(festival.festivalId) ? '-fill heart-icon-fill' : ''} heart-icon`}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            handleFavoriteToggle(festival.festivalId);
+                                        }}
+                                    ></i>
+                                    <ReviewCount className="btn btn-primary review-btn me-2" entityType="festivals"
+                                                 id={festival.festivalId}/>
                                 </div>
                             </Card.Body>
                         </Card>
@@ -188,7 +283,7 @@ const FestivalListPage = () => {
                             onClick={() => handlePageChange(page > 0 ? page : 1)}
                             disabled={page === 0}
                         >
-                            이전
+                        이전
                         </Pagination.Prev>
                         {[...Array(Math.min(5, totalPages))].map((_, idx) => (
                             <Pagination.Item

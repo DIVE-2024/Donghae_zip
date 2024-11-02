@@ -5,19 +5,67 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import '../Trail/TrailListPage.css';
 import ReviewCount from "../../components/Comment/ReviewCount";
+import {getUserIdFromToken } from "../../components/Util/jwtUtils";
 
 const AccommodationList = () => {
     const [accommodations, setAccommodations] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [totalPages, setTotalPages] = useState(1);
     const [totalAccommodations, setTotalAccommodations] = useState(0); // 총 숙박 수 상태 추가
     const [currentPage, setCurrentPage] = useState(0);
     const [region, setRegion] = useState('');
+    const [favoriteAccommodations, setFavoriteAccommodations] = useState([]); // 사용자의 찜 목록
+    const [accommodationsCount, setAccommodationCount] = useState(0);
     const [priceRange, setPriceRange] = useState('');
+    const [ userId , setUserId] = useState(null);
+    const [page, setPage] = useState(0);
 
     const itemsPerPage = 15;
+    const maxPageNumbersToShow = 5; // 1 ~ 5 페이지만 페이지네이션에 보여줌
 
-    // 페이지네이션에서 1에서 5까지만 표시되도록 설정
-    const maxPageNumbersToShow = 5;
+
+    // 초기 로드 시 JWT에서 userId 설정
+    useEffect(() => {
+        const userId = getUserIdFromToken();  // userId 가져오기
+        if (userId) setUserId(userId);
+    }, []);
+
+
+    // 사용자 찜 목록 가져오기
+    const fetchFavoriteAccommodaions = useCallback(() => {
+        const token = sessionStorage.getItem('token');
+        const userId = getUserIdFromToken();
+        console.log(userId);
+
+        if (!userId) {
+            console.error('userId가 세션에 저장되지 않았습니다.');
+            return;
+        }
+
+        axios.get(`/api/favorites/auth/accommodations/${userId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            params: {
+                page: page,  // 페이지 번호 추가
+                size: itemsPerPage  // 페이지 크기 추가
+            }
+        })
+            .then(response => {
+                // 데이터 구조가 예상대로인지를 확인하기 위한 로그
+                console.log("Fetched favorites data:", response.data);
+
+                const favoriteAccommodationsIds = response.data.content.map(fav => fav.accommodation.uniqueId);
+                setFavoriteAccommodations(favoriteAccommodationsIds); // 찜 목록 상태에 저장
+                setTotalPages(response.data.totalPages); // 전체 페이지 수 설정
+                setAccommodationCount(response.data.totalElements); // 전체 식당 수 설정
+                setLoading(false);
+            })
+            .catch(error => {
+                console.error('Error fetching favorite restaurants:', error);
+                setLoading(false);
+            });
+    }, [page]);
 
     const fetchAccommodations = useCallback(() => {
         let apiUrl = `/api/accommodations?page=${currentPage}&size=${itemsPerPage}`;
@@ -44,7 +92,49 @@ const AccommodationList = () => {
 
     useEffect(() => {
         fetchAccommodations();
-    }, [fetchAccommodations]);
+        fetchFavoriteAccommodaions();
+    }, [fetchAccommodations,fetchFavoriteAccommodaions,userId]);
+
+    const handleFavoriteToggle = (id) => {
+        const token = sessionStorage.getItem('token');
+        if (!token || !userId) {
+            alert("로그인이 필요합니다.");
+            return;
+        }
+
+        const isFavorite = favoriteAccommodations.includes(id);
+
+        if (isFavorite) {
+            // 좋아요 삭제 요청
+            axios.delete(`/api/favorites/auth/accommodations/${id}?email=${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(() => {
+                    // 기존 코드에서 삭제할 id를 명확히 지정하여 상태를 업데이트합니다
+                    setFavoriteAccommodations((prevFavorites) => prevFavorites.filter(favId => favId !== id));
+                })
+                .catch(error => {
+                    console.error("좋아요 삭제 중 오류:", error);
+                    alert("좋아요 삭제에 실패했습니다.");
+                });
+        } else {
+            // 좋아요 추가 요청
+            axios.post(`/api/favorites/auth/accommodations/${id}?email=${userId}`, null, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(() => {
+                    setFavoriteAccommodations((prevFavorites) => [...prevFavorites, id]);
+                })
+                .catch(error => {
+                    console.error("좋아요 추가 중 오류:", error);
+                    alert("좋아요 추가에 실패했습니다.");
+                });
+        }
+    };
 
     // 페이지 번호 렌더링
     const renderPagination = () => {
@@ -84,7 +174,7 @@ const AccommodationList = () => {
     return (
         <div className="container custom-container mt-5">
             {/* 결과 총 숙박 수 표시 */}
-            <div className="page-title">결과 총 {totalAccommodations}개</div>
+            <div className="page-title">숙소 결과 총 {totalAccommodations}개</div>
 
             <div className="input-group filter-group mb-4">
                 <select
@@ -134,9 +224,17 @@ const AccommodationList = () => {
                                         <p style={{fontSize:'1.3rem'}} className="trail-info">
                                             1일 평균 숙박가격: {accommodation.averagePrice.toLocaleString()}원
                                         </p>
-                                        <div className="mt-auto d-flex justify-content-end align-items-center">
-                                            <ReviewCount className="btn btn-primary review-btn me-2" entityType="accommodations" id={accommodation.uniqueId} />
-                                            <i className="bi bi-heart heart-icon"></i>
+                                        <div className="mt-auto d-flex align-items-center"
+                                             style={{display: 'flex', justifyContent: 'space-between'}}>
+                                            <i
+                                                className={`bi bi-heart${favoriteAccommodations.includes(accommodation.uniqueId) ? '-fill heart-icon-fill' : ''} heart-icon`}
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    handleFavoriteToggle(accommodation.uniqueId);
+                                                }}
+                                            ></i>
+                                            <ReviewCount className="btn btn-primary review-btn me-2"
+                                                         entityType="accommodations" id={accommodation.uniqueId}/>
                                         </div>
                                     </div>
                                 </div>
