@@ -67,7 +67,7 @@ Donghae.zip은 사람들에게 동해선 여행플래너 기능 및 정보 제�
 
 ## 🔗데이터 수집 출처
 
-- [동해선 관광지 정보 데이터](https://www.visitbusan.net/kr/index.do)
+- [동해선 관광지 정보 데이터](https://korean.visitkorea.or.kr/main/main.do)
 - [동해선 숙소 정보 데이터](https://www.yeogi.com/)
 - [동해선 식당 정보 데이터](https://www.diningcode.com/)
 - [동해선 축제 정보 데이터](https://www.visitbusan.net/kr/index.do)
