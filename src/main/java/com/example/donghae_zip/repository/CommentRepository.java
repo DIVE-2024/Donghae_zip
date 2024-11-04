@@ -12,7 +12,8 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     // 특정 사용자가 작성한 모든 리뷰를 조회
-    List<Comment> findAllByMemberUserId(Long userId);
+    // 이메일로 특정 사용자가 작성한 댓글 조회
+    List<Comment> findByMemberEmail(String email);
 
     // 특정 Accommodation에 대한 평점 평균 계산 (unique_id 사용)
     @Query("SELECT AVG(c.rating) FROM Comment c WHERE c.accommodation.uniqueId = :accommodationId")

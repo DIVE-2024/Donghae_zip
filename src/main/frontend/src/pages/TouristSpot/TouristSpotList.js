@@ -6,6 +6,8 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import './TouristSpotList.css';
 import ReviewCount from "../../components/Comment/ReviewCount";
 import {getUserIdFromToken } from "../../components/Util/jwtUtils";
+import AverageRating from "../../components/Comment/AverageRating";
+import Warning from "../../components/Warning/Warning";
 
 const TouristSpotList = () => {
     const [spots, setSpots] = useState([]);
@@ -18,6 +20,7 @@ const TouristSpotList = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [favoriteSpots, setFavoriteSpots] = useState([]);  // 찜한 관광지 목록
     const [userId,setUserId] = useState(null);
+    const [showWarning, setShowWarning] = useState(false);
     const itemsPerPage = 15;
     const maxPageButtons = 5; // 페이지 버튼을 5개로 제한
 
@@ -86,12 +89,14 @@ const TouristSpotList = () => {
     }, [title, category, region, indoorOutdoor, page]);
 
     // userId가 설정된 후 관광지 및 찜 목록을 불러옴
+    // 관광지 목록 불러오기
     useEffect(() => {
+        fetchSpots();  // 항상 관광지 목록 불러오기
         if (userId) {
-            fetchSpots();
-            fetchFavoriteSpots();
+            fetchFavoriteSpots();  // 로그인된 경우에만 찜 목록 불러오기
         }
     }, [fetchSpots, fetchFavoriteSpots, userId]);
+
 
     // 카테고리 필터를 버튼 클릭 시 적용
     const handleCategoryClick = (selectedCategory) => {
@@ -115,8 +120,8 @@ const TouristSpotList = () => {
 
     const handleFavoriteToggle = (spotId) => {
         const token = sessionStorage.getItem('token');
-        if (!token || !userId) {
-            alert("로그인이 필요합니다.");
+        if (!userId || !token) {
+            setShowWarning(true); // Warning 모달을 열기
             return;
         }
 
@@ -151,6 +156,12 @@ const TouristSpotList = () => {
                     alert("좋아요 추가에 실패했습니다.");
                 });
         }
+    };
+
+    const handleConfirmWarning = () => {
+        setShowWarning(false);
+        // 로그인 페이지로 이동
+        window.location.href = '/login';
     };
 
 
@@ -244,6 +255,8 @@ const TouristSpotList = () => {
                                         <ReviewCount className="btn btn-primary review-btn me-2"
                                                      entityType="tourist-spots" id={spot.spotId}/>
                                     </div>
+                                    {/* 평균 평점 표시 */}
+                                    <AverageRating entityType="tourist-spots" entityId={spot.spotId} />
                                 </div>
                             </div>
                         </Link>
@@ -276,6 +289,12 @@ const TouristSpotList = () => {
                     </ul>
                 </nav>
             </div>
+            <Warning
+                show={showWarning}
+                message="로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?"
+                onConfirm={handleConfirmWarning}
+                onCancel={() => setShowWarning(false)}
+            />
         </div>
     );
 };

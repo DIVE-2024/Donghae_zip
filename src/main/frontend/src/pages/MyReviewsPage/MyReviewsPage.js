@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import {getUserIdFromToken} from "../../components/Util/jwtUtils";
 
 const MyReviewsPage = () => {
     const [reviews, setReviews] = useState([]);  // 초기 상태는 빈 배열로 설정
     const [page, setPage] = useState(0); // 페이지 번호 상태 추가
     const [totalPages, setTotalPages] = useState(0); // 총 페이지 수 상태 추가
     const navigate = useNavigate();
-    const userId = sessionStorage.getItem('userId'); // 세션에서 userId 가져오기
+    const [userId,setUserId] = useState(null);
 
     useEffect(() => {
         const token = sessionStorage.getItem('token');
+        const userId = getUserIdFromToken();  // userId 가져오기
+        if (userId) setUserId(userId);
+
+        console.log(userId);
+
         if (!token || !userId) {
             navigate('/login');
         } else {

@@ -16,6 +16,7 @@ const TrailDetailPage = () => {
     const [trail, setTrail] = useState(null);
     const [comments, setComments] = useState([]); // 댓글 목록 저장
     const [userId, setUserId] = useState(null);
+    const [averageRating, setAverageRating] = useState(0);
 
     useEffect(() => {
         const userId = getUserIdFromToken();  // userId 가져오기
@@ -44,15 +45,10 @@ const TrailDetailPage = () => {
         return <div>Loading...</div>;
     }
 
-    // 평점에 따른 별 이모지 반환 함수
-    const renderStars = (rating) => {
-        return (
-            <div className="star-rating">
-                {[...Array(5)].map((_, index) => (
-                    <i style={{fontSize:'1.8rem'}} key={index} className={`bi ${index < rating ? 'bi-star-fill text-warning' : 'bi-star'}`}></i>
-                ))}
-            </div>
-        );
+
+    // 평균 평점 변경 시 호출될 함수
+    const handleAverageRatingChange = (newAverageRating) => {
+        setAverageRating(newAverageRating);
     };
 
     //이전 페이지로 넘어가는 함수
@@ -77,9 +73,14 @@ const TrailDetailPage = () => {
                 <div style={{fontSize: '4rem'}}
                      className="accommodation-title text-center mb-4">{trail.courseName}</div>
 
-                {/* 별 모양 */}
+                {/* 평균 별점 표시 */}
                 <div className="text-center mb-2">
-                    {renderStars(3)} {/* 여기에 trail의 기본 평점이 있다고 가정함 */}
+                    {Array.from({ length: 5 }).map((_, index) => (
+                        <i key={index} className={`bi ${index < Math.round(averageRating) ? 'bi-star-fill text-warning' : 'bi-star text-secondary'}`} style={{ fontSize: '2.8rem' }}></i>
+                    ))}
+                    <span style={{ fontSize: '1.5rem', color: '#555', marginLeft: '10px' }}>
+                        ({averageRating.toFixed(1)})
+                    </span>
                 </div>
 
                 {/* 큰 이미지 */}
@@ -128,7 +129,7 @@ const TrailDetailPage = () => {
                 </div>
             </div>
             {/* 공통 리뷰 섹션 */}
-            <ReviewSection entityType="trails" entityId={id} userId={userId}/>
+            <ReviewSection entityType="trails" entityId={id} userId={userId} onAverageRatingChange={handleAverageRatingChange}/>
         </div>
     );
 };

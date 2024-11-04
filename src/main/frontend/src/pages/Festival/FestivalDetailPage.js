@@ -7,6 +7,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import './FestivalDetailPage.css';
 import {getUserIdFromToken} from "../../components/Util/jwtUtils";
 import ReviewSection from "../../components/Comment/ReviewSection";
+import AverageRating from "../../components/Comment/AverageRating";
 
 const FestivalDetailPage = () => {
     const { id } = useParams(); // URL에서 festivalId 추출
@@ -14,6 +15,7 @@ const FestivalDetailPage = () => {
     const [festival, setFestival] = useState(null);
     const [comments, setComments] = useState([]); // 댓글 목록 저장
     const [userId, setUserId] = useState(null);
+    const [averageRating, setAverageRating] = useState(0);
 
     useEffect(() => {
         const userId = getUserIdFromToken();  // userId 가져오기
@@ -40,6 +42,12 @@ const FestivalDetailPage = () => {
     if (!festival) {
         return <p>Loading...</p>;
     }
+
+    // 평균 평점 변경 시 호출될 함수
+    const handleAverageRatingChange = (newAverageRating) => {
+        setAverageRating(newAverageRating);
+    };
+
     //이전 페이지로 넘어가는 함수
     const handleBack = () => {
         navigate(-1);
@@ -68,14 +76,8 @@ const FestivalDetailPage = () => {
                 </button>
                 {/* 축제명 */}
                 <div style={{fontSize: '4rem'}} className="festival-title text-center mb-4">{festival.title}</div>
-
-                {/* 별 모양 추가 */}
-                <div className="text-center mb-2">
-                    {[...Array(4)].map((_, index) => (
-                        <i key={index} className="bi bi-star-fill text-warning"></i>
-                    ))}
-                    <i className="bi bi-star text-secondary"></i>
-                </div>
+                {/* 평균 별점 표시 */}
+                <AverageRating entityType="festivals" entityId={festival.festivalId} fontSize="2.5rem" />
                 <div style={{display: 'flex', width: '100%', justifyContent: 'center'}}>
                     {/* 이미지 출력 */}
                     <div className="text-center mb-4" style={{flex: 1}}>
@@ -124,7 +126,7 @@ const FestivalDetailPage = () => {
                     </div>
                 </div>
                 {/* 공통 리뷰 섹션 */}
-                <ReviewSection entityType="festivals" entityId={id} userId={userId}/>
+                <ReviewSection entityType="festivals" entityId={id} userId={userId} onAverageRatingChange={handleAverageRatingChange}/>
             </Container>
         </div>
 

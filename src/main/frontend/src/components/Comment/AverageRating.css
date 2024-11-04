@@ -1,0 +1,34 @@
+.average-rating {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.star-wrapper {
+    position: relative;
+    font-size: 1.8rem;
+    color: #e0e0e0; /* 빈 별 색상 */
+    width: 1em;
+    height: 1.3em;
+}
+
+.empty-star {
+    position: absolute;
+    color: #e0e0e0; /* 빈 별 색상 */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.filled-star {
+    position: absolute;
+    color: #FFD700; /* 채워진 별 색상 */
+    top: 0;
+    left: 0;
+    width: 0; /* 시작할 때는 채워진 부분 없음 */
+    overflow: hidden;
+    white-space: nowrap;
+    transition: width 0.2s ease; /* 채워지는 애니메이션 효과 */
+}

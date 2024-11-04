@@ -5,11 +5,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './Header.css'; // 커스텀 CSS 파일
 import Logo from '../assets/images/logo.png';
 import {parseJwt} from "./Util/jwtUtils";
+import Warning from "./Warning/Warning";
+
 const Header = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태 관리
     const navigate = useNavigate();
     const [userId, setUserId] = useState(null);
     const [nickname, setNickname] = useState(null);
+    const [showWarning, setShowWarning] = useState(false);
+
 
     useEffect(() => {
         const token = sessionStorage.getItem('token');
@@ -43,6 +47,18 @@ const Header = () => {
         navigate('/'); // 로그아웃 후 메인 페이지로 이동
     };
 
+    const handleProtectedNavigation = (e) => {
+        if (!isLoggedIn) {
+            e.preventDefault(); // Prevent default link action
+            setShowWarning(true); // Show warning modal
+        }
+    };
+
+    const handleConfirmWarning = () => {
+        setShowWarning(false);
+        navigate('/login'); // Redirect to login page
+    };
+
     return (
         <nav className="navbar navbar-expand-lg navbar-light custom-navbar">
             <div className="container-fluid">
@@ -70,13 +86,16 @@ const Header = () => {
                             </ul>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/donghae-hotplace">동해 출동해</Link>
+                            <Link className="nav-link" to="/donghae-hotplace" onClick={handleProtectedNavigation}>동해
+                                출동해</Link>
                         </li>
                         <li className="nav-item dropdown mypage">
-                            <Link className="nav-link" to="/mypage">MyPage</Link>
+                            <Link className="nav-link" to="/mypage" onClick={handleProtectedNavigation}>MyPage</Link>
                             <ul className="dropdown-menu" aria-labelledby="mypageDropdown">
-                                <li><Link className="dropdown-item" to="/wishList">찜 목록</Link></li>
-                                <li><Link className="dropdown-item" to="/myreviews">내가 쓴 리뷰</Link></li>
+                                <li><Link className="dropdown-item" to="/wishList" onClick={handleProtectedNavigation}>찜
+                                    목록</Link></li>
+                                <li><Link className="dropdown-item" to="/myreviews" onClick={handleProtectedNavigation}>내가
+                                    쓴 리뷰</Link></li>
                             </ul>
                         </li>
                         {isLoggedIn ? (
@@ -85,7 +104,10 @@ const Header = () => {
                                     <span className="nav-link">환영합니다, {nickname}님!</span>
                                 </li>
                                 <li className="nav-item">
-                                    <button className="btn btn-primary custom-login-btn" style={{marginTop:'0.5rem',height:'3rem',fontSize:'1.2rem'}} onClick={handleLogoutClick}>Log Out</button>
+                                    <button className="btn btn-primary custom-login-btn"
+                                            style={{marginTop: '0.5rem', height: '3rem', fontSize: '1.2rem'}}
+                                            onClick={handleLogoutClick}>Log Out
+                                    </button>
                                 </li>
                             </>
                         ) : (
@@ -94,13 +116,25 @@ const Header = () => {
                                     <Link className="nav-link" to="/signup">회원가입</Link>
                                 </li>
                                 <li className="nav-item">
-                                    <button className="btn btn-primary custom-login-btn" style={{marginTop:'0.5rem',width:'6rem',height:'3rem',fontSize:'1.2rem'}} onClick={handleLoginClick}>Log In</button>
+                                    <button className="btn btn-primary custom-login-btn" style={{
+                                        marginTop: '0.5rem',
+                                        width: '6rem',
+                                        height: '3rem',
+                                        fontSize: '1.2rem'
+                                    }} onClick={handleLoginClick}>Log In
+                                    </button>
                                 </li>
                             </>
                         )}
                     </ul>
                 </div>
             </div>
+            <Warning
+                show={showWarning}
+                message="로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?"
+                onConfirm={handleConfirmWarning}
+                onCancel={() => setShowWarning(false)}
+            />
         </nav>
     );
 };

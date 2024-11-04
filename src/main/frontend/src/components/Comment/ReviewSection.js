@@ -1,4 +1,3 @@
-// components/ReviewSection.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import EditComment from "./EditComment";
@@ -6,12 +5,14 @@ import DeleteComment from "./DeleteComment";
 import ReviewCount from "./ReviewCount";
 import StarRating from './StarRating';
 import './ReviewSection.css';
+import AverageRating from "./AverageRating";
 
-const ReviewSection = ({ entityType, entityId, userId }) => {
+const ReviewSection = ({ entityType, entityId, userId,onAverageRatingChange }) => { //onAverageRatingChange 콜백함수추가
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState('');
     const [rating, setRating] = useState(0);
     const [warningMessage, setWarningMessage] = useState('');
+    const [averageRating, setAverageRating] = useState(0); // 평균 점수를 위한 상태 추가
 
     useEffect(() => {
         // 컴포넌트가 로드될 때 한 번만 댓글 목록을 불러옴
@@ -20,8 +21,25 @@ const ReviewSection = ({ entityType, entityId, userId }) => {
 
     const fetchComments = () => {
         axios.get(`/api/comments/${entityType}/${entityId}/reviews`)
-            .then(response => setComments(response.data))
+            .then(response => {
+                setComments(response.data);
+                calculateAverageRating(response.data); // 리뷰 데이터로 평균 점수 계산
+            })
             .catch(error => console.error(`Error fetching ${entityType} comments:`, error));
+    };
+
+    // 평균 점수 계산 함수
+    const calculateAverageRating = (comments) => {
+        if (comments.length === 0) {
+            setAverageRating(0);
+            onAverageRatingChange(0); // 부모 컴포넌트로 전달
+            return;
+        }
+        const total = comments.reduce((sum, comment) => sum + comment.rating, 0);
+        const average = total / comments.length;
+        console.log("Calculated Average Rating:", average); // 확인용 로그 추가
+        setAverageRating(average);
+        onAverageRatingChange(average); // 부모 컴포넌트로 전달
     };
 
     const formatDate = (dateString) => {
@@ -44,24 +62,20 @@ const ReviewSection = ({ entityType, entityId, userId }) => {
         }
 
         const token = sessionStorage.getItem('token');
-
-        // 각 카테고리에 맞는 ID 필드를 동적으로 설정
         const fieldMapping = {
             restaurants: 'restaurantId',
             accommodations: 'accommodationId',
             festivals: 'festivalId',
-            'tourist-spots': 'touristSpotId', // 정확히 매핑되었는지 확인
+            'tourist-spots': 'touristSpotId',
             trails: 'trailId'
         };
-        const idField = fieldMapping[entityType]; // 현재 entityType에 맞는 필드명 선택
+        const idField = fieldMapping[entityType];
 
         const requestData = {
             content: newComment,
             rating,
-            [idField]: parseInt(entityId) // 선택한 필드명으로 ID 설정
+            [idField]: parseInt(entityId)
         };
-
-        console.log("Sending comment data:", requestData); // 요청 데이터 확인용 로그
 
         axios.post('/api/comments', requestData, {
             headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
@@ -69,17 +83,27 @@ const ReviewSection = ({ entityType, entityId, userId }) => {
             .then(response => {
                 setNewComment('');
                 setRating(0);
-                fetchComments(); // 댓글 목록을 다시 불러옵니다
+                fetchComments();
             })
             .catch(error => console.error('Error posting comment:', error));
     };
 
-
-
     return (
         <div className="comment-section" style={{ padding: '20px' }}>
             <div style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '20px' }}>리뷰</div>
+
+            {/* 평균 별점 표시 */}
+            <div className="text-center mb-2">
+                {Array.from({ length: 5 }).map((_, index) => (
+                    <i key={index} className={`bi ${index < Math.round(averageRating) ? 'bi-star-fill text-warning' : 'bi-star text-secondary'}`} style={{ fontSize: '1.8rem' }}></i>
+                ))}
+                <span style={{ fontSize: '1.5rem', color: '#555', marginLeft: '10px' }}>
+                    ({averageRating.toFixed(1)})
+                </span>
+            </div>
+
             <ReviewCount entityType={entityType} id={entityId} count={comments.length} />
+
             {comments.length === 0 ? (
                 <p style={{ fontSize: '1.5rem' }}>아직 작성된 댓글이 없습니다.</p>
             ) : (
@@ -135,6 +159,7 @@ const ReviewSection = ({ entityType, entityId, userId }) => {
                     </div>
                 ))
             )}
+            {/* 댓글 작성 UI */}
             <div className="mt-4">
                 <div style={{ fontSize: '1.8rem' }}>리뷰 작성하기</div>
                 <div className="d-flex align-items-center mb-2">

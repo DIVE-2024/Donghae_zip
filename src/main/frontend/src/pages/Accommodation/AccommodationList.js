@@ -6,6 +6,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import '../Trail/TrailListPage.css';
 import ReviewCount from "../../components/Comment/ReviewCount";
 import {getUserIdFromToken } from "../../components/Util/jwtUtils";
+import AverageRating from "../../components/Comment/AverageRating";
 
 const AccommodationList = () => {
     const [accommodations, setAccommodations] = useState([]);
@@ -236,6 +237,8 @@ const AccommodationList = () => {
                                             <ReviewCount className="btn btn-primary review-btn me-2"
                                                          entityType="accommodations" id={accommodation.uniqueId}/>
                                         </div>
+                                        {/* 평균 평점 표시 */}
+                                        <AverageRating entityType="accommodations" entityId={accommodation.uniqueId} />
                                     </div>
                                 </div>
                             </Link>
