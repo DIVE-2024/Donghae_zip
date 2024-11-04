@@ -50,7 +50,7 @@ const Map = ({ latitude, longitude, markers = [] }) => {
 
 
 
-    return <div id="map" style={{ width: '80%', height: '550px' ,borderRadius:'2rem',boxShadow:'0 4px 8px rgba(0, 0, 0, 0.5)'}}></div>;
+    return <div id="map" style={{ width: '80%', height: '25rem' ,borderRadius:'2rem',boxShadow:'0 4px 8px rgba(0, 0, 0, 0.5)'}}></div>;
 };
 
 export default Map;

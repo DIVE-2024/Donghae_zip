@@ -6,6 +6,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import './TrailListPage.css';
 import ReviewCount from "../../components/Comment/ReviewCount";
 import {getUserIdFromToken } from "../../components/Util/jwtUtils";
+import AverageRating from "../../components/Comment/AverageRating";
 
 const TrailListPage = () => {
     const [trails, setTrails] = useState([]);
@@ -161,6 +162,7 @@ const TrailListPage = () => {
                     type="text"
                     className="form-control"
                     placeholder="제목 검색"
+                    style={{fontSize:'1.3rem'}}
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     onBlur={handleFilterChange}
@@ -169,6 +171,7 @@ const TrailListPage = () => {
                 <select
                     className="form-select"
                     value={difficulty}
+                    style={{fontSize:'1.3rem'}}
                     onChange={(e) => { setDifficulty(e.target.value); handleFilterChange(); }}
                 >
                     <option value="">난이도 선택</option>
@@ -180,6 +183,7 @@ const TrailListPage = () => {
                 <select
                     className="form-select"
                     value={sortOption}
+                    style={{fontSize:'1.3rem'}}
                     onChange={(e) => { setSortOption(e.target.value); handleFilterChange(); }}
                 >
                     <option value="">정렬 옵션 선택</option>
@@ -188,7 +192,7 @@ const TrailListPage = () => {
                 </select>
 
                 {/* 필터 초기화 버튼 */}
-                <button className="btn btn-secondary" onClick={resetFilters}>
+                <button className="btn btn-secondary" onClick={resetFilters} style={{fontSize:'1.3rem'}}>
                     초기화
                 </button>
             </div>
@@ -223,6 +227,8 @@ const TrailListPage = () => {
                                             <ReviewCount className="btn btn-primary review-btn me-2" entityType="trails"
                                                          id={trail.trailId}/>
                                         </div>
+                                        {/* 평균 평점 표시 */}
+                                        <AverageRating entityType="trails" entityId={trail.trailId} />
                                     </div>
                                 </div>
                             </Link>

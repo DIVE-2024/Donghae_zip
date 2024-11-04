@@ -5,6 +5,7 @@ import './FestivalListPage.css';
 import { Link } from 'react-router-dom';
 import ReviewCount from "../../components/Comment/ReviewCount";
 import {getUserIdFromToken } from "../../components/Util/jwtUtils";
+import AverageRating from "../../components/Comment/AverageRating";
 
 const FestivalListPage = () => {
     const [festivals, setFestivals] = useState([]);
@@ -270,6 +271,8 @@ const FestivalListPage = () => {
                                     <ReviewCount className="btn btn-primary review-btn me-2" entityType="festivals"
                                                  id={festival.festivalId}/>
                                 </div>
+                                {/* 평균 평점 표시 */}
+                                <AverageRating entityType="festivals" entityId={festival.festivalId} />
                             </Card.Body>
                         </Card>
                     </Col>

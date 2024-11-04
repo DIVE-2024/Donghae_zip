@@ -1,7 +1,7 @@
 /* custom-modal.css */
-.custom-modal .modal-dialog {
-    max-width: 700px; /* 모달의 최대 넓이를 600px로 설정 */
-    width: 90%; /* 너비를 90%로 설정 */
+.modal-dialog.custom-modal {
+    max-width: 750px !important; /* 원하는 최대 너비 */
+    width: 100%; /* 부모의 100% */
 }
 
 .custom-modal .modal-body {

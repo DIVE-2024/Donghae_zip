@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './FavoriteButton.css';
+import Warning from "../Warning/Warning";
 
 const FavoriteButton = ({ entityType, entityId, userId }) => {
     const [isFavorite, setIsFavorite] = useState(false);
+    const [showWarning, setShowWarning] = useState(false);
 
     useEffect(() => {
         // 엔터티의 초기 찜 상태 확인
@@ -24,7 +26,7 @@ const FavoriteButton = ({ entityType, entityId, userId }) => {
     const toggleFavorite = () => {
         const token = sessionStorage.getItem('token');
         if (!userId || !token) {
-            alert("로그인이 필요합니다.");
+            setShowWarning(true); // Warning 모달을 열기
             return;
         }
 
@@ -52,12 +54,27 @@ const FavoriteButton = ({ entityType, entityId, userId }) => {
         }
     };
 
+    const handleConfirmWarning = () => {
+        setShowWarning(false);
+        // 로그인 페이지로 이동
+        window.location.href = '/login';
+    };
+
     return (
-        <i
-            className={`bi bi-heart${isFavorite ? '-fill heart-icon-fill' : ''} heart-icon`}
-            onClick={toggleFavorite}
-            style={{ cursor: 'pointer', fontSize: '1.5rem' }}
-        ></i>
+        <>
+            <i
+                className={`bi bi-heart${isFavorite ? '-fill heart-icon-fill' : ''} heart-icon`}
+                onClick={toggleFavorite}
+                style={{ cursor: 'pointer', fontSize: '1.5rem' }}
+            ></i>
+
+            <Warning
+                show={showWarning}
+                message="로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?"
+                onConfirm={handleConfirmWarning}
+                onCancel={() => setShowWarning(false)}
+            />
+        </>
     );
 };
 

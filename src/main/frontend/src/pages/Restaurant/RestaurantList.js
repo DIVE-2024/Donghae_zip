@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
-import {Link, useParams} from "react-router-dom";
+import { Link } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import '../Trail/TrailListPage.css';
 import ReviewCount from "../../components/Comment/ReviewCount";
-import {getUserIdFromToken } from "../../components/Util/jwtUtils";
+import { getUserIdFromToken } from "../../components/Util/jwtUtils";
+import AverageRating from "../../components/Comment/AverageRating";
 
 const RestaurantList = () => {
     const [restaurants, setRestaurants] = useState([]);
@@ -18,53 +19,18 @@ const RestaurantList = () => {
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [restaurantCount, setRestaurantCount] = useState(0);
-    const [favoriteRestaurants, setFavoriteRestaurants] = useState([]); // 사용자의 찜 목록
-    const [userId,setUserId] = useState(null);
-    const itemsPerPage = 15; // 한 페이지에 15개의 식당
-    const maxPagesToShow = 5; // 1 ~ 5 페이지만 페이지네이션에 보여줌
+    const [favoriteRestaurants, setFavoriteRestaurants] = useState([]);
+    const [userId, setUserId] = useState(null);
+    const itemsPerPage = 15;
+    const maxPagesToShow = 5;
 
-    // 초기 로드 시 JWT에서 userId 설정
+    // 사용자 ID 설정
     useEffect(() => {
-        const userId = getUserIdFromToken();  // userId 가져오기
-        if (userId) setUserId(userId);
+        const id = getUserIdFromToken();
+        if (id) setUserId(id);
     }, []);
 
-    // 사용자 찜 목록 가져오기
-    const fetchFavoriteRestaurants = useCallback(() => {
-        const token = sessionStorage.getItem('token');
-        const userId = getUserIdFromToken();
-        console.log(userId);
-
-        if (!userId) {
-            console.error('userId가 세션에 저장되지 않았습니다.');
-            return;
-        }
-
-        axios.get(`/api/favorites/auth/restaurants/${userId}`, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-            params: {
-                page: page,  // 페이지 번호 추가
-                size: itemsPerPage  // 페이지 크기 추가
-            }
-        })
-            .then(response => {
-                // 데이터 구조가 예상대로인지를 확인하기 위한 로그
-                console.log("Fetched favorites data:", response.data);
-
-                const favoriteRestaurantIds = response.data.content.map(fav => fav.restaurant.id); // restaurantId 배열로 변환
-                setFavoriteRestaurants(favoriteRestaurantIds); // 찜 목록 상태에 저장
-                setTotalPages(response.data.totalPages); // 전체 페이지 수 설정
-                setRestaurantCount(response.data.totalElements); // 전체 식당 수 설정
-                setLoading(false);
-            })
-            .catch(error => {
-                console.error('Error fetching favorite restaurants:', error);
-                setLoading(false);
-            });
-    }, [page]);
-
+    // useEffect로 region 값이 변경될 때 districts와 hashtags를 업데이트
     useEffect(() => {
         if (region) {
             axios.get(`/api/restaurants/region/${region}/hashtags`)
@@ -74,14 +40,33 @@ const RestaurantList = () => {
             axios.get(`/api/restaurants/region/${region}/districts`)
                 .then(response => setDistricts(response.data))
                 .catch(error => console.error('Error fetching districts:', error));
+        } else {
+            // 기본값 설정 (빈 값으로 초기화)
+            setDistricts([]);
+            setHashtags([]);
         }
     }, [region]);
 
-    // Fetch restaurant data based on filters
-    const fetchRestaurants = useCallback(() => {
-        setLoading(true);
-        let url = `/api/restaurants?page=${page}&size=${itemsPerPage}`;
+    // 찜한 식당 목록 가져오기
+    const fetchFavoriteRestaurants = useCallback(async () => {
+        const token = sessionStorage.getItem('token');
+        if (!userId || !token) return;
 
+        try {
+            const response = await axios.get(`/api/favorites/auth/restaurants/${userId}`, {
+                headers: { 'Authorization': `Bearer ${token}` },
+                params: { page, size: itemsPerPage },
+            });
+            const favoriteIds = response.data.content.map(fav => fav.restaurant.id);
+            setFavoriteRestaurants(favoriteIds);
+        } catch (error) {
+            console.error('Error fetching favorite restaurants:', error);
+        }
+    }, [userId, page]);
+
+    // 필터에 따른 식당 목록 가져오기
+    const fetchRestaurants = useCallback(async () => {
+        let url = `/api/restaurants?page=${page}&size=${itemsPerPage}`;
         if (region && !district && !hashtag) {
             url = `/api/restaurants/region/${region}?page=${page}&size=${itemsPerPage}`;
         } else if (region && district && !hashtag) {
@@ -90,39 +75,47 @@ const RestaurantList = () => {
             url = `/api/restaurants/searchByDistrict?region=${region}&district=${district}&hashtag=${encodeURIComponent(hashtag)}&page=${page}&size=${itemsPerPage}`;
         }
 
-        axios.get(url)
-            .then(response => {
-                setRestaurants(response.data.content);
-                setRestaurantCount(response.data.totalElements);
-                setTotalPages(response.data.totalPages);
-                setLoading(false);
-            })
-            .catch(error => {
-                console.error('Error fetching restaurant data:', error);
-                setLoading(false);
-            });
-    }, [region, district, hashtag, page]);
-
-    // userId가 설정된 후 관광지 및 찜 목록을 불러옴
-    useEffect(() => {
-        if (userId) {
-            fetchRestaurants();
-            fetchFavoriteRestaurants();
+        try {
+            const response = await axios.get(url);
+            setRestaurants(response.data.content);
+            setRestaurantCount(response.data.totalElements);
+            setTotalPages(response.data.totalPages);
+        } catch (error) {
+            console.error('Error fetching restaurant data:', error);
         }
+    }, [region, district, hashtag, page, itemsPerPage]);
+
+    // 모든 데이터가 로드될 때까지 로딩 상태 유지
+    useEffect(() => {
+        const fetchData = async () => {
+            // 초기 로딩일 때만 로딩 상태를 true로 설정
+            if (restaurants.length === 0) setLoading(true);
+            try {
+                await fetchRestaurants();  // 항상 식당 목록 불러오기
+                if (userId) {
+                    await fetchFavoriteRestaurants();  // 로그인된 경우에만 찜한 식당 목록 불러오기
+                }
+            } catch (error) {
+                console.error("Error loading data:", error);
+            } finally {
+                setLoading(false); // 데이터 로드 후 로딩 종료
+            }
+        };
+
+        fetchData();  // userId와 관계없이 fetchData 호출
     }, [fetchRestaurants, fetchFavoriteRestaurants, userId]);
 
-    // 페이지네이션을 위한 페이지 번호 계산
+
+
+    // 페이지네이션 계산
     const getPaginationGroup = () => {
         const startPage = Math.max(0, page - Math.floor(maxPagesToShow / 2));
         const endPage = Math.min(startPage + maxPagesToShow - 1, totalPages - 1);
         return [...Array(endPage - startPage + 1).keys()].map(num => startPage + num);
     };
 
-    if (loading) {
-        return <p>로딩 중...</p>;
-    }
-
-    const handleFavoriteToggle = (id) => {
+    // 찜 토글 기능
+    const handleFavoriteToggle = async (id) => {
         const token = sessionStorage.getItem('token');
         if (!token || !userId) {
             alert("로그인이 필요합니다.");
@@ -131,75 +124,55 @@ const RestaurantList = () => {
 
         const isFavorite = favoriteRestaurants.includes(id);
 
-        if (isFavorite) {
-            // 좋아요 삭제 요청
-            axios.delete(`/api/favorites/auth/restaurants/${id}?email=${userId}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
-                .then(() => {
-                    // 기존 코드에서 삭제할 id를 명확히 지정하여 상태를 업데이트합니다
-                    setFavoriteRestaurants((prevFavorites) => prevFavorites.filter(favId => favId !== id));
-                })
-                .catch(error => {
-                    console.error("좋아요 삭제 중 오류:", error);
-                    alert("좋아요 삭제에 실패했습니다.");
+        try {
+            if (isFavorite) {
+                await axios.delete(`/api/favorites/auth/restaurants/${id}?email=${userId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
-        } else {
-            // 좋아요 추가 요청
-            axios.post(`/api/favorites/auth/restaurants/${id}?email=${userId}`, null, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
-                .then(() => {
-                    setFavoriteRestaurants((prevFavorites) => [...prevFavorites, id]);
-                })
-                .catch(error => {
-                    console.error("좋아요 추가 중 오류:", error);
-                    alert("좋아요 추가에 실패했습니다.");
+                setFavoriteRestaurants(prev => prev.filter(favId => favId !== id));
+            } else {
+                await axios.post(`/api/favorites/auth/restaurants/${id}?email=${userId}`, null, {
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
+                setFavoriteRestaurants(prev => [...prev, id]);
+            }
+        } catch (error) {
+            console.error("Error toggling favorite:", error);
+            alert("좋아요 토글에 실패했습니다.");
         }
     };
 
+    if (loading) {
+        return <p>로딩 중...</p>;
+    }
+
     return (
         <div className="container custom-container mt-5">
-            <div className="page-title">먹거리 결과 총 {restaurantCount}개</div>
+            <div className="page-title">맛집 결과 총 {restaurantCount}개</div>
 
             {/* Region Filter */}
-            <div className="input-group filter-group mb-4">
-                <select className="form-select" value={region} onChange={(e) => setRegion(e.target.value)}>
+            <div className="input-group filter-group mb-4" style={{width:'100rem',maxWidth:'1000px',height:'3rem'}}>
+                <select className="form-select" value={region} onChange={(e) => setRegion(e.target.value)} style={{fontSize:'1.3rem'}}>
                     <option value="">지역 선택</option>
                     <option value="부산">부산</option>
                     <option value="울산">울산</option>
                 </select>
-
-                {/* District Filter */}
                 {region && (
-                    <select className="form-select" value={district} onChange={(e) => setDistrict(e.target.value)}>
+                    <select className="form-select" value={district} onChange={(e) => setDistrict(e.target.value)} style={{fontSize:'1.3rem'}}>
                         <option value="">구/군 선택</option>
                         {districts.map((dist, index) => (
-                            <option key={index} value={dist}>
-                                {dist}
-                            </option>
+                            <option key={index} value={dist}>{dist}</option>
                         ))}
                     </select>
                 )}
-
-                {/* Hashtag Filter */}
                 {region && (
-                    <select className="form-select" value={hashtag} onChange={(e) => setHashtag(e.target.value)}>
+                    <select className="form-select" value={hashtag} onChange={(e) => setHashtag(e.target.value)} style={{fontSize:'1.3rem'}}>
                         <option value="">모든 해시태그</option>
                         {hashtags.map((tag, index) => (
-                            <option key={index} value={tag}>
-                                {tag}
-                            </option>
+                            <option key={index} value={tag}>{tag}</option>
                         ))}
                     </select>
                 )}
-
-                {/* Reset Button */}
                 <button className="btn btn-secondary" onClick={() => {
                     setRegion('');
                     setDistrict('');
@@ -237,6 +210,8 @@ const RestaurantList = () => {
                                         <ReviewCount className="btn btn-primary review-btn me-2"
                                                      entityType="restaurants" id={restaurant.id}/>
                                     </div>
+                                    {/* 평균 평점 표시 */}
+                                    <AverageRating entityType="restaurants" entityId={restaurant.id} />
                                 </div>
                             </div>
                         </Link>

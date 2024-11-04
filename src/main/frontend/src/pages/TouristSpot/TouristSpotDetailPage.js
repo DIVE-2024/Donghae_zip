@@ -9,6 +9,7 @@ import Map from '../../components/Map/Map';
 import '../../components/Comment/Comment.css'
 import {getUserIdFromToken} from "../../components/Util/jwtUtils";
 import ReviewSection from "../../components/Comment/ReviewSection";
+import AverageRating from "../../components/Comment/AverageRating";
 
 const TouristSpotDetailPage = () => {
     const { spotId } = useParams();
@@ -17,6 +18,7 @@ const TouristSpotDetailPage = () => {
     const [tags, setTags] = useState([]);
     const [comments, setComments] = useState([]); // 댓글 목록 저장
     const [userId, setUserId] = useState(null);
+    const [averageRating, setAverageRating] = useState(0);
 
     useEffect(() => {
         const userId = getUserIdFromToken();  // userId 가져오기
@@ -56,17 +58,9 @@ const TouristSpotDetailPage = () => {
         return <p>Loading...</p>;
     }
 
-    const formatDate = (dateString) => {
-        const options = {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true,  // 12시간 형식 (AM/PM)
-        };
-        const date = new Date(dateString);
-        return date.toLocaleString('ko-KR', options);
+    // 평균 평점 변경 시 호출될 함수
+    const handleAverageRatingChange = (newAverageRating) => {
+        setAverageRating(newAverageRating);
     };
 
     //이전 페이지로 넘어가는 함수
@@ -83,15 +77,11 @@ const TouristSpotDetailPage = () => {
                         뒤로 가기
                     </button>
                     <div style={{fontSize: '4rem'}} className="text-center">{spot.title}</div>
-                <div className="text-center mb-2">
-                    {[...Array(4)].map((_, index) => (
-                        <i key={index} className="bi bi-star-fill text-warning"></i>
-                    ))}
-                    <i className="bi bi-star text-secondary"></i>
-                </div>
+                {/* 평균 별점 표시 */}
+                <AverageRating entityType="tourist-spots" entityId={spot.spotId} fontSize="2.5rem" />
 
                 {/* tags 표시 */}
-                <div className="text-center mb-4">
+                <div className="text-center mb-4" style={{marginTop:'2rem'}}>
                     {spot.tags && spot.tags.length > 0 && spot.tags.map((tag, idx) => (
                         <span style={{height: '3rem', fontSize: '1.5rem', padding: '10px', textAlign: 'center'}}
                               key={idx}
@@ -126,7 +116,6 @@ const TouristSpotDetailPage = () => {
                         </Carousel>
                     </div>
                 </div>
-
 
                 {/* 여행지 정보 */}
                 <div style={{display: 'flex', gap: '8rem', justifyContent: 'center'}}>
@@ -225,7 +214,7 @@ const TouristSpotDetailPage = () => {
                 </div>
             </div>
             {/* 공통 리뷰 섹션 */}
-            <ReviewSection entityType="tourist-spots" entityId={spotId} userId={userId} />
+            <ReviewSection entityType="tourist-spots" entityId={spotId} userId={userId} onAverageRatingChange={handleAverageRatingChange}/>
         </div>
     );
 };

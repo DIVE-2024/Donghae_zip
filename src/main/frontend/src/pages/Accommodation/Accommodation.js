@@ -15,6 +15,7 @@ const Accommodation = () => {
     const [accommodation, setAccommodation] = useState(null);
     const [comments, setComments] = useState([]); // 댓글 목록 저장
     const [userId, setUserId] = useState(null);
+    const [averageRating, setAverageRating] = useState(0);
 
 
     useEffect(() => {
@@ -53,6 +54,12 @@ const Accommodation = () => {
     if (!accommodation) {
         return <div>Loading...</div>;
     }
+
+    // 평균 평점 변경 시 호출될 함수
+    const handleAverageRatingChange = (newAverageRating) => {
+        setAverageRating(newAverageRating);
+    };
+
     //이전 페이지로 넘어가는 함수
     const handleBack = () => {
         navigate(-1);
@@ -75,12 +82,14 @@ const Accommodation = () => {
                 <div style={{fontSize: '4rem'}}
                      className="accommodation-title text-center mb-4">{accommodation.name}</div>
 
-                {/* 별 모양 */}
+                {/* 평균 별점 표시 */}
                 <div className="text-center mb-2">
-                    {[...Array(4)].map((_, index) => (
-                        <i key={index} className="bi bi-star-fill text-warning"></i>
+                    {Array.from({ length: 5 }).map((_, index) => (
+                        <i key={index} className={`bi ${index < Math.round(averageRating) ? 'bi-star-fill text-warning' : 'bi-star text-secondary'}`} style={{ fontSize: '2.8rem' }}></i>
                     ))}
-                    <i className="bi bi-star text-secondary"></i>
+                    <span style={{ fontSize: '1.5rem', color: '#555', marginLeft: '10px' }}>
+                        ({averageRating.toFixed(1)})
+                    </span>
                 </div>
 
                 {/* 이미지 출력 */}
@@ -178,7 +187,7 @@ const Accommodation = () => {
                 </div>
             </div>
             {/* 공통 리뷰 섹션 */}
-            <ReviewSection entityType="accommodations" entityId={uniqueId} userId={userId}/>
+            <ReviewSection entityType="accommodations" entityId={uniqueId} userId={userId} onAverageRatingChange={handleAverageRatingChange}/>
         </div>
     );
 };

@@ -65,12 +65,13 @@ public class CommentController {
     @Autowired
     private ObjectMapper objectMapper;
 
+
+    //로그인한 사용자가 누른 찜목록 조회
     @GetMapping("/auth/my-reviews")
-    public ResponseEntity<List<Comment>> getMyReviews(@RequestParam Long userId) {
-        List<Comment> reviews = commentService.getCommentsByMember(userId);
+    public ResponseEntity<List<Comment>> getMyReviews(@RequestParam String email) {
+        List<Comment> reviews = commentService.getCommentsByMember(email);
         return ResponseEntity.ok(reviews);
     }
-
 
     @PostMapping
     public ResponseEntity<Comment> createComment(HttpServletRequest request) {
@@ -184,9 +185,6 @@ public class CommentController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
-
-
-
 
     @Operation(summary = "리뷰 삭제", description = "작성자만이 특정 리뷰를 삭제할 수 있습니다.")
     @DeleteMapping("/{commentId}")
