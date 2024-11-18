@@ -11,6 +11,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -66,12 +70,17 @@ public class CommentController {
     private ObjectMapper objectMapper;
 
 
-    //로그인한 사용자가 누른 찜목록 조회
     @GetMapping("/auth/my-reviews")
-    public ResponseEntity<List<Comment>> getMyReviews(@RequestParam String email) {
-        List<Comment> reviews = commentService.getCommentsByMember(email);
+    public ResponseEntity<Page<Comment>> getMyReviews(
+            @RequestParam String email,
+            @RequestParam int page,
+            @RequestParam int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<Comment> reviews = commentRepository.findByMember_Email(email, pageable);
         return ResponseEntity.ok(reviews);
     }
+
+
 
     @PostMapping
     public ResponseEntity<Comment> createComment(HttpServletRequest request) {

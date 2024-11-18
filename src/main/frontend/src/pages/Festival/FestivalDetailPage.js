@@ -8,6 +8,7 @@ import './FestivalDetailPage.css';
 import {getUserIdFromToken} from "../../components/Util/jwtUtils";
 import ReviewSection from "../../components/Comment/ReviewSection";
 import AverageRating from "../../components/Comment/AverageRating";
+import TokenHandler from "../../components/Util/TokenHandler";
 
 const FestivalDetailPage = () => {
     const { id } = useParams(); // URL에서 festivalId 추출
@@ -63,6 +64,7 @@ const FestivalDetailPage = () => {
             margin: 'auto',
             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.5)'
         }}>
+            <TokenHandler/>
             <Container className="festival-detail-container mt-5" style={{maxWidth: '100%'}}> {/* maxWidth를 100%로 설정 */}
                 <button className="btn btn-primary" onClick={handleBack}
                         style={{

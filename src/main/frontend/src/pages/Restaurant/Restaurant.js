@@ -8,6 +8,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import './RestaurantDetailPage.css';
 import {getUserIdFromToken} from "../../components/Util/jwtUtils";
 import ReviewSection from "../../components/Comment/ReviewSection";
+import TokenHandler from "../../components/Util/TokenHandler";
 
 const Restaurant = () => {
     const { id } = useParams();
@@ -69,6 +70,7 @@ const Restaurant = () => {
 
     return (
         <div style={{backgroundColor:'white',borderRadius:'5rem',width:'90%',padding:'2rem',margin:'auto',boxShadow: '0 4px 8px rgba(0, 0, 0, 0.5)'}}>
+            <TokenHandler/>
             <div className="container mt-5">
                 <button className="btn btn-primary" onClick={handleBack}
                         style={{
