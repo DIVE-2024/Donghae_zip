@@ -1,6 +1,8 @@
 package com.example.donghae_zip.repository;
 
 import com.example.donghae_zip.domain.Comment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,6 +16,9 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     // 특정 사용자가 작성한 모든 리뷰를 조회
     // 이메일로 특정 사용자가 작성한 댓글 조회
     List<Comment> findByMemberEmail(String email);
+
+    // 특정 사용자가 작성한 모든 리뷰를 페이지네이션으로 조회
+    Page<Comment> findByMember_Email(String email, Pageable pageable);
 
     // 특정 Accommodation에 대한 평점 평균 계산 (unique_id 사용)
     @Query("SELECT AVG(c.rating) FROM Comment c WHERE c.accommodation.uniqueId = :accommodationId")
