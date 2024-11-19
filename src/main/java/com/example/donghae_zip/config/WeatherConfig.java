@@ -1,16 +1,16 @@
 package com.example.donghae_zip.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
-@Component
-@ConfigurationProperties(prefix = "api.weather")
+@Configuration
+@ConfigurationProperties(prefix = "weather.api")
 public class WeatherConfig {
 
-    private String key;
+    private String key; // application.properties에 저장된 weather.api.key를 매핑
 
-    // Getter & Setter
-    public String getKey() {
+    public String getWeatherApiKey() {
+        System.out.println("Weather API Key: " + key);
         return key;
     }
 

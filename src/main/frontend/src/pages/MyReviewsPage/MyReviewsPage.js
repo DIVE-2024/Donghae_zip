@@ -147,10 +147,9 @@ const MyReviewsPage = () => {
                                 </div>
                                 <p className="review-rating">
                                     <StarRating rating={review.rating}/>
-                                </p>
-                                <p className="review-content">리뷰 내용: {review.content}</p>
+                                </p><p className="review-content">리뷰 내용: {review.content}</p>
                                 <div className="review-footer">
-                                    <p className="review-date">작성일자: {new Date(review.createdAt).toLocaleDateString()}</p>
+                                    <p className="review-date" style={{fontSize:'1.3rem'}}>작성일자: {new Date(review.createdAt).toLocaleDateString()}</p>
                                     <a
                                         className="go-to-page-link"
                                         onClick={(e) => {
