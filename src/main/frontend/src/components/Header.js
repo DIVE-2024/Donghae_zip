@@ -86,7 +86,7 @@ const Header = () => {
                             </ul>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/donghae-hotplace" onClick={handleProtectedNavigation}>동해
+                            <Link className="nav-link" to="/donghae-myTravel" onClick={handleProtectedNavigation}>동해
                                 출동해</Link>
                         </li>
                         <li className="nav-item dropdown mypage">

@@ -20,6 +20,7 @@ import DonghaeSubway from "../../src/Donghae/DonghaeSubway";
 import MyReviewsPage from "../pages/MyReviewsPage/MyReviewsPage";
 import ImageMapWithCoordinates from "../Donghae/ImageMapWithCoordinates";
 import WishlistPage from "../pages/WishlistPage/WishlistPage";
+import MyTravel from "../pages/MyTravel/MyTravel";
 
 const AppRoutes = () => {
         return (
@@ -59,6 +60,8 @@ const AppRoutes = () => {
                     {/* 동해선 노선도 페이지 추가 */}
                     <Route path="/donghae-subway" element={<DonghaeSubway />} />
 
+                    {/*여행 일정 페이지 */}
+                    <Route path="/donghae-myTravel" element={<MyTravel />} />
 
                     {/* 마이 페이지 */}
                     {/* 찜 목록과 내가 쓴 리뷰 페이지 추가 */}

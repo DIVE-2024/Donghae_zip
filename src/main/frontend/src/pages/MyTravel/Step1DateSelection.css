@@ -1,0 +1,110 @@
+/* 달력 전체 크기 키우기 */
+.large-datepicker {
+    font-size: 2rem; /* 글꼴 크기 */
+    width: 600px; /* 달력 너비 */
+    padding: 20px; /* 여백 추가 */
+}
+
+.react-datepicker__current-month{
+    font-size: 1.3rem;
+}
+/* 날짜 셀 크기 */
+.react-datepicker__day {
+    width: 4rem; /* 날짜 셀 너비 */
+    height: 4rem; /* 날짜 셀 높이 */
+    line-height: 4rem; /* 텍스트 정렬 */
+    font-size: 2rem; /* 날짜 글자 크기 */
+    margin: 0.2rem; /* 날짜 간격 */
+    border-radius: 0.5rem; /* 둥근 모서리 */
+}
+
+/* 선택된 날짜 및 범위 색상 */
+.react-datepicker__day--selected,
+.react-datepicker__day--in-range {
+    background-color: #007bff; /* 선택된 날짜 배경 */
+    color: white; /* 텍스트 색상 */
+    border-radius: 0.5rem; /* 둥근 모서리 */
+}
+
+/* 월, 년도 헤더 크기 */
+.react-datepicker__header {
+    padding: 20px;
+    font-size: 2.5rem; /* 헤더 텍스트 크기 */
+    text-align: center; /* 가운데 정렬 */
+}
+
+/* 요일 헤더 스타일 */
+.react-datepicker__day-name {
+    font-size: 1.5rem; /* 요일 글자 크기 */
+    width: 3rem; /* 칸 너비 */
+    height: 3rem; /* 칸 높이 */
+    align-items: center;
+    justify-content: center;
+    margin: 0; /* 여백 제거 */
+    text-align: center; /* 중앙 정렬 */
+    padding: 2.25rem;
+}
+/* 네비게이션 버튼 크기 */
+.react-datepicker__navigation {
+    top: 2rem; /* 버튼 위치 조정 */
+    width: 3rem; /* 버튼 너비 */
+    height: 3rem; /* 버튼 높이 */
+}
+
+.react-datepicker__navigation-icon {
+    font-size: 2rem; /* 화살표 크기 */
+}
+
+/* 입력 필드 스타일 */
+input[type="date"] {
+    padding: 0.8rem;
+    font-size: 1.5rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    width: 15rem;
+    text-align: center; /* 텍스트 가운데 정렬 */
+}
+
+/* 버튼 스타일 */
+button {
+    padding: 1rem 3rem;
+    font-size: 1.8rem;
+    border-radius: 0.5rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.weather-container {
+    display: inline-block;
+    padding: 10px; /* 여백을 추가하여 이미지와 컨테이너를 분리 */
+    border-radius: 12px; /* 컨테이너의 모서리를 둥글게 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0), 0 1px 3px rgba(0, 0, 0, 0);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.weather-container:hover {
+    transform: scale(1.2); /* 컨테이너 전체 크기를 키움 */
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0), 0 4px 6px rgba(0, 0, 0, 0); /* 더 진한 그림자 */
+}
+
+.weather-icon {
+    width: 100px;
+    height: 90px;
+    border-radius: 8px; /* 이미지 자체를 둥글게 */
+    box-shadow: none; /* 이미지 자체에 그림자 제거 */
+    transition: transform 0.3s ease;
+}
+
+
