@@ -94,7 +94,7 @@ button:disabled {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.weather-container:hover {
+.weather-icon:hover {
     transform: scale(1.2); /* 컨테이너 전체 크기를 키움 */
     box-shadow: 0 8px 12px rgba(0, 0, 0, 0), 0 4px 6px rgba(0, 0, 0, 0); /* 더 진한 그림자 */
 }
@@ -105,6 +105,7 @@ button:disabled {
     border-radius: 8px; /* 이미지 자체를 둥글게 */
     box-shadow: none; /* 이미지 자체에 그림자 제거 */
     transition: transform 0.3s ease;
+    margin-bottom: 2rem;
 }
 
 

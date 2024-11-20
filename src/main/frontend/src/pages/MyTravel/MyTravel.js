@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './MyTravel.css'; // 스타일링을 위한 CSS 파일
 import Step1DateSelection from "./Step1DateSelection";
+import Step2RecommendTravel from "./Step2RecommendTravel";
 
 const MyTravel = () => {
     const navigate = useNavigate();
@@ -66,11 +67,15 @@ const MyTravel = () => {
 
                         {/* 현재 단계에 따라 다른 내용 표시 가능 */}
                         {currentStep === 2 && (
-                            <div>
-                                <h2>2. 다음 단계 내용</h2>
-                                {/* Step2 컴포넌트 내용 추가 */}
-                            </div>
+                            <Step2RecommendTravel
+                                startDate={startDate}
+                                endDate={endDate}
+                                selectedLocation="Busan" // 사용자 선택 지역
+                                onNext={handleNextStep}
+                                onPrevious={handlePreviousStep}
+                            />
                         )}
+
 
                         {/* 이전/다음 버튼 */}
                         <div style={{ display: "flex", justifyContent: "space-between", marginTop: "2rem" }}>
@@ -83,6 +88,7 @@ const MyTravel = () => {
                                         borderRadius: "5px",
                                         backgroundColor: "#ccc",
                                         cursor: "pointer",
+                                        margin:'2rem'
                                     }}
                                 >
                                     이전
@@ -98,6 +104,7 @@ const MyTravel = () => {
                                         backgroundColor: "#50bcdf",
                                         color: "white",
                                         cursor: "pointer",
+                                        margin:'2rem'
                                     }}
                                 >
                                     다음
