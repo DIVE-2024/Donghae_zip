@@ -75,13 +75,60 @@ public class WeatherService {
 
                 // 4. 필터링된 데이터 저장
                 for (Map<String, Object> forecast : filteredForecasts) {
-                    saveWeather(cityName, forecast, parseDate(forecast.get("dt_txt").toString()));
+                    Date forecastDate = parseDate(forecast.get("dt_txt").toString());
+                    saveOrUpdateWeather(cityName, forecast, forecastDate);
                 }
             }
         } catch (Exception e) {
             System.err.println("Error fetching weather data for city " + cityName + ": " + e.getMessage());
         }
     }
+
+    private void saveOrUpdateWeather(String cityName, Map<String, Object> weatherData, Date date) {
+        // 시간 추출
+        String time = "00:00:00";
+        if (weatherData.get("dt_txt") != null) {
+            String dateTime = weatherData.get("dt_txt").toString();
+            time = dateTime.split(" ")[1];
+        }
+
+        // 기존 데이터 확인
+        Optional<Weather> existingWeather = weatherRepository.findByLocationAndDateAndTime(cityName, date, java.sql.Time.valueOf(time));
+
+        Weather weather = existingWeather.orElse(new Weather());
+        weather.setLocation(cityName);
+        weather.setDate(date);
+        weather.setTime(java.sql.Time.valueOf(time));
+
+        // 새로운 데이터로 업데이트
+        Map<String, Object> temp = (Map<String, Object>) weatherData.get("main");
+        if (temp != null) {
+            weather.setTemperature(temp.get("temp") != null ? ((Number) temp.get("temp")).doubleValue() : 0.0);
+            weather.setMinTemperature(temp.get("temp_min") != null ? ((Number) temp.get("temp_min")).doubleValue() : 0.0);
+            weather.setMaxTemperature(temp.get("temp_max") != null ? ((Number) temp.get("temp_max")).doubleValue() : 0.0);
+        }
+
+        List<Map<String, Object>> weatherList = (List<Map<String, Object>>) weatherData.get("weather");
+        if (weatherList != null && !weatherList.isEmpty()) {
+            Map<String, Object> weatherDetails = weatherList.get(0);
+            weather.setDescription((String) weatherDetails.getOrDefault("description", "No description available"));
+            weather.setIcon((String) weatherDetails.getOrDefault("icon", ""));
+        } else {
+            weather.setDescription("No description available");
+            weather.setIcon("");
+        }
+
+        weather.setWindSpeed(weatherData.get("wind") != null && weatherData.get("wind_speed") != null
+                ? ((Number) ((Map<String, Object>) weatherData.get("wind")).get("speed")).doubleValue()
+                : 0.0);
+        weather.setHumidity(temp.get("humidity") != null ? ((Number) temp.get("humidity")).intValue() : 0);
+        weather.setPressure(temp.get("pressure") != null ? ((Number) temp.get("pressure")).intValue() : 0);
+
+        // 데이터 저장 또는 업데이트
+        weatherRepository.save(weather);
+    }
+
+
 
     // 특정 시간대 필터링 로직
     private List<Map<String, Object>> filterWeatherData(List<Map<String, Object>> weatherData) {
@@ -110,21 +157,22 @@ public class WeatherService {
 
     // 공통 저장 로직
     private void saveWeather(String cityName, Map<String, Object> weatherData, Date date) {
-        Weather weather = new Weather();
-        weather.setLocation(cityName);
-        weather.setDate(date);
-
         // 시간 설정
+        String time = "00:00:00";
         if (weatherData.get("dt_txt") != null) {
             String dateTime = weatherData.get("dt_txt").toString(); // "2024-11-19 12:00:00"
-            String time = dateTime.split(" ")[1]; // "12:00:00"
-            weather.setTime(java.sql.Time.valueOf(time));
-        } else {
-            // 기본 시간 설정 (예: 자정)
-            weather.setTime(java.sql.Time.valueOf("00:00:00"));
+            time = dateTime.split(" ")[1]; // "12:00:00"
         }
 
-        // 온도 처리
+        // 중복 확인
+        Optional<Weather> existingWeather = weatherRepository.findByLocationAndDateAndTime(cityName, date, java.sql.Time.valueOf(time));
+
+        Weather weather = existingWeather.orElse(new Weather());
+        weather.setLocation(cityName);
+        weather.setDate(date);
+        weather.setTime(java.sql.Time.valueOf(time));
+
+        // 날씨 정보 업데이트
         Map<String, Object> temp = (Map<String, Object>) weatherData.get("main");
         if (temp != null) {
             weather.setTemperature(temp.get("temp") != null ? ((Number) temp.get("temp")).doubleValue() : 0.0);
@@ -132,7 +180,6 @@ public class WeatherService {
             weather.setMaxTemperature(temp.get("temp_max") != null ? ((Number) temp.get("temp_max")).doubleValue() : 0.0);
         }
 
-        // 날씨 설명
         List<Map<String, Object>> weatherList = (List<Map<String, Object>>) weatherData.get("weather");
         if (weatherList != null && !weatherList.isEmpty()) {
             Map<String, Object> weatherDetails = weatherList.get(0);
@@ -143,16 +190,16 @@ public class WeatherService {
             weather.setIcon("");
         }
 
-        // 기타 데이터
         weather.setWindSpeed(weatherData.get("wind") != null && weatherData.get("wind_speed") != null
                 ? ((Number) ((Map<String, Object>) weatherData.get("wind")).get("speed")).doubleValue()
                 : 0.0);
         weather.setHumidity(temp.get("humidity") != null ? ((Number) temp.get("humidity")).intValue() : 0);
         weather.setPressure(temp.get("pressure") != null ? ((Number) temp.get("pressure")).intValue() : 0);
 
-        // 데이터베이스 저장
+        // 데이터베이스에 저장 (업데이트 or 삽입)
         weatherRepository.save(weather);
     }
+
 
 
     // 특정 지역과 날짜 범위의 날씨 데이터 조회

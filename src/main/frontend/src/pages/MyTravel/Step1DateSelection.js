@@ -193,10 +193,11 @@ const Step1DateSelection = ({ startDate, setStartDate, endDate, setEndDate, onNe
 
                 </div>
                 {weatherData.length > 0 && (
-                    <div className="weather-info" style={{ backgroundColor: '#FFE3EE', padding: '3rem', borderRadius: '3rem', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)'}}>
+                    <div className="weather-info" style={{ width:'40rem', backgroundColor: '#FFE3EE', padding: '3rem', borderRadius: '3rem', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)'}}>
                         <div style={{fontSize:'2.5rem'}}>
-                            {weatherData[0].date}일의 {locationTranslations[selectedLocation] || selectedLocation} 날씨 정보
+                            {weatherData[0].date}일
                         </div> {/* 지역명을 한글로 변환 */}
+                        <div style={{fontSize:'2rem'}}>{locationTranslations[selectedLocation] || selectedLocation} 날씨 정보</div>
                         {weatherData.map((weather, index) => {
                             const translatedDescription = weatherTranslations[weather.description] || weather.description; // 번역 찾기
                             const weatherIcon = weatherIconMappings[translatedDescription] || ClearIcon;
@@ -205,8 +206,8 @@ const Step1DateSelection = ({ startDate, setStartDate, endDate, setEndDate, onNe
                                 <div key={index}
                                      style={{borderBottom: '1px solid #ccc', marginBottom: '1rem', marginTop: '1rem'}}>
                                     <p style={{fontSize: '1.3rem'}}>{formatTime(weather.time)}</p>
-                                    <p style={{fontSize: '1.3rem'}}>온도: {weather.temperature}°C</p>
-                                    <div className="weather-container" style={{display:'flex',justifyContent:'center'}}>
+                                    <p style={{fontSize: '1.3rem'}}>평균 기온: {weather.temperature}°C (도)</p>
+                                    <div className="weather-container" style={{display:'flex',justifyContent:'center',gap:'2rem'}}>
                                         <p style={{fontSize: '1.3rem'}}>날씨: {translatedDescription}</p>
                                         <img
                                             src={weatherIcon}

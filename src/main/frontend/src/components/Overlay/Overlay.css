@@ -1,0 +1,280 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.overlay-content {
+    background-color: #DFF6F0;
+    width: 90%; /* 기존보다 넓게 설정 */
+    max-width: 2000px; /* 최대 너비 제한 */
+    height: 80%; /* 높이 조정 */
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+
+.overlay-body {
+    display: flex; /* 내부 요소를 가로로 정렬 */
+    flex: 1;
+    gap: 1rem; /* 요소 간 간격 */
+}
+
+.schedule-list, .category-section {
+    flex: 1; /* 좌우 요소가 같은 비율로 커지도록 설정 */
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 1rem;
+    overflow-y: auto;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.schedule-list {
+    margin-right: 1rem; /* 오른쪽 요소와 간격 */
+}
+
+.schedule-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+.schedule-card {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.schedule-card:hover {
+    transform: translateY(-5px);
+}
+
+.schedule-time {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #4caf50; /* 포인트 색상 */
+    margin-bottom: 10px;
+}
+
+.schedule-plans {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.plan-item {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+}
+
+.plan-icon {
+    margin-right: 10px;
+    font-size: 1.2rem;
+}
+
+.view-more-button {
+    margin-top: 10px;
+    padding: 5px 10px;
+    border: none;
+    background-color: #4caf50;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.view-more-button:hover {
+    background-color: #388e3c;
+}
+
+.empty-message {
+    text-align: center;
+    font-size: 1rem;
+    color: #999;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
+.category-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem; /* 세로 간격 */
+}
+
+.category-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 1rem; /* 버튼들 사이 간격 */
+    margin-bottom: 1rem;
+}
+
+.category-section button {
+    width: 80%;
+    padding: 0.5rem;
+    font-size: 1.5rem;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+/* 버튼별 색상 설정 */
+.category-tabs button:nth-child(1) {
+    background-color: #ff7f7f; /* 첫 번째 버튼 색상 */
+    color: white;
+}
+
+.category-tabs button:nth-child(2) {
+    background-color: #ffbf80; /* 두 번째 버튼 색상 */
+    color: white;
+}
+
+.category-tabs button:nth-child(3) {
+    background-color: #80d4ff; /* 세 번째 버튼 색상 */
+    color: white;
+}
+
+/* 선택된(active) 버튼 스타일 */
+.category-tabs button.active {
+    background-color: #0056b3; /* 활성화된 버튼 색상 */
+    color: white;
+    font-weight: bold;
+}
+
+
+.data-list {
+    display: grid; /* 카드형식의 레이아웃 */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* 자동 크기 조정 */
+    gap: 1rem; /* 카드 간의 간격 */
+    padding: 1rem; /* 전체 여백 */
+}
+
+.data-item {
+    background: #fff; /* 카드 배경색 */
+    border: 1px solid #ddd; /* 카드 테두리 */
+    border-radius: 8px; /* 둥근 모서리 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+    overflow: hidden; /* 내용이 넘치지 않도록 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+    padding: 1rem; /* 내부 여백 */
+    transition: transform 0.2s, box-shadow 0.2s; /* 호버 효과 */
+}
+
+.data-item:hover {
+    transform: translateY(-5px); /* 위로 살짝 올라감 */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* 그림자 강조 */
+}
+
+.data-image {
+    width: 100%; /* 이미지가 카드 전체 너비를 차지 */
+    height: 200px; /* 고정 높이 */
+    object-fit: cover; /* 이미지 비율 유지 */
+    border-bottom: 1px solid #ddd; /* 이미지 아래 경계선 */
+}
+
+.data-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 0.5rem 0;
+}
+
+.data-desc {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.category-section .data-button {
+    width: 80%;
+    background: #007bff; /* 버튼 색상 */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.data-button:hover {
+    background: #0056b3; /* 버튼 호버 색상 */
+}
+
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+    gap: 1rem;
+}
+
+.pagination button {
+    padding: 0.5rem 1rem;
+    background-color: #50bcdf;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.pagination button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.pagination span {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.time-slot {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.time-slot.filled {
+    background-color: #d1e7dd; /* 일정이 추가된 경우 초록색 */
+}
+
+.time-slot strong {
+    font-size: 1.2rem;
+}
+
+.time-slot ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.time-slot ul li {
+    font-size: 1rem;
+}
+
+
