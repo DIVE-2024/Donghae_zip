@@ -14,6 +14,19 @@ const Overlay = ({ closeOverlay, selectedDay }) => {
     const [selectedTime, setSelectedTime] = useState("06:00"); // Selected start time
     const [duration, setDuration] = useState(1); // Selected duration in hours
 
+    const getCategoryIcon = (category) => {
+        switch (category) {
+            case "식당":
+                return "/image/RestaurantMarker.png";
+            case "숙박/휴양":
+                return "/image/AccommodaionMarker.png";
+            case "여행지":
+                return "/image/TouristSpotMarker.png";
+            default:
+                return "/image/default_image.png"; // 기본 아이콘
+        }
+    };
+
     // Initialize time slots from 06:00 to 24:00
     useEffect(() => {
         const slots = Array.from({ length: 19 }, (_, i) => ({
@@ -35,6 +48,7 @@ const Overlay = ({ closeOverlay, selectedDay }) => {
         else if (category === "ACCOMMODATION") url = `/api/accommodations?page=${page}&size=${size}`;
         try {
             const response = await axios.get(url);
+            console.log(response.data);
             setData(response.data.content); // Set the current page's data
             setTotalPages(response.data.totalPages); // Set total pages
         } catch (error) {
@@ -44,32 +58,58 @@ const Overlay = ({ closeOverlay, selectedDay }) => {
 
     const isTimeSlotAvailable = (startIndex, duration) => {
         for (let i = startIndex; i < startIndex + duration; i++) {
-            if (i >= timeSlots.length || timeSlots[i].plans.length > 0) {
+            if (i >= timeSlots.length || timeSlots[i].plans.length > 0 || timeSlots[i]?.reserved) {
                 return false;
             }
         }
         return true;
     };
-
     const addItemToTimeSlot = (item, startIndex, duration) => {
+        const startTime = timeSlots[startIndex].time; // 시작 시간
+        const endTimeIndex = startIndex + duration; // 종료 시간 계산
+        const endTime = timeSlots[endTimeIndex]?.time || "24:00"; // 종료 시간이 범위를 초과하지 않도록 설정
+
         if (!isTimeSlotAvailable(startIndex, duration)) {
             alert("선택한 시간대에 이미 일정이 있습니다. 다른 시간을 선택해주세요.");
             return;
         }
 
+        // 새로운 일정 데이터 (단일 항목)
+        const newPlan = {
+            ...item,
+            startTime,
+            endTime,
+        };
+
         setTimeSlots((prevSlots) => {
-            // 깊은 복사 수행
-            const updatedSlots = prevSlots.map((slot) => ({
-                ...slot,
-                plans: [...slot.plans],
-            }));
-            for (let i = startIndex; i < startIndex + duration; i++) {
-                updatedSlots[i].plans.push(item);
+            // 이전 슬롯 복사
+            const updatedSlots = [...prevSlots];
+
+            // 시작 시간 슬롯에 중복 여부 검사 후 추가
+            const currentPlans = updatedSlots[startIndex].plans;
+            const isDuplicate = currentPlans.some(
+                (plan) => plan.title === newPlan.title && plan.startTime === newPlan.startTime
+            );
+
+            if (!isDuplicate) {
+                updatedSlots[startIndex].plans.push(newPlan); // 중복이 아닐 때만 추가
             }
+
+            // 예약된 시간대를 표시 (중복 추가 방지용)
+            for (let i = startIndex + 1; i < endTimeIndex; i++) {
+                if (updatedSlots[i]) {
+                    updatedSlots[i].reserved = true;
+                }
+            }
+
             return updatedSlots;
         });
-        closeModal(); // Close the modal after adding the item
+
+        closeModal(); // 모달 닫기
     };
+
+
+
 
     const handleAddToSchedule = () => {
         const startIndex = timeSlots.findIndex((slot) => slot.time === selectedTime);
@@ -104,39 +144,39 @@ const Overlay = ({ closeOverlay, selectedDay }) => {
                 </div>
 
                 <div className="overlay-body">
-                    {/* Left: Time slots */}
                     <div className="schedule-list">
-                        <div style={{fontSize: '2.5rem'}}>{selectedDay.dayLabel} 일정</div>
+                        <div style={{fontSize: "2.5rem"}}>{selectedDay.dayLabel} 일정</div>
                         <div className="schedule-container">
                             {timeSlots
                                 .filter((slot) => slot.plans.length > 0) // 일정이 있는 시간대만 표시
                                 .map((slot, index) => (
                                     <div key={index} className="schedule-card">
-                                        <div className="schedule-time">
-                                            <strong>{slot.time}</strong>
-                                        </div>
-                                        <div className="schedule-plans">
-                                            {slot.plans.slice(0, 2).map((plan, idx) => ( // 첫 2개의 일정만 표시
-                                                <div key={idx} className="plan-item">
-                                                    <span className="plan-icon">📍</span> {/* 아이콘 */}
-                                                    {plan.title || plan.name}
+                                        {slot.plans.map((plan, idx) => (
+                                            <div key={idx} className="plan-item">
+                                                {/* 시작 시간 ~ 종료 시간 */}
+                                                <div className="schedule-time">
+                                                    {plan.startTime} ~ {plan.endTime}
                                                 </div>
-                                            ))}
-                                            {slot.plans.length > 2 && (
-                                                <button className="view-more-button">
-                                                    +{slot.plans.length - 2} 더 보기
-                                                </button>
-                                            )}
-                                        </div>
+                                                {/* 일정 제목과 카테고리 아이콘 */}
+                                                <div className="plan-content">
+                                                    <img
+                                                        src={getCategoryIcon(plan.category)} // 카테고리별 아이콘
+                                                        alt={`${plan.category} icon`}
+                                                        className="plan-icon"
+                                                    />
+                                                    <span className="plan-title">{plan.title || plan.name}</span>
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
                                 ))}
                             {timeSlots.every((slot) => slot.plans.length === 0) && (
-                                <div className="empty-message" style={{fontSize:'1.5rem'}}>추가된 일정이 없습니다.</div>
+                                <div className="empty-message" style={{fontSize: "1.5rem"}}>
+                                    추가된 일정이 없습니다.
+                                </div>
                             )}
                         </div>
                     </div>
-
-                    {/* Right: Category data */}
                     <div className="category-section">
                         <div className="category-tabs">
                             <button
@@ -169,22 +209,44 @@ const Overlay = ({ closeOverlay, selectedDay }) => {
                         </div>
                         <div className="data-list">
                             {data.length > 0 ? (
-                                data.map((item) => (
-                                    <div key={item.id || item.uniqueId} className="data-item">
-                                        <img
-                                            src={item.imageUrls ? item.imageUrls[0] : item.imageUrl}
-                                            alt={item.name || item.title}
-                                            className="data-image"
-                                        />
-                                        <h4>{item.title || item.name}</h4>
-                                        <p>{item.oneLineDesc || item.address}</p>
-                                        <button onClick={() => openModal(item)}>일정 추가</button>
-                                    </div>
-                                ))
+                                data.map((item) => {
+                                    console.log(item); // 데이터 확인
+
+                                    // 이미지 URL 처리
+                                    let imageUrl = "/image/default_image.png";
+                                    if (item.imageUrls && Array.isArray(item.imageUrls)) {
+                                        imageUrl = item.imageUrls[0];
+                                    } else if (item.imageUrl) {
+                                        try {
+                                            const parsedUrls = JSON.parse(item.imageUrl);
+                                            imageUrl = Array.isArray(parsedUrls) && parsedUrls.length > 0 ? parsedUrls[0] : item.imageUrl;
+                                        } catch (error) {
+                                            imageUrl = item.imageUrl;
+                                        }
+                                    }
+
+                                    return (
+                                        <div key={item.id || item.uniqueId || item.spotId} className="data-item">
+                                            <div className="image-container">
+                                                <img src={imageUrl} alt={item.name || item.title}
+                                                     className="data-image"/>
+                                            </div>
+                                            <div className="data-content">
+                                                <h4 className="data-title">{item.title || item.name}</h4>
+                                                <p className="data-desc">{item.oneLineDesc || item.address}</p>
+                                                <button className="data-button" onClick={() => openModal(item)}>
+                                                    일정 추가
+                                                </button>
+                                            </div>
+                                        </div>
+                                    );
+                                })
                             ) : (
-                                <p>데이터가 없습니다.</p>
+                                <p className="empty-message">데이터가 없습니다.</p>
                             )}
                         </div>
+
+
                         {/* Pagination */}
                         <div className="pagination">
                             <button onClick={goToPreviousPage} disabled={currentPage === 0}>
@@ -201,7 +263,6 @@ const Overlay = ({ closeOverlay, selectedDay }) => {
                     </div>
                 </div>
             </div>
-
             {/* Modal */}
             <Modal
                 isOpen={isModalOpen}
@@ -221,16 +282,17 @@ const Overlay = ({ closeOverlay, selectedDay }) => {
                     </select>
                 </label>
                 <label>
-                    지속 시간:
+                    머무를 시간:
                     <select value={duration} onChange={(e) => setDuration(Number(e.target.value))}>
                         {[1, 2, 3, 4].map((d) => (
                             <option key={d} value={d}>
-                            {d}시간
+                                {d}시간
                             </option>
                         ))}
                     </select>
                 </label>
             </Modal>
+
         </div>
     );
 };

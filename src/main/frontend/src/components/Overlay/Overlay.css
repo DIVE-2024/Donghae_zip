@@ -84,14 +84,16 @@
 .plan-item {
     display: flex;
     align-items: center;
-    font-size: 1rem;
+    font-size: 1.5rem;
     font-weight: 500;
     color: #333;
 }
 
 .plan-icon {
+    width: 24px;
+    height: 24px;
     margin-right: 10px;
-    font-size: 1.2rem;
+    vertical-align: middle;
 }
 
 .view-more-button {
@@ -173,33 +175,47 @@
     padding: 1rem; /* 전체 여백 */
 }
 
+/* 오른쪽 데이터 리스트 */
 .data-item {
-    background: #fff; /* 카드 배경색 */
-    border: 1px solid #ddd; /* 카드 테두리 */
-    border-radius: 8px; /* 둥근 모서리 */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
-    overflow: hidden; /* 내용이 넘치지 않도록 */
-    text-align: center; /* 텍스트 중앙 정렬 */
-    padding: 1rem; /* 내부 여백 */
-    transition: transform 0.2s, box-shadow 0.2s; /* 호버 효과 */
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    background-color: #fff;
+    transition: transform 0.3s ease;
 }
 
 .data-item:hover {
-    transform: translateY(-5px); /* 위로 살짝 올라감 */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* 그림자 강조 */
+    transform: translateY(-5px);
+}
+
+/* 이미지 컨테이너 */
+.image-container {
+    position: relative;
+    width: 100%;
+    height: 200px; /* 이미지 높이 고정 */
+    overflow: hidden;
 }
 
 .data-image {
-    width: 100%; /* 이미지가 카드 전체 너비를 차지 */
-    height: 200px; /* 고정 높이 */
-    object-fit: cover; /* 이미지 비율 유지 */
-    border-bottom: 1px solid #ddd; /* 이미지 아래 경계선 */
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 이미지 크기 조정 */
+}
+
+.data-content {
+    padding: 15px;
+    text-align: center;
 }
 
 .data-title {
     font-size: 1.2rem;
     font-weight: bold;
-    margin: 0.5rem 0;
+    margin-bottom: 10px;
+    color: #333;
 }
 
 .data-desc {
@@ -233,6 +249,7 @@
 }
 
 .pagination button {
+    width:30%;
     padding: 0.5rem 1rem;
     background-color: #50bcdf;
     color: white;
@@ -277,4 +294,56 @@
     font-size: 1rem;
 }
 
+/* 시간 오버레이 */
+.time-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
+.time-text {
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+/* 내용 영역 */
+.data-content {
+    padding: 15px;
+    text-align: center;
+}
+
+.data-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.data-desc {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.data-button {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.data-button:hover {
+    background-color: #388e3c;
+}

@@ -89,6 +89,9 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/comments/{commentId}").authenticated() // 리뷰 수정은 인증 필요
                         .requestMatchers(HttpMethod.DELETE, "/api/comments/{commentId}").authenticated() // 리뷰 삭제는 인증 필요
 
+                        // 여행 및 상세 여행 API 인증 필요
+                        .requestMatchers("/api/travel/**").authenticated() // `travel` API는 인증 필요
+                        .requestMatchers("/api/travel-detail/**").authenticated() // `travel-detail` API는 인증 필요
 
                         .anyRequest().authenticated()
                 )

@@ -7,7 +7,7 @@ const Modal = ({ isOpen, onClose, onConfirm, title, children }) => {
     return (
         <div className="modal">
             <div className="modal-content">
-                <h3>{title}</h3>
+                <div style={{fontSize:'2rem'}}>{title}</div>
                 <div className="modal-body">{children}</div>
                 <div className="modal-footer">
                     <button className="confirm-button" onClick={onConfirm}>
