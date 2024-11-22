@@ -48,6 +48,8 @@ const Step1DateSelection = ({ startDate, setStartDate, endDate, setEndDate, onNe
         "broken clouds": "구름 많음",
         "shower rain": "소나기",
         "rain": "비",
+        "heavy intensity rain": "폭우",
+        "moderate rain": "적당한 비",
         "overcast clouds": "흐린 구름",
         "thunderstorm": "천둥번개",
         "snow": "눈",
@@ -65,6 +67,8 @@ const Step1DateSelection = ({ startDate, setStartDate, endDate, setEndDate, onNe
         "눈": SnowIcon,
         "소나기": RainIcon,
         "비": RainIcon,
+        "폭우": RainIcon,
+        "적당한 비": RainIcon,
         "천둥번개": ThunderstormIcon
     };
 
