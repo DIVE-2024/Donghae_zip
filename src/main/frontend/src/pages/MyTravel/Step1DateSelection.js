@@ -9,14 +9,16 @@ import CloudyIcon from '../../assets/images/흐림.png';
 import SnowIcon from '../../assets/images/눈.png';
 import RainIcon from '../../assets/images/비.png';
 import ThunderstormIcon from '../../assets/images/번개.png';
+import {getUserIdFromToken} from "../../components/Util/jwtUtils";
 
 registerLocale('ko', ko);
 
-const Step1DateSelection = ({ startDate, setStartDate, endDate, setEndDate, onNext }) => {
+const Step1DateSelection = ({ travel ,startDate, setStartDate, endDate, setEndDate, onNext }) => {
     const [isSelectingStartDate, setIsSelectingStartDate] = useState(true); // 출발날 선택 상태 관리
     const [weatherData, setWeatherData] = useState([]); // 선택된 날의 날씨 데이터
     const [selectedLocation, setSelectedLocation] = useState("Busan"); // 기본값은 부산
     const [error, setError] = useState(''); // 에러 메시지 상태
+    const [userId,setUserId] = useState(null);
 
     // 시간을 오전/오후 형식으로 변환
     const formatTime = (time) => {
@@ -25,6 +27,55 @@ const Step1DateSelection = ({ startDate, setStartDate, endDate, setEndDate, onNe
         const isAM = hourNum < 12;
         const formattedHour = hourNum % 12 || 12; // 12시간제 표현 (0시는 12로 변환)
         return `${isAM ? "오전" : "오후"} ${formattedHour}:${minute}`;
+    };
+
+
+    const handleSubmitDates = async () => {
+
+        if (!startDate || !endDate) {
+            alert("출발날과 도착날을 선택하세요.");
+            return;
+        }
+        try {
+            const token = sessionStorage.getItem('token');
+            const userId = getUserIdFromToken();  // userId 가져오기
+            if (userId) setUserId(userId);
+
+            // 서버로 PATCH 요청 전송
+            const response = await axios.patch(`/api/travel/${travel.travelId}/dates`, {
+                    startDate: startDate.toLocaleDateString("en-CA"), // YYYY-MM-DD 형식
+                    endDate: endDate.toLocaleDateString("en-CA"),
+            },{
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                }
+                );
+
+            console.log("Travel dates updated:", response.data);
+            onNext(); // 다음 단계로 이동
+        } catch (error) {
+            console.error("Error updating travel dates:", error);
+            alert("날짜를 저장하는 중 오류가 발생했습니다.");
+        }
+    };
+
+    const handleResetDates = async () => {
+        try {
+            const token = sessionStorage.getItem('token');
+            const email = getUserIdFromToken(); // JWT에서 이메일 추출
+            await axios.patch(`/api/travel/${travel.travelId}/reset-dates?email=${email}`, null, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setStartDate(null);
+            setEndDate(null);
+            alert("날짜가 초기화되었습니다.");
+        } catch (error) {
+            console.error("Error resetting travel dates:", error);
+            alert("날짜 초기화 중 오류가 발생했습니다.");
+        }
     };
 
 
@@ -130,20 +181,16 @@ const Step1DateSelection = ({ startDate, setStartDate, endDate, setEndDate, onNe
         }
     };
 
-    const handleResetDates = () => {
-        setStartDate(null); // 출발날 초기화
-        setEndDate(null); // 도착날 초기화
-        setIsSelectingStartDate(true); // 출발날 선택 상태로 초기화
-        setWeatherData([]);
-        setError('');
-    };
-
     const maxEndDate = startDate
         ? new Date(startDate.getTime() + 2 * 24 * 60 * 60 * 1000) // 출발날 + 2일
         : null;
 
     return (
         <div style={{textAlign: 'center'}}>
+            {/* 선택된 여행 타이틀 표시 */}
+            <div style={{ fontSize: '2.5rem', marginBottom: '1rem', color: '#333' }}>
+                여행 일정: <strong>{travel?.title}</strong>
+            </div>
             <div style={{fontSize: '2.5rem'}}>1. 여행 날짜 선택</div>
             <p style={{fontSize: '1.5rem'}}>출발날과 도착날을 선택하세요 (최대 <strong style={{color: '#50bcdf'}}>2박 3일</strong> 허용)
             </p>
@@ -270,7 +317,7 @@ const Step1DateSelection = ({ startDate, setStartDate, endDate, setEndDate, onNe
     <div style={{marginTop: '2rem', display: 'flex', justifyContent: 'center', gap: '1rem'}}>
         <button
             style={{padding: '1rem 2rem', fontSize: '1.2rem'}}
-            onClick={onNext}
+            onClick={handleSubmitDates}
             disabled={!startDate || !endDate}
         >
             다음 단계로

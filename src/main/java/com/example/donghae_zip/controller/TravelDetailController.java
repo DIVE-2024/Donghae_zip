@@ -1,35 +1,55 @@
 package com.example.donghae_zip.controller;
 
+import com.example.donghae_zip.domain.Travel;
+import com.example.donghae_zip.domain.TravelDTO;
 import com.example.donghae_zip.domain.TravelDetail;
+import com.example.donghae_zip.domain.TravelDetailDTO;
 import com.example.donghae_zip.service.TravelDetailService;
+import com.example.donghae_zip.service.TravelService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/travel-detail")
 public class TravelDetailController {
 
     private final TravelDetailService travelDetailService;
+    private final TravelService travelService;
 
-    public TravelDetailController(TravelDetailService travelDetailService) {
+    public TravelDetailController(TravelDetailService travelDetailService, TravelService travelService) {
         this.travelDetailService = travelDetailService;
+        this.travelService = travelService;
     }
 
-    // 1. 특정 여행 ID로 상세 일정 조회
+    // 특정 여행 ID로 상세 일정 조회
     @GetMapping("/travel/{travelId}")
-    public ResponseEntity<List<TravelDetail>> getDetailsByTravelId(@PathVariable Long travelId) {
-        List<TravelDetail> details = travelDetailService.getDetailsByTravelId(travelId);
-        return ResponseEntity.ok(details);
+    public ResponseEntity<TravelDTO> getDetailsByTravelId(@PathVariable Long travelId) {
+        Travel travel = travelService.getTravelById(travelId);
+        TravelDTO travelDTO = new TravelDTO(travel); // DTO로 변환
+        return ResponseEntity.ok(travelDTO); // DTO 반환
     }
 
-    // 2. 특정 여행에 새 일정 추가
     @PostMapping
-    public ResponseEntity<TravelDetail> addTravelDetail(@RequestBody TravelDetail travelDetail) {
-        TravelDetail addedDetail = travelDetailService.saveTravelDetail(travelDetail);
-        return ResponseEntity.ok(addedDetail);
+    public ResponseEntity<List<TravelDetailDTO>> addTravelDetail(
+            @RequestParam Long travelId,
+            @RequestBody TravelDetail travelDetail
+    ) {
+        travelDetailService.saveTravelDetail(travelId, travelDetail);
+
+        // 일정 추가 후, 해당 travelId의 최신 데이터 반환
+        List<TravelDetail> updatedDetails = travelDetailService.getDetailsByTravelId(travelId);
+
+        // DTO로 변환하여 반환
+        List<TravelDetailDTO> updatedDetailsDTO = updatedDetails.stream()
+                .map(TravelDetailDTO::new)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(updatedDetailsDTO);
     }
+
 
     // 3. 특정 상세 일정 삭제
     @DeleteMapping("/{detailId}")

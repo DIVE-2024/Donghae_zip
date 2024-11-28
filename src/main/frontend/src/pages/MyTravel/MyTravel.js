@@ -14,6 +14,8 @@ const MyTravel = () => {
     const [nickname, setNickname] = useState(null); // 닉네임 상태 추가
     const [startDate, setStartDate] = useState(null); // 출발날 상태
     const [endDate, setEndDate] = useState(null); // 도착날 상태
+    const [selectedTravel, setSelectedTravel] = useState(null); // 선택된 여행 정보 추가
+    const [selectedTravelId, setSelectedTravelId] = useState(null);
 
     useEffect(() => {
         const token = sessionStorage.getItem('token');
@@ -35,13 +37,17 @@ const MyTravel = () => {
     }, [navigate]);
 
     // 다음 단계로 이동
-    const handleNextStep = () => {
+    const handleNextStep = (travel) => {
+        if (currentStep === 0 && travel) {
+            setSelectedTravel(travel); // 선택된 여행 저장
+        }
         if (currentStep === 1 && (!startDate || !endDate)) {
-            alert("출발날과 도착날을 선택하세요."); // 날짜 선택이 안된 경우 경고
+            alert("출발날과 도착날을 선택하세요.");
             return;
         }
         if (currentStep < 5) setCurrentStep(currentStep + 1);
     };
+
 
     // 이전 단계로 이동
     const handlePreviousStep = () => {
@@ -58,17 +64,23 @@ const MyTravel = () => {
             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.5)',
             display: 'flex',
             justifyContent: 'center',
+            flexDirection: 'column', // 세로 정렬을 추가
+            minHeight: '80vh',
         }}>
             <div style={{
                 backgroundColor: '#DFF6F0',
-                borderRadius: '5rem',
-                width: '80%',
+                borderRadius: '2rem',
+                width: '100%',
                 alignItems: 'center',
-                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.5)',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+                margin: 'auto',
+                padding: '3rem',
+                flexGrow: 1, // 콘텐츠를 중앙에 배치
             }}>
-                <div style={{ fontSize: '4rem' }} className="accommodation-title text-center mb-4">
+                <div style={{fontSize: '4rem'}} className="accommodation-title text-center mb-4">
                     동해 출동해!
                 </div>
+
 
                 {isLoggedIn ? (
                     <div>
@@ -83,6 +95,7 @@ const MyTravel = () => {
 
                         {currentStep === 1 && (
                             <Step1DateSelection
+                                travel={selectedTravel} // 선택된 여행 데이터 전달
                                 startDate={startDate}
                                 setStartDate={setStartDate}
                                 endDate={endDate}
@@ -93,6 +106,7 @@ const MyTravel = () => {
 
                         {currentStep === 2 && (
                             <Step2RecommendTravel
+                                travelId={selectedTravel?.travelId} // 선택된 여행 ID 전달
                                 startDate={startDate}
                                 endDate={endDate}
                                 selectedLocation="Busan" // 사용자 선택 지역
@@ -102,7 +116,7 @@ const MyTravel = () => {
                         )}
 
                         {/* 이전/다음 버튼 */}
-                        <div style={{ display: "flex", justifyContent: "space-between", marginTop: "2rem" }}>
+                        <div style={{display: "flex", justifyContent: "space-between", marginTop: "2rem"}}>
                             {currentStep > 0 && (
                                 <button
                                     onClick={handlePreviousStep}
@@ -118,7 +132,7 @@ const MyTravel = () => {
                                     이전
                                 </button>
                             )}
-                            {currentStep < 5 && (
+                            {currentStep > 0 && currentStep < 5 &&(
                                 <button
                                     onClick={handleNextStep}
                                     style={{

@@ -3,7 +3,7 @@ import axios from 'axios'; // axios for API requests
 import './Overlay.css';
 import Modal from "../Modal/Modal";
 
-const Overlay = ({ closeOverlay, selectedDay }) => {
+const Overlay = ({ closeOverlay, selectedDay, travelId }) => {
     const [activeCategory, setActiveCategory] = useState("TOURIST_SPOT"); // Active category
     const [data, setData] = useState([]); // Data for the active category
     const [currentPage, setCurrentPage] = useState(0); // Current page index
@@ -27,14 +27,30 @@ const Overlay = ({ closeOverlay, selectedDay }) => {
         }
     };
 
-    // Initialize time slots from 06:00 to 24:00
+    // Fetch travel details from the backend
     useEffect(() => {
-        const slots = Array.from({ length: 19 }, (_, i) => ({
-            time: `${String(i + 6).padStart(2, "0")}:00`,
-            plans: [],
-        }));
-        setTimeSlots(slots);
-    }, []);
+        const fetchTravelDetails = async () => {
+            try {
+                const token = sessionStorage.getItem("token");
+                const response = await axios.get(`/api/travel-detail/travel/${travelId}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                const slots = Array.isArray(response.data)
+                    ? response.data
+                    : response.data.timeSlots || []; // 데이터가 배열인지 확인
+                setTimeSlots(slots); // 성공 시 timeSlots 설정
+            } catch (error) {
+                console.error("Error fetching travel details:", error);
+                alert("일정을 가져오는 중 오류가 발생했습니다.");
+                setTimeSlots([]); // 실패 시 빈 배열로 초기화
+            }
+        };
+
+        fetchTravelDetails(); // useEffect 내에서 함수 호출
+    }, [travelId]); // travelId가 변경될 때마다 호출
+
+
 
     // Fetch data whenever the category or page changes
     useEffect(() => {
@@ -64,7 +80,7 @@ const Overlay = ({ closeOverlay, selectedDay }) => {
         }
         return true;
     };
-    const addItemToTimeSlot = (item, startIndex, duration) => {
+    const addItemToTimeSlot = async (item, startIndex, duration) => {
         const startTime = timeSlots[startIndex].time; // 시작 시간
         const endTimeIndex = startIndex + duration; // 종료 시간 계산
         const endTime = timeSlots[endTimeIndex]?.time || "24:00"; // 종료 시간이 범위를 초과하지 않도록 설정
@@ -76,39 +92,34 @@ const Overlay = ({ closeOverlay, selectedDay }) => {
 
         // 새로운 일정 데이터 (단일 항목)
         const newPlan = {
-            ...item,
-            startTime,
-            endTime,
+            travelDate: selectedDay.date.toISOString().split("T")[0], // YYYY-MM-DD 형식
+            placeType: ["TOURIST_SPOT", "RESTAURANT", "ACCOMMODATION"].includes(item.type)
+                ? item.type
+                : "TOURIST_SPOT", // 유효성 검증
+            placeId: item.id || item.spotId || item.uniqueId, // 가능한 ID 값을 우선순위로 설정
+            startTime: startTime, // 시작 시간
+            endTime: endTime, // 종료 시간
         };
 
-        setTimeSlots((prevSlots) => {
-            // 이전 슬롯 복사
-            const updatedSlots = [...prevSlots];
+        try {
+            // 서버로 POST 요청 전송
+            const token = sessionStorage.getItem("token");
+            const response = await axios.post(`/api/travel-detail?travelId=${travelId}`, newPlan, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
 
-            // 시작 시간 슬롯에 중복 여부 검사 후 추가
-            const currentPlans = updatedSlots[startIndex].plans;
-            const isDuplicate = currentPlans.some(
-                (plan) => plan.title === newPlan.title && plan.startTime === newPlan.startTime
-            );
-
-            if (!isDuplicate) {
-                updatedSlots[startIndex].plans.push(newPlan); // 중복이 아닐 때만 추가
-            }
-
-            // 예약된 시간대를 표시 (중복 추가 방지용)
-            for (let i = startIndex + 1; i < endTimeIndex; i++) {
-                if (updatedSlots[i]) {
-                    updatedSlots[i].reserved = true;
-                }
-            }
-
-            return updatedSlots;
-        });
-
-        closeModal(); // 모달 닫기
+            // 백엔드에서 반환된 최신 데이터로 상태 업데이트
+            const updatedPlans = response.data; // 백엔드가 최신 데이터를 반환한다고 가정
+            setTimeSlots(updatedPlans); // 최신 데이터로 상태 업데이트
+            alert("일정이 추가되었습니다!");
+            closeModal();
+        } catch (error) {
+            console.error("Error adding plan:", error);
+            alert("일정을 추가하는 중 오류가 발생했습니다.");
+        }
     };
-
-
 
 
     const handleAddToSchedule = () => {
@@ -153,14 +164,12 @@ const Overlay = ({ closeOverlay, selectedDay }) => {
                                     <div key={index} className="schedule-card">
                                         {slot.plans.map((plan, idx) => (
                                             <div key={idx} className="plan-item">
-                                                {/* 시작 시간 ~ 종료 시간 */}
                                                 <div className="schedule-time">
                                                     {plan.startTime} ~ {plan.endTime}
                                                 </div>
-                                                {/* 일정 제목과 카테고리 아이콘 */}
                                                 <div className="plan-content">
                                                     <img
-                                                        src={getCategoryIcon(plan.category)} // 카테고리별 아이콘
+                                                        src={getCategoryIcon(plan.category)}
                                                         alt={`${plan.category} icon`}
                                                         className="plan-icon"
                                                     />

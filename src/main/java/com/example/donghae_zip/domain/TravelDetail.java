@@ -1,5 +1,6 @@
 package com.example.donghae_zip.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -19,9 +20,10 @@ public class TravelDetail {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "travel_id", nullable = false)
-    @ToString.Exclude // 순환 참조 방지
-    @EqualsAndHashCode.Exclude // equals/hashCode 계산 시 제외
-    private Travel travel; // Travel 테이블의 FK
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @JsonBackReference // TravelDetail → Travel 직렬화 제외
+    private Travel travel;
 
     @Column(name = "place_type", nullable = false)
     @Enumerated(EnumType.STRING)
