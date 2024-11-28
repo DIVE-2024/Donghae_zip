@@ -3,20 +3,45 @@
     text-align: center;
 }
 
+.travel-list-container {
+    text-align: center;
+    padding: 2rem 3rem; /* 상하 2rem, 좌우 3rem */
+    background-color: #f8f9fa; /* 부드러운 배경색 */
+    border-radius: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* 더 부드러운 그림자 */
+    height: 100%;
+    margin: auto; /* 가운데 정렬 */
+}
+
 .travel-item {
     padding: 1rem;
     margin: 1rem 0;
     border: 1px solid #ccc;
     border-radius: 10px;
-    background-color: #f9f9f9;
+    background-color: #f7f7f7;
     text-align: left;
     width: 80%;
     margin-left: auto;
     margin-right: auto;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
 
-.travel-item h3 {
-    font-size: 1.5rem;
+.travel-item:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
+    background-color: #f0f0f0;
+}
+
+.travel-item-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.2rem;
+}
+
+.travel-item-title {
+    font-size: 2.5rem;
+    font-weight: bold;
 }
 
 .travel-item p {
@@ -24,18 +49,24 @@
     margin: 0.5rem 0;
 }
 
-.travel-item button {
+.travel-item-buttons {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.travel-item-button {
     padding: 0.5rem 1rem;
     background-color: #50bcdf;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 1rem;
+    transition: background-color 0.3s ease;
 }
 
-.travel-item button:hover {
-    background-color: #3daac6;
+.travel-item-button:hover {
+    background-color: #3aa4c5;
 }
 
 .empty-message {

@@ -1,6 +1,8 @@
 package com.example.donghae_zip.service;
 
+import com.example.donghae_zip.domain.Member;
 import com.example.donghae_zip.domain.Travel;
+import com.example.donghae_zip.repository.MemberRepository;
 import com.example.donghae_zip.repository.TravelRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
@@ -10,13 +12,16 @@ import java.util.List;
 @Service
 public class TravelService {
     private final TravelRepository travelRepository;
+    private final MemberRepository memberRepository;
 
-    public TravelService(TravelRepository travelRepository) {
+    public TravelService(TravelRepository travelRepository, MemberRepository memberRepository) {
         this.travelRepository = travelRepository;
+        this.memberRepository = memberRepository;
     }
 
-    public List<Travel> getUserTravels(Long userId) {
-        return travelRepository.findByUserId(userId);
+    // 특정 사용자의 여행 목록 조회 (Member 기반)
+    public List<Travel> getUserTravels(Member member) {
+        return travelRepository.findByMember(member);
     }
 
     // 여행 생성

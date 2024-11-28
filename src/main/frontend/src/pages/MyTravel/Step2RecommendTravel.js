@@ -3,7 +3,7 @@ import './Step2RecommendTravel.css';
 import Overlay from "../../components/Overlay/Overlay";
 
 
-const Step2RecommendTravel = ({ startDate, endDate, selectedLocation, onNext, onPrevious }) => {
+const Step2RecommendTravel = ({ travelId,startDate, endDate, selectedLocation, onNext, onPrevious }) => {
     const [travelDays, setTravelDays] = useState([]); // 날짜별 일정 저장
     const [showOverlay, setShowOverlay] = useState(false); // 오버레이 표시 상태
     const [selectedDay, setSelectedDay] = useState(null); // 선택된 일차 정보
@@ -63,11 +63,14 @@ const Step2RecommendTravel = ({ startDate, endDate, selectedLocation, onNext, on
                             </button>
                         ) : (
                             <div className="plans-list">
-                                {day.plans.map((plan, idx) => (
-                                    <div key={idx} className="plan-item">
-                                        {plan.name}
-                                    </div>
-                                ))}
+                                {day.plans.map((plan, idx) => {
+                                    console.log(plan); // 속성 확인
+                                    return (
+                                        <div key={idx} className="plan-item">
+                                            {plan.title || plan.name || "일정 정보 없음"}
+                                        </div>
+                                    );
+                                })}
                             </div>
                         )}
                     </div>
@@ -76,6 +79,7 @@ const Step2RecommendTravel = ({ startDate, endDate, selectedLocation, onNext, on
             {/* 오버레이 창 */}
             {showOverlay && (
                 <Overlay
+                    travelId={travelId} // travelId를 전달
                     closeOverlay={closeOverlay}
                     selectedDay={selectedDay}
                 />
