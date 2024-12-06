@@ -10,6 +10,7 @@ const Step0TravelList = ({ nickname, onNext }) => {
     const [isOverlayOpen, setIsOverlayOpen] = useState(false); // 오버레이 열림 상태
     const [userId,setUserId] = useState(null);
 
+
     useEffect(() => {
         const token = sessionStorage.getItem('token');
         const userId = getUserIdFromToken();  // userId 가져오기

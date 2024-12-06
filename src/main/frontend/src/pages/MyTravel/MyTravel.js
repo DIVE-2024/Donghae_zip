@@ -106,12 +106,13 @@ const MyTravel = () => {
 
                         {currentStep === 2 && (
                             <Step2RecommendTravel
-                                travelId={selectedTravel?.travelId} // 선택된 여행 ID 전달
+                                travelId={selectedTravel?.travelId}
                                 startDate={startDate}
                                 endDate={endDate}
-                                selectedLocation="Busan" // 사용자 선택 지역
+                                selectedLocation="Busan"
                                 onNext={handleNextStep}
                                 onPrevious={handlePreviousStep}
+                                goToTravelList={() => setCurrentStep(0)} // 여행 목록으로 돌아가기
                             />
                         )}
 

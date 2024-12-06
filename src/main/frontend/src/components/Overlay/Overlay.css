@@ -56,60 +56,89 @@
 
 .schedule-card {
     display: flex;
-    flex-direction: column;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 15px;
-    transition: transform 0.2s ease-in-out;
+    align-items: center; /* 세로 가운데 정렬 */
+    justify-content: flex-start; /* 왼쪽 정렬 */
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    padding: 12px 16px; /* 내부 여백 */
+    margin-bottom: 12px; /* 아래 간격 */
+    height: 7rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* 부드러운 호버 효과 */
 }
 
 .schedule-card:hover {
-    transform: translateY(-5px);
+    transform: scale(1.03); /* 약간 확대 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* 그림자 강조 */
 }
 
 .schedule-time {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #4caf50; /* 포인트 색상 */
-    margin-bottom: 10px;
+    font-size: 1.6rem;
+    color: #4caf50; /* 시간 색상 */
+    min-width: 120px; /* 시간을 위한 고정 너비 */
+    text-align: left; /* 왼쪽 정렬 */
+    margin-right: 16px; /* 시간과 제목 사이 간격 */
 }
 
-.schedule-plans {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.plan-item {
+.plan-content {
     display: flex;
     align-items: center;
-    font-size: 1.5rem;
-    font-weight: 500;
-    color: #333;
+    flex: 1; /* 나머지 공간 차지 */
 }
 
 .plan-icon {
-    width: 24px;
-    height: 24px;
-    margin-right: 10px;
-    vertical-align: middle;
+    width: 32px;
+    height: 32px;
+    margin-right: 12px; /* 텍스트와 간격 */
+    object-fit: contain; /* 이미지 왜곡 방지 */
 }
 
-.view-more-button {
-    margin-top: 10px;
-    padding: 5px 10px;
+.plan-title {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #333333; /* 텍스트 색상 */
+    white-space: nowrap; /* 한 줄 유지 */
+    overflow: hidden; /* 넘칠 경우 숨기기 */
+    text-overflow: ellipsis; /* 말줄임표 */
+}
+
+
+.data-buttons {
+    display: flex;
+    justify-content: space-between; /* 버튼 사이에 여백을 줌 */
+    align-items: center; /* 수직 가운데 정렬 */
+    margin-top: 1rem;
+}
+
+.data-button,
+.view-detail-button {
+    flex: 1; /* 버튼 크기를 동일하게 만듦 */
+    margin: 0 0.5rem; /* 양옆 여백 추가 */
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
     border: none;
-    background-color: #4caf50;
-    color: white;
-    border-radius: 5px;
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 0.9rem;
 }
 
-.view-more-button:hover {
-    background-color: #388e3c;
+.data-button {
+    background-color: #007bff; /* 파란색 */
+    color: white;
 }
+
+.data-button:hover {
+    background-color: #0056b3; /* hover 효과 */
+}
+
+.view-detail-button {
+    background-color: #4caf50; /* 녹색 */
+    color: white;
+}
+
+.view-detail-button:hover {
+    background-color: #45a049; /* hover 효과 */
+}
+
 
 .empty-message {
     text-align: center;
@@ -135,7 +164,7 @@
     margin-bottom: 1rem;
 }
 
-.category-section button {
+.category-tabs button {
     width: 80%;
     padding: 0.5rem;
     font-size: 1.5rem;
@@ -219,7 +248,7 @@
 }
 
 .data-desc {
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: #666;
     margin-bottom: 1rem;
 }
@@ -346,4 +375,25 @@
 
 .data-button:hover {
     background-color: #388e3c;
+}
+
+/* 삭제 버튼 스타일 */
+.delete-button {
+    margin-left: auto; /* 버튼을 오른쪽 끝으로 정렬 */
+    background-color: #ff6666;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+.delete-button:hover {
+    background-color: #ff4d4d; /* 호버 시 더 어두운 색상 */
+    transform: scale(1.1); /* 호버 시 약간 확대 */
+}
+
+.delete-button:active {
+    transform: scale(0.95); /* 클릭 시 약간 축소 */
 }

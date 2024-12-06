@@ -2,20 +2,96 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios'; // axios for API requests
 import './Overlay.css';
 import Modal from "../Modal/Modal";
+import TouristFilter from "../Filter/TouristFilter"; // TouristFilter import
 
-const Overlay = ({ closeOverlay, selectedDay, travelId }) => {
-    const [activeCategory, setActiveCategory] = useState("TOURIST_SPOT"); // Active category
-    const [data, setData] = useState([]); // Data for the active category
-    const [currentPage, setCurrentPage] = useState(0); // Current page index
-    const [totalPages, setTotalPages] = useState(0); // Total pages for pagination
+const Overlay = ({ closeOverlay, selectedDay, travelId ,onSavePlan}) => {
+    const [activeCategory, setActiveCategory] = useState("TOURIST_SPOT");
+    const [data, setData] = useState([]);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
     const [timeSlots, setTimeSlots] = useState([]); // Time slots (06:00 - 24:00)
-    const [isModalOpen, setIsModalOpen] = useState(false); // Modal open/close state
-    const [modalItem, setModalItem] = useState(null); // Item selected for the modal
-    const [selectedTime, setSelectedTime] = useState("06:00"); // Selected start time
-    const [duration, setDuration] = useState(1); // Selected duration in hours
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalItem, setModalItem] = useState(null);
+    const [selectedTime, setSelectedTime] = useState("06:00");
+    const [duration, setDuration] = useState(1);
+    const [title, setTitle] = useState(""); // 제목 검색 필터
+    const [category, setCategory] = useState(""); // 카테고리 필터
+    const [region, setRegion] = useState(""); // 지역 필터
+    const [indoorOutdoor, setIndoorOutdoor] = useState(""); // 실내/실외 필터
+
+
+    const mapPlaceTypeToCategory = (placeType) => {
+        switch (placeType) {
+            case "RESTAURANT":
+                return "식당";
+            case "ACCOMMODATION":
+                return "숙박/휴양";
+            case "TOURIST_SPOT":
+                return "여행지";
+            default:
+                return "기타";
+        }
+    };
+    const fetchData = async () => {
+        let url = "";
+
+        if (activeCategory === "TOURIST_SPOT") {
+            const params = new URLSearchParams();
+            if (title) params.append("title", title);
+            if (category) params.append("category", category);
+            if (region) params.append("region", region);
+            if (indoorOutdoor) params.append("indoorOutdoor", indoorOutdoor);
+
+            params.append("page", currentPage);
+            params.append("size", 6);
+
+            url = `/api/tourist-spots/search?${params.toString()}`;
+        } else if (activeCategory === "RESTAURANT") {
+            url = `/api/restaurants?page=${currentPage}&size=6`;
+        } else if (activeCategory === "ACCOMMODATION") {
+            url = `/api/accommodations?page=${currentPage}&size=6`;
+        }
+
+        try {
+            const response = await axios.get(url);
+            console.log("Fetched Data:", response.data.content || response.data);
+            setData(response.data.content || []);
+            setTotalPages(response.data.totalPages || 0);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+
+    // Overlay.js 내부에 handleCategoryClick 메서드 추가
+    const handleCategoryClick = (selectedCategory) => {
+        console.log("Before setCategory:", category); // 현재 상태 확인
+        setCategory(selectedCategory); // 카테고리 상태 업데이트
+        setCurrentPage(0); // 페이지 초기화
+        console.log("After setCategory:", selectedCategory); // 업데이트된 값 확인
+        fetchData(); // 필터링된 데이터 가져오기
+    };
+
+
+    const resetFilters = () => {
+        setTitle(""); // 제목 초기화
+        setCategory(""); // 카테고리 초기화
+        setRegion(""); // 지역 초기화
+        setIndoorOutdoor(""); // 실내/실외 초기화
+        setCurrentPage(0); // 페이지 초기화
+        fetchData(); // 필터 초기화 후 데이터 다시 로드
+    };
+
+
+    useEffect(() => {
+        fetchData(); // activeCategory에 따라 적절한 API 호출
+    }, [activeCategory, title, category, region, indoorOutdoor, currentPage]);
+
+
+    const normalizeCategory = (category) => category?.trim()?.toLowerCase();
 
     const getCategoryIcon = (category) => {
-        switch (category) {
+        const normalizedCategory = normalizeCategory(category);
+        switch (normalizedCategory) {
             case "식당":
                 return "/image/RestaurantMarker.png";
             case "숙박/휴양":
@@ -23,9 +99,34 @@ const Overlay = ({ closeOverlay, selectedDay, travelId }) => {
             case "여행지":
                 return "/image/TouristSpotMarker.png";
             default:
-                return "/image/default_image.png"; // 기본 아이콘
+                return "/image/default_image.png";
         }
     };
+
+    // 일정 삭제 요청 함수
+    const deletePlan = async (detailId) => {
+        try {
+            const token = sessionStorage.getItem("token");
+            await axios.delete(`/api/travel-detail/${detailId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            // 삭제 후 상태 업데이트
+            const updatedTimeSlots = timeSlots.map((slot) => ({
+                ...slot,
+                plans: slot.plans.filter((plan) => plan.detailId !== detailId),
+            }));
+            setTimeSlots(updatedTimeSlots);
+
+            alert("일정이 삭제되었습니다.");
+        } catch (error) {
+            console.error("Error deleting plan:", error);
+            alert("일정을 삭제하는 중 오류가 발생했습니다.");
+        }
+    };
+
 
     // Fetch travel details from the backend
     useEffect(() => {
@@ -36,10 +137,39 @@ const Overlay = ({ closeOverlay, selectedDay, travelId }) => {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
-                const slots = Array.isArray(response.data)
-                    ? response.data
-                    : response.data.timeSlots || []; // 데이터가 배열인지 확인
-                setTimeSlots(slots); // 성공 시 timeSlots 설정
+                const travelDetails = response.data.travelDetails || [];
+
+                // 06:00 ~ 24:00 시간대 배열 생성
+                const defaultTimeSlots = [];
+                for (let hour = 6; hour <= 24; hour++) {
+                    const time = hour < 10 ? `0${hour}:00` : `${hour}:00`;
+                    defaultTimeSlots.push({ time, plans: [] });
+                }
+
+                // 선택한 날짜와 일치하는 데이터만 처리
+                const selectedDateString = selectedDay.date.toISOString().split("T")[0]; // YYYY-MM-DD 형식
+                const filteredDetails = travelDetails.filter(
+                    (detail) => detail.travelDate === selectedDateString
+                );
+
+                // filteredDetails 데이터를 시간대와 매핑
+                filteredDetails.forEach((detail) => {
+                    const startIndex = defaultTimeSlots.findIndex(
+                        (slot) => slot.time === detail.startTime.substring(0, 5)
+                    );
+                    const endIndex = defaultTimeSlots.findIndex(
+                        (slot) => slot.time === detail.endTime.substring(0, 5)
+                    );
+
+                    for (let i = startIndex; i < endIndex; i++) {
+                        if (i >= 0 && i < defaultTimeSlots.length) {
+                            defaultTimeSlots[i].plans.push(detail);
+                        }
+                    }
+                });
+
+                console.log("Filtered Time Slots:", defaultTimeSlots);
+                setTimeSlots(defaultTimeSlots); // timeSlots 상태 업데이트
             } catch (error) {
                 console.error("Error fetching travel details:", error);
                 alert("일정을 가져오는 중 오류가 발생했습니다.");
@@ -48,7 +178,8 @@ const Overlay = ({ closeOverlay, selectedDay, travelId }) => {
         };
 
         fetchTravelDetails(); // useEffect 내에서 함수 호출
-    }, [travelId]); // travelId가 변경될 때마다 호출
+    }, [travelId, selectedDay]);
+
 
 
 
@@ -62,15 +193,27 @@ const Overlay = ({ closeOverlay, selectedDay, travelId }) => {
         if (category === "TOURIST_SPOT") url = `/api/tourist-spots/all?page=${page}&size=${size}`;
         else if (category === "RESTAURANT") url = `/api/restaurants?page=${page}&size=${size}`;
         else if (category === "ACCOMMODATION") url = `/api/accommodations?page=${page}&size=${size}`;
+
         try {
             const response = await axios.get(url);
-            console.log(response.data);
+            console.log("Fetched data:", response.data.content); // 데이터 구조 확인
             setData(response.data.content); // Set the current page's data
             setTotalPages(response.data.totalPages); // Set total pages
         } catch (error) {
             console.error("Error fetching data:", error);
         }
     };
+
+    const handleCategoryChange = (category) => {
+        setActiveCategory(category); // 현재 활성 카테고리 변경
+        setTitle(""); // 필터 초기화
+        setCategory("");
+        setRegion("");
+        setIndoorOutdoor("");
+        setCurrentPage(0);
+    };
+
+
 
     const isTimeSlotAvailable = (startIndex, duration) => {
         for (let i = startIndex; i < startIndex + duration; i++) {
@@ -80,6 +223,7 @@ const Overlay = ({ closeOverlay, selectedDay, travelId }) => {
         }
         return true;
     };
+
     const addItemToTimeSlot = async (item, startIndex, duration) => {
         const startTime = timeSlots[startIndex].time; // 시작 시간
         const endTimeIndex = startIndex + duration; // 종료 시간 계산
@@ -90,19 +234,29 @@ const Overlay = ({ closeOverlay, selectedDay, travelId }) => {
             return;
         }
 
-        // 새로운 일정 데이터 (단일 항목)
+        const mapCategoryToPlaceType = (category) => {
+            switch (category) {
+                case "식당":
+                    return "RESTAURANT";
+                case "숙박/휴양":
+                    return "ACCOMMODATION";
+                case "여행지":
+                    return "TOURIST_SPOT";
+                default:
+                    return "TOURIST_SPOT";
+            }
+        };
+
         const newPlan = {
-            travelDate: selectedDay.date.toISOString().split("T")[0], // YYYY-MM-DD 형식
-            placeType: ["TOURIST_SPOT", "RESTAURANT", "ACCOMMODATION"].includes(item.type)
-                ? item.type
-                : "TOURIST_SPOT", // 유효성 검증
-            placeId: item.id || item.spotId || item.uniqueId, // 가능한 ID 값을 우선순위로 설정
-            startTime: startTime, // 시작 시간
-            endTime: endTime, // 종료 시간
+            travelDate: selectedDay.date.toISOString().split("T")[0],
+            placeType: mapCategoryToPlaceType(item.category),
+            placeId: item.id || item.spotId || item.uniqueId,
+            startTime: startTime,
+            endTime: endTime,
+            placeTitle: item.name || item.title,
         };
 
         try {
-            // 서버로 POST 요청 전송
             const token = sessionStorage.getItem("token");
             const response = await axios.post(`/api/travel-detail?travelId=${travelId}`, newPlan, {
                 headers: {
@@ -110,9 +264,28 @@ const Overlay = ({ closeOverlay, selectedDay, travelId }) => {
                 },
             });
 
-            // 백엔드에서 반환된 최신 데이터로 상태 업데이트
-            const updatedPlans = response.data; // 백엔드가 최신 데이터를 반환한다고 가정
-            setTimeSlots(updatedPlans); // 최신 데이터로 상태 업데이트
+            const addedPlan = response.data;
+
+            // 새로 추가된 일정으로 timeSlots 업데이트
+            const updatedTimeSlots = [...timeSlots];
+            updatedTimeSlots[startIndex].plans.push({
+                ...addedPlan,
+                placeTitle: item.name || item.title,
+                placeType: mapCategoryToPlaceType(item.category),
+                startTime: newPlan.startTime,
+                endTime: newPlan.endTime,
+            });
+
+            // 예약된 시간 표시
+            for (let i = startIndex + 1; i < endTimeIndex; i++) {
+                if (i >= 0 && i < updatedTimeSlots.length) {
+                    updatedTimeSlots[i].reserved = true;
+                }
+            }
+
+            // 부모 컴포넌트와 동기화
+            onSavePlan([{ ...addedPlan }], selectedDay); // 부모 컴포넌트로 전달
+            setTimeSlots(updatedTimeSlots); // 내부 상태 업데이트
             alert("일정이 추가되었습니다!");
             closeModal();
         } catch (error) {
@@ -139,12 +312,19 @@ const Overlay = ({ closeOverlay, selectedDay, travelId }) => {
     };
 
     const goToPreviousPage = () => {
-        if (currentPage > 0) setCurrentPage((prev) => prev - 1);
+        if (currentPage > 0) {
+            setCurrentPage((prev) => prev - 1);
+            fetchData(); // 데이터 다시 로드
+        }
     };
 
     const goToNextPage = () => {
-        if (currentPage < totalPages - 1) setCurrentPage((prev) => prev + 1);
+        if (currentPage < totalPages - 1) {
+            setCurrentPage((prev) => prev + 1);
+            fetchData(); // 데이터 다시 로드
+        }
     };
+
 
     return (
         <div className="overlay">
@@ -158,32 +338,46 @@ const Overlay = ({ closeOverlay, selectedDay, travelId }) => {
                     <div className="schedule-list">
                         <div style={{fontSize: "2.5rem"}}>{selectedDay.dayLabel} 일정</div>
                         <div className="schedule-container">
-                            {timeSlots
-                                .filter((slot) => slot.plans.length > 0) // 일정이 있는 시간대만 표시
-                                .map((slot, index) => (
-                                    <div key={index} className="schedule-card">
-                                        {slot.plans.map((plan, idx) => (
-                                            <div key={idx} className="plan-item">
-                                                <div className="schedule-time">
-                                                    {plan.startTime} ~ {plan.endTime}
-                                                </div>
-                                                <div className="plan-content">
-                                                    <img
-                                                        src={getCategoryIcon(plan.category)}
-                                                        alt={`${plan.category} icon`}
-                                                        className="plan-icon"
-                                                    />
-                                                    <span className="plan-title">{plan.title || plan.name}</span>
+                            <div className="schedule-container">
+                                {
+                                    timeSlots
+                                        .flatMap((slot) => slot.plans)
+                                        .reduce((uniquePlans, plan) => {
+                                            const isDuplicate = uniquePlans.some(
+                                                (uniquePlan) =>
+                                                    uniquePlan.startTime === plan.startTime &&
+                                                    uniquePlan.endTime === plan.endTime &&
+                                                    uniquePlan.placeId === plan.placeId
+                                            );
+                                            if (!isDuplicate) {
+                                                uniquePlans.push(plan);
+                                            }
+                                            return uniquePlans;
+                                        }, [])
+                                        .map((plan, idx) => (
+                                            <div key={idx} className="schedule-card">
+                                                <div className="plan-item">
+                                                    <div className="schedule-time">
+                                                        {/* 시간 데이터가 없으면 기본값 처리 */}
+                                                        {plan.startTime || "00:00"} ~ {plan.endTime || "00:00"}
+                                                    </div>
+                                                    <div className="plan-content">
+                                                        <img
+                                                            src={getCategoryIcon(mapPlaceTypeToCategory(plan.placeType))}
+                                                            alt={`${plan.placeType} icon`}
+                                                            className="plan-icon"
+                                                        />
+                                                        <span className="plan-title">{plan.placeTitle || "제목 없음"}</span>
+                                                        <button className="delete-button" onClick={() => deletePlan(plan.detailId)}>
+                                                            삭제
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        ))}
-                                    </div>
-                                ))}
-                            {timeSlots.every((slot) => slot.plans.length === 0) && (
-                                <div className="empty-message" style={{fontSize: "1.5rem"}}>
-                                    추가된 일정이 없습니다.
-                                </div>
-                            )}
+                                        ))
+                                }
+                            </div>
+
                         </div>
                     </div>
                     <div className="category-section">
@@ -213,13 +407,26 @@ const Overlay = ({ closeOverlay, selectedDay, travelId }) => {
                                     setCurrentPage(0);
                                 }}
                             >
-                                숙박
+                            숙박
                             </button>
                         </div>
+
+                        {activeCategory === "TOURIST_SPOT" && (
+                            <TouristFilter
+                                title={title}
+                                setTitle={setTitle}
+                                region={region}
+                                setRegion={setRegion}
+                                indoorOutdoor={indoorOutdoor}
+                                setIndoorOutdoor={setIndoorOutdoor}
+                                handleCategoryClick={handleCategoryClick} // 카테고리 클릭 이벤트 연결
+                                resetFilters={resetFilters} // 필터 초기화
+                            />
+                        )}
+
                         <div className="data-list">
                             {data.length > 0 ? (
                                 data.map((item) => {
-                                    console.log(item); // 데이터 확인
 
                                     // 이미지 URL 처리
                                     let imageUrl = "/image/default_image.png";
@@ -243,9 +450,42 @@ const Overlay = ({ closeOverlay, selectedDay, travelId }) => {
                                             <div className="data-content">
                                                 <h4 className="data-title">{item.title || item.name}</h4>
                                                 <p className="data-desc">{item.oneLineDesc || item.address}</p>
-                                                <button className="data-button" onClick={() => openModal(item)}>
-                                                    일정 추가
-                                                </button>
+
+                                                {/* 버튼 컨테이너 */}
+                                                <div className="data-buttons">
+                                                    <button className="data-button" onClick={() => openModal(item)}>
+                                                        일정 추가
+                                                    </button>
+                                                    <button
+                                                        className="view-detail-button"
+                                                        onClick={() => {
+                                                            const category = normalizeCategory(activeCategory);
+                                                            const id = item.id || item.spotId || item.uniqueId;
+
+                                                            // 카테고리별 URL 생성
+                                                            let detailUrl = "";
+                                                            switch (category) {
+                                                                case "tourist_spot":
+                                                                    detailUrl = `/tourist-spot/${id}`;
+                                                                    break;
+                                                                case "restaurant":
+                                                                    detailUrl = `/restaurant/${id}`;
+                                                                    break;
+                                                                case "accommodation":
+                                                                    detailUrl = `/accommodation/${id}`;
+                                                                    break;
+                                                                default:
+                                                                    console.error("Invalid category:", category);
+                                                                    return;
+                                                            }
+
+                                                            // 새 창으로 링크 열기
+                                                            window.open(detailUrl, "_blank");
+                                                        }}
+                                                    >
+                                                        자세히 보기
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     );
@@ -293,7 +533,7 @@ const Overlay = ({ closeOverlay, selectedDay, travelId }) => {
                 <label>
                     머무를 시간:
                     <select value={duration} onChange={(e) => setDuration(Number(e.target.value))}>
-                        {[1, 2, 3, 4].map((d) => (
+                        {[1, 2, 3, 4, 5, 6, 7, 8].map((d) => (
                             <option key={d} value={d}>
                                 {d}시간
                             </option>

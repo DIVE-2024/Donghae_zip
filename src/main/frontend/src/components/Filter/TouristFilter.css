@@ -1,0 +1,70 @@
+/* TouristFilter 스타일 */
+
+.filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+/* 제목, 지역, 실내/실외 필터 스타일 */
+.filter-bar .form-control,
+.filter-bar .form-select {
+    flex: 1;
+    min-width: 150px;
+    max-width: 300px;
+    font-size: 1.3rem;
+    padding: 0.5rem;
+}
+
+/* 카테고리 버튼 스타일 */
+.category-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.category-box {
+    padding: 20px;
+    background-color: #CED7E4;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+}
+
+.category-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.category-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.category-btn {
+    padding: 8px 16px;
+    border-radius: 20px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    font-size: 1.3rem;
+    color: #333;
+    cursor: pointer;
+}
+
+.category-btn:hover {
+    background-color: #e6e6e6;
+    border-color: #ccc;
+}
+.filter-reset-button{
+    font-size: 1.8rem;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+}

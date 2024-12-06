@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.io.File;
 import java.util.List;
@@ -30,13 +31,30 @@ public class TouristSpotService {
 
     // 다중 조건 필터 검색
     public Page<TouristSpot> searchSpots(String title, String region, String indoorOutdoor, String category, int page, int size) {
+        Specification<TouristSpot> spec = Specification.where(null);
+
+        // 제목 조건
+        if (title != null && !title.isEmpty()) {
+            spec = spec.and((root, query, cb) -> cb.like(root.get("title"), "%" + title + "%"));
+        }
+
+        // 지역 조건
+        if (region != null && !region.isEmpty()) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("region"), region));
+        }
+
+        // 실내/실외 조건
+        if (indoorOutdoor != null && !indoorOutdoor.isEmpty()) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("indoorOutdoor"), indoorOutdoor));
+        }
+
+        // 카테고리 조건
+        if (category != null && !category.isEmpty()) {
+            spec = spec.and((root, query, cb) -> cb.equal(root.get("placeCategory"), category));
+        }
+
         Pageable pageable = PageRequest.of(page, size);
-        return touristSpotRepository.findByTitleContainingAndRegionContainingAndIndoorOutdoorContainingAndPlaceCategoryContaining(
-                title != null ? title : "",
-                region != null ? region : "",
-                indoorOutdoor != null ? indoorOutdoor : "",
-                category != null ? category : "",
-                pageable);
+        return touristSpotRepository.findAll(spec, pageable);
     }
 
     // 제목으로 검색 (페이지네이션 적용)
