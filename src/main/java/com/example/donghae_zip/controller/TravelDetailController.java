@@ -9,6 +9,7 @@ import com.example.donghae_zip.service.TravelService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,13 +25,32 @@ public class TravelDetailController {
         this.travelService = travelService;
     }
 
-    // 특정 여행 ID로 상세 일정 조회
     @GetMapping("/travel/{travelId}")
     public ResponseEntity<TravelDTO> getDetailsByTravelId(@PathVariable Long travelId) {
         Travel travel = travelService.getTravelById(travelId);
-        TravelDTO travelDTO = new TravelDTO(travel); // DTO로 변환
-        return ResponseEntity.ok(travelDTO); // DTO 반환
+        TravelDTO travelDTO = new TravelDTO(travel);
+
+        // TravelDetailDTO 생성 시 placeType 포함
+        List<TravelDetailDTO> updatedDetails = travelDTO.getTravelDetails().stream()
+                .map(detail -> {
+                    String placeTitle = travelDetailService.getPlaceTitle(detail.getPlaceType(), detail.getPlaceId());
+                    return new TravelDetailDTO(
+                            detail.getDetailId(),
+                            detail.getPlaceType(), // placeType 올바르게 전달
+                            detail.getTravelDate(),
+                            detail.getPlaceId(),
+                            detail.getStartTime(),
+                            detail.getEndTime(),
+                            placeTitle
+                    );
+                })
+                .collect(Collectors.toList());
+
+        travelDTO.setTravelDetails(updatedDetails); // 업데이트된 TravelDetails 설정
+        return ResponseEntity.ok(travelDTO);
     }
+
+
 
     @PostMapping
     public ResponseEntity<List<TravelDetailDTO>> addTravelDetail(
@@ -48,6 +68,55 @@ public class TravelDetailController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(updatedDetailsDTO);
+    }
+
+    // 특정 날짜의 일정 조회 API
+    @GetMapping("/travel/{travelId}/date/{travelDate}")
+    public ResponseEntity<List<TravelDetailDTO>> getDetailsByTravelDate(
+            @PathVariable Long travelId,
+            @PathVariable String travelDate) {
+        List<TravelDetail> travelDetails = travelDetailService.getDetailsByTravelDate(travelId, travelDate);
+
+        List<TravelDetailDTO> travelDetailDTOs = travelDetails.stream()
+                .map(detail -> {
+                    String placeTitle = travelDetailService.getPlaceTitle(detail.getPlaceType(), detail.getPlaceId());
+                    return new TravelDetailDTO(
+                            detail.getDetailId(),
+                            detail.getPlaceType(),
+                            detail.getTravelDate(),
+                            detail.getPlaceId(),
+                            detail.getStartTime(),
+                            detail.getEndTime(),
+                            placeTitle
+                    );
+                })
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(travelDetailDTOs);
+    }
+
+    // 특정 날짜의 일정 저장 API
+    @PostMapping("/travel/{travelId}/date/{travelDate}")
+    public ResponseEntity<TravelDetailDTO> addDetailForDate(
+            @PathVariable Long travelId,
+            @PathVariable String travelDate,
+            @RequestBody TravelDetail travelDetail) {
+
+        travelDetail.setTravelDate(LocalDate.parse(travelDate)); // travelDate 설정
+        TravelDetail savedDetail = travelDetailService.saveTravelDetail(travelId, travelDetail);
+
+        String placeTitle = travelDetailService.getPlaceTitle(savedDetail.getPlaceType(), savedDetail.getPlaceId());
+        TravelDetailDTO travelDetailDTO = new TravelDetailDTO(
+                savedDetail.getDetailId(),
+                savedDetail.getPlaceType(),
+                savedDetail.getTravelDate(),
+                savedDetail.getPlaceId(),
+                savedDetail.getStartTime(),
+                savedDetail.getEndTime(),
+                placeTitle
+        );
+
+        return ResponseEntity.ok(travelDetailDTO);
     }
 
 

@@ -8,6 +8,7 @@ import ReviewCount from "../../components/Comment/ReviewCount";
 import {getUserIdFromToken } from "../../components/Util/jwtUtils";
 import AverageRating from "../../components/Comment/AverageRating";
 import Warning from "../../components/Warning/Warning";
+import TouristFilter from "../../components/Filter/TouristFilter";
 
 const TouristSpotList = () => {
     const [spots, setSpots] = useState([]);
@@ -97,13 +98,6 @@ const TouristSpotList = () => {
         }
     }, [fetchSpots, fetchFavoriteSpots, userId]);
 
-
-    // 카테고리 필터를 버튼 클릭 시 적용
-    const handleCategoryClick = (selectedCategory) => {
-        setCategory(selectedCategory);
-        setPage(0);  // 필터 변경 시 페이지 초기화
-    };
-
     // 필터 초기화 함수
     const resetFilters = () => {
         setTitle("");
@@ -171,59 +165,16 @@ const TouristSpotList = () => {
             {/* "결과 총 00개" */}
             <div className="page-title"> 여행지 결과 총 {spotCount}개</div>
 
-            {/* 필터 그룹 */}
-            <div className="input-group filter-group mb-4" style={{height:'3rem'}}>
-                {/* 제목 검색 필터 */}
-                <input
-                    type="text"
-                    style={{fontSize:'1.3rem'}}
-                    className="form-control"
-                    placeholder="제목 검색"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    onBlur={fetchSpots}  // 입력이 끝난 후 검색
-                />
-
-                {/* 지역 선택 필터 */}
-                <select
-                    className="form-select"
-                    style={{fontSize:'1.3rem'}}
-                    value={region}
-                    onChange={(e) => { setRegion(e.target.value); setPage(0); fetchSpots(); }}
-                >
-                    <option value="">지역 선택</option>
-                    <option value="부산">부산</option>
-                    <option value="울산">울산</option>
-                </select>
-
-                {/* 실내/실외 선택 필터 */}
-                <select
-                    style={{fontSize:'1.3rem'}}
-                    className="form-select"
-                    value={indoorOutdoor}
-                    onChange={(e) => { setIndoorOutdoor(e.target.value); setPage(0); fetchSpots(); }}
-                >
-                    <option value="">실내/실외 선택</option>
-                    <option value="indoor">실내</option>
-                    <option value="outdoor">실외</option>
-                </select>
-
-                {/* 필터 초기화 버튼 */}
-                <button style={{fontSize:'1.3rem'}} className="btn btn-secondary ml-2" onClick={resetFilters}>초기화</button>
-            </div>
-
-            {/* 카테고리 필터 박스 */}
-            <div className="category-box">
-                <div style={{fontSize:'1.8rem'}} className="category-title">카테고리 필터</div>
-                <div className="category-buttons mb-4">
-                    {/* 카테고리 버튼 */}
-                    {["공원", "문화시설", "레포츠", "테마거리", "쇼핑", "문화유산", "산책로", "해수욕장", "시장", "마을", "사찰", "체험시설", "지질공원", "테마파크", "놀이시설", "키즈카페", "전시관", "식물원", "계곡", "영화관", "아쿠아리움", "해안지역", "유적지", "상점", "도시", "공방", "스파", "명소"].map((category) => (
-                        <button style={{fontSize:'1.3rem'}} key={category} className="category-btn" onClick={() => handleCategoryClick(category)}>
-                            {category}
-                        </button>
-                    ))}
-                </div>
-            </div>
+            <TouristFilter
+                title={title}
+                setTitle={setTitle}
+                region={region}
+                setRegion={setRegion}
+                indoorOutdoor={indoorOutdoor}
+                setIndoorOutdoor={setIndoorOutdoor}
+                handleCategoryClick={setCategory}
+                resetFilters={resetFilters}
+            />
 
             {/* 관광지 목록 */}
             <div className="row">

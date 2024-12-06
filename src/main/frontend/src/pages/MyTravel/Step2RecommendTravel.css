@@ -37,27 +37,80 @@
     margin-top: 3rem;
 }
 
+/* 일자 카드 */
 .travel-day-card {
-    background-color: #f0f8ff;
-    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
     border-radius: 8px;
     padding: 1rem;
     width: 30%;
-    height: 50rem;
+    min-height: 30rem; /* 최소 높이 */
     text-align: left;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
 }
 
+.travel-day-card:hover {
+    transform: translateY(-4px);
+}
+
+/* 카드 제목 */
 .travel-day-card h3 {
-    font-size: 1.5rem;
+    font-size: 2.5rem;
+    color: #333;
     margin-bottom: 0.5rem;
 }
 
 .travel-day-card p {
-    font-size: 1rem;
+    font-size: 1.5rem;
     margin-bottom: 1rem;
     color: #555;
 }
+
+/* 일정 리스트 컨테이너 */
+.plans-list {
+    margin-bottom: 1rem;
+    list-style-type: none;
+    padding: 0;
+}
+
+/* 일정 아이템 */
+.plan-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0.8rem;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.plan-item:hover {
+    transform: translateY(-2px);
+}
+
+/* 일정 시간 */
+.plan-time {
+    color: #007bff;
+    font-weight: bold;
+    margin-right: 3rem;
+}
+
+/* 일정 제목 */
+.plan-title {
+    flex: 1;
+    color: #333;
+}
+
+/* 일정 아이콘 */
+.plan-icon {
+    width: 24px;
+    height: 24px;
+}
+
 
 .plan-input {
     width: 100%;
@@ -96,16 +149,18 @@
 .add-plan-button {
     width: 100%;
     padding: 1rem;
-    background-color: #50bcdf;
+    background-color: #007bff;
     color: white;
     border: none;
     border-radius: 5px;
+    font-size: 1.8rem;
     cursor: pointer;
-    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .add-plan-button:hover {
-    background-color: #3aa6c8;
+    background-color: #0056b3;
+    transform: translateY(-2px);
 }
 
 .overlay {
