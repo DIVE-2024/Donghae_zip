@@ -13,6 +13,7 @@ const Header = () => {
     const [userId, setUserId] = useState(null);
     const [nickname, setNickname] = useState(null);
     const [showWarning, setShowWarning] = useState(false);
+    const [displayName, setDisplayName] = useState(null); // 표시할 이름 상태 추가
 
 
     useEffect(() => {
@@ -22,8 +23,17 @@ const Header = () => {
             console.log("Decoded JWT:", decoded);
 
             if (decoded) {
-                setUserId(decoded.sub);        // 이메일
-                setNickname(decoded.nickname); // 닉네임
+                setUserId(decoded.sub); // 이메일 저장
+                const provider = decoded.provider || null; // 소셜 로그인 provider 확인
+                const name = decoded.name || "이름 없음"; // 이름 확인, 기본값 설정
+                const nickname = decoded.nickname || "닉네임 없음"; // 닉네임 확인, 기본값 설정
+
+                // 카카오 로그인인 경우 name 사용, 일반 로그인인 경우 nickname 사용
+                if (provider === 'kakao') {
+                    setDisplayName(name ? name : "카카오 사용자");
+                } else {
+                    setDisplayName(nickname ? nickname : "일반 사용자");
+                }
             } else {
                 console.log("Decoded JWT is invalid");
             }
@@ -101,7 +111,7 @@ const Header = () => {
                         {isLoggedIn ? (
                             <>
                                 <li className="nav-item">
-                                    <span className="nav-link">환영합니다, {nickname}님!</span>
+                                    <span className="nav-link">환영합니다, {displayName}님!</span>
                                 </li>
                                 <li className="nav-item">
                                     <button className="btn btn-primary custom-login-btn"

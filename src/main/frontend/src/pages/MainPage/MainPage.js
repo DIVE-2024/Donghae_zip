@@ -44,11 +44,6 @@ const MovingTrain = styled.div`
         100% { transform: translateX(100vw) scaleX(-1); }
     }
 `;
-
-
-
-
-
 const TextSection = styled.div`
   width: 110rem;
   padding-right: 20px;
@@ -213,57 +208,143 @@ const MainPage = () => {
     const [accommodations, setAccommodations] = useState([]);  // 숙박 데이터
     const [restaurants, setRestaurants] = useState([]);  // 식당 데이터
     const [touristSpots, setTouristSpots] = useState([]);  // 여행지 데이터
+    const [selectedCategory, setSelectedCategory] = useState(null); // 카테고리 상태 추가
     const [isStationClicked, setIsStationClicked] = useState(false); // 역 클릭 여부 상태
     const [currentSlide, setCurrentSlide] = useState(0);
-
-
+    const [hashtags, setHashtags] = useState([]);
+    const [totalAccommodationCount, setTotalAccommodationCount] = useState(0);
+    const [totalRestaurantCount, setTotalRestaurantCount] = useState(0);
+    const [totalTouristSpotCount, setTotalTouristSpotCount] = useState(0);
     // 로그인 상태 관리
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userNickname, setUserNickname] = useState('');
 
+    const [currentPage, setCurrentPage] = useState({
+        accommodations: 0,
+        restaurants: 0,
+        touristSpots: 0,
+    });
+    const handleCloseButtonClick = () => {
+        // 상태 초기화
+        setSelectedStation(null); // 선택된 역 초기화
+        setRadius(1500); // 반경 기본값으로 초기화
+        setShowCategory(false); // 카테고리 UI 숨김
+        setSelectedCategory(null); // 선택된 카테고리 초기화
+        setIsStationClicked(false); // 역 클릭 상태 초기화
+        setCurrentPage({
+            accommodations: 0,
+            restaurants: 0,
+            touristSpots: 0,
+        }); // 페이지 초기화
+    };
 
-    // 페이지 로드 시 로그인 상태 확인
     useEffect(() => {
         const token = sessionStorage.getItem('token'); // JWT 토큰 가져오기
         if (token) {
-            // 토큰이 있으면 로그인된 상태로 설정
-            setIsLoggedIn(true);
+            setIsLoggedIn(true); // 로그인 상태 설정
 
-            // 백엔드에서 사용자 정보 가져오기
+            // 사용자 정보를 가져오는 API 호출
             axios.get('/api/members/profile', {
                 headers: {
                     'Authorization': `Bearer ${token}` // JWT 토큰을 Authorization 헤더에 추가
                 }
             })
                 .then(response => {
-                    setUserNickname(response.data.nickname); // 사용자 닉네임 저장
-                    console.log('메인 페이지에서 사용 중인 토큰:', sessionStorage.getItem('token'));
-                    console.log(response);
+                    // API 응답 구조 확인
+                    console.log('사용자 정보:', response.data);
+
+                    // 백엔드 응답에 따라 닉네임 또는 이름 설정
+                    const { nickname, name } = response.data;
+
+                    // 닉네임 우선, 없으면 이름 설정
+                    setUserNickname(nickname || name || '사용자');
                 })
                 .catch(error => {
                     console.error("사용자 정보를 가져오는 중 에러 발생:", error);
                     setIsLoggedIn(false); // 오류 발생 시 로그아웃 처리
                 });
         }
-    }, []); // 페이지 로드 시 한 번만 실행
+    }, []);
+
+    // 데이터 요청 로직
+    const fetchData = async (latitude, longitude, radius, category, page) => {
+        try {
+            let response;
+            if (category === "touristSpots") {
+                response = await axios.get(`/api/tourist-spots/radius`, {
+                    params: { latitude, longitude, radius, page, size: 4 },
+                });
+                setTouristSpots(response.data.content);
+                setTotalTouristSpotCount(response.data.totalElements);
+            } else if (category === "accommodations") {
+                response = await axios.get(`/api/accommodations/radius`, {
+                    params: { latitude, longitude, radius, page, size: 4 },
+                });
+                setAccommodations(response.data.content);
+                setTotalAccommodationCount(response.data.totalElements);
+            } else if (category === "restaurants") {
+                response = await axios.get(`/api/restaurants/radius`, {
+                    params: { latitude, longitude, radius, page, size: 4 },
+                });
+                setRestaurants(response.data.content);
+                setTotalRestaurantCount(response.data.totalElements);
+            }
+        } catch (error) {
+            console.error(`Error fetching ${category} data:`, error);
+        }
+    };
+
 
     // 역 클릭 시 처리 로직
-    const handleStationClick = (stationName) => {
-        axios.get(`/api/donghae/station/${stationName}`)
-            .then((response) => {
-                const { stationInfo } = response.data;
-                setSelectedStation({
-                    name: stationInfo.stationName,
-                    latitude: stationInfo.latitude,
-                    longitude: stationInfo.longitude
-                });
-                setShowCategory(true); // 카테고리 UI 표시
-                setIsStationClicked(true);  // 역 클릭 상태 업데이트
-            })
-            .catch((error) => {
-                console.error("Error fetching station data:", error);
-            });
+    const handleStationClick = async (stationName) => {
+        console.log("Station clicked:", stationName);
+
+        // 상태 초기화
+        setAccommodations([]);
+        setRestaurants([]);
+        setTouristSpots([]);
+        setSelectedCategory(null);
+        setShowCategory(false);
+        setIsStationClicked(false);
+        setCurrentPage({ accommodations: 0, restaurants: 0, touristSpots: 0 });
+
+        try {
+            const stationResponse = await axios.get(`/api/donghae/station/${stationName}`);
+            const { stationInfo } = stationResponse.data;
+
+            const selectedStationData = {
+                name: stationInfo.stationName,
+                latitude: stationInfo.latitude,
+                longitude: stationInfo.longitude,
+            };
+            setSelectedStation(selectedStationData);
+
+            // 첫 페이지 데이터 요청
+            await fetchData(stationInfo.latitude, stationInfo.longitude, radius, "accommodations", 0);
+            await fetchData(stationInfo.latitude, stationInfo.longitude, radius, "restaurants", 0);
+            await fetchData(stationInfo.latitude, stationInfo.longitude, radius, "touristSpots", 0);
+
+            setShowCategory(true);
+            setIsStationClicked(true);
+        } catch (error) {
+            console.error("Error handling station click:", error);
+        }
     };
+
+    const handlePageChange = (category, direction) => {
+        setCurrentPage((prev) => ({
+            ...prev,
+            [category]: Math.max(0, prev[category] + direction), // 0 이하로 내려가지 않음
+        }));
+    };
+    // 반경 변경 및 페이지네이션 변경 시 데이터 갱신
+    useEffect(() => {
+        if (selectedStation && selectedCategory) {
+            const { latitude, longitude } = selectedStation;
+            fetchData(latitude, longitude, radius, selectedCategory, currentPage[selectedCategory]);
+        }
+    }, [radius, selectedStation, selectedCategory, currentPage]);
+
 
 
     // 동해선 역 데이터 및 진행 중인 축제 데이터를 API에서 가져오는 로직
@@ -281,7 +362,7 @@ const MainPage = () => {
         // 진행 중인 축제 데이터 가져오기
         axios.get("/api/festivals/status", {
             params: {
-                status: 'ONGOING',  // 진행 중인 축제만 필터링
+                status: 'COMPLETED',  // 진행 중인 축제만 필터링
                 page: 0,
                 size: 10  // 한 번에 최대 10개의 축제를 가져옴
             }
@@ -354,20 +435,49 @@ const MainPage = () => {
                         accommodations={accommodations}
                         restaurants={restaurants}
                         touristSpots={touristSpots}
-                        onStationClick={handleStationClick}
+                        filteredMarkers={
+                            selectedCategory === 'accommodations'
+                                ? accommodations
+                                : selectedCategory === 'restaurants'
+                                    ? restaurants
+                                    : selectedCategory === 'touristSpots'
+                                        ? touristSpots
+                                        : []
+                        }
+                        selectedCategory={selectedCategory} // 전달
+                        onStationClick={handleStationClick} // 통합 핸들러 전달
                         radius={radius}
                         selectedStation={selectedStation}
+                        setSelectedStation={setSelectedStation} // 추가
+                        setIsStationClicked={setIsStationClicked} // 추가
                     />
-                    {/* 역 클릭 전에는 StationStatsChart를, 클릭 후에는 DonghaeMapPlace를 표시 */}
-                    {!isStationClicked ? (
+
+                    {/* 역 클릭 전에는 StationStatsChart, 클릭 후에는 DonghaeMapPlace */}
+                    {isStationClicked && selectedStation ? (
+                        <DonghaeMapPlace
+                            selectedStation={selectedStation}
+                            accommodations={accommodations}
+                            restaurants={restaurants}
+                            touristSpots={touristSpots}
+                            onCategoryChange={setSelectedCategory} // 카테고리 변경 핸들러
+                            radius={radius}
+                            onStationClick={handleStationClick} // 통합 핸들러 전달
+                            setRadius={setRadius}
+                            showCategory={showCategory}
+                            hashtags={hashtags}
+                            totalAccommodationCount={totalAccommodationCount}
+                            totalRestaurantCount={totalRestaurantCount}
+                            totalTouristSpotCount={totalTouristSpotCount}
+                            currentPage={currentPage}
+                            onPageChange={handlePageChange} // 페이지 변경 핸들러 전달
+                            onClose={handleCloseButtonClick} // 닫기 핸들러 전달
+                        />
+                    ) : (
                         <StationStatsChart />
-                        ) : (
-                        <DonghaeMapPlace />
-                        )}
+                    )}
                 </div>
             </BottomSection>
         </MainContainer>
     );
 };
-
 export default MainPage;

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-const DonghaeMap = ({ stations = [], accommodations = [], restaurants = [], touristSpots = [], onStationClick, radius, selectedStation ,hideMap}) => {
+const DonghaeMap = ({ stations = [], accommodations = [], restaurants = [], touristSpots = [],filteredMarkers = [], onStationClick, selectedCategory, radius, selectedStation ,hideMap}) => {
     const mapRef = useRef(null); // 지도 객체 참조
     const markersRef = useRef([]); // 생성된 마커 배열 관리
     const circleRef = useRef(null); // Circle 객체를 참조
@@ -8,6 +8,70 @@ const DonghaeMap = ({ stations = [], accommodations = [], restaurants = [], tour
     const [activeOverlay, setActiveOverlay] = useState(null); // 현재 활성화된 오버레이 상태 관리
     const [polylines, setPolylines] = useState([]); // 생성된 경로 폴리라인 배열 관리
     const apiKey = process.env.REACT_APP_KAKAO_API_KEY;
+
+    // 마커 생성 함수: 모든 useEffect에서 사용 가능
+    const createMarker = (latitude, longitude, name, onClick, markerType = 'station') => {
+        const markerPosition = new window.kakao.maps.LatLng(latitude, longitude);
+        let markerImageSrc = '';
+
+        switch (markerType) {
+            case 'station':
+                markerImageSrc = '/image/marker.png';
+                break;
+            case 'accommodation':
+                markerImageSrc = '/image/AccommodaionMarker.png';
+                break;
+            case 'restaurant':
+                markerImageSrc = '/image/RestaurantMarker.png';
+                break;
+            case 'touristSpot':
+                markerImageSrc = '/image/TouristSpotMarker.png';
+                break;
+            default:
+                break;
+        }
+
+        const imageSize = new window.kakao.maps.Size(40, 40);
+        const imageOption = { offset: new window.kakao.maps.Point(20, 40) };
+        const markerImage = new window.kakao.maps.MarkerImage(markerImageSrc, imageSize, imageOption);
+
+        const marker = new window.kakao.maps.Marker({
+            position: markerPosition,
+            title: name,
+            image: markerImage,
+        });
+        marker.setMap(mapRef.current);
+        markersRef.current.push(marker);
+
+        const customOverlay = new window.kakao.maps.CustomOverlay({
+            position: markerPosition,
+            content: `<div style="padding: 5px; background-color: white; border-radius: 10px;">${name}</div>`,
+            yAnchor: 2.5,
+            xAnchor: 0.5,
+            zIndex: 3,
+        });
+        customOverlay.setMap(mapRef.current);
+        customOverlay.setVisible(false);
+
+        window.kakao.maps.event.addListener(marker, 'click', () => {
+            onClick(name);
+            mapRef.current.setCenter(markerPosition);
+
+            if (activeOverlay) {
+                activeOverlay.setVisible(false);
+            }
+            customOverlay.setVisible(true);
+            setActiveOverlay(customOverlay);
+        });
+
+        window.kakao.maps.event.addListener(marker, 'mouseover', () => customOverlay.setVisible(true));
+        window.kakao.maps.event.addListener(marker, 'mouseout', () => {
+            if (customOverlay !== activeOverlay) {
+                customOverlay.setVisible(false);
+            }
+        });
+    };
+
 
     useEffect(() => {
         const loadKakaoMapScript = () => {
@@ -80,22 +144,29 @@ const DonghaeMap = ({ stations = [], accommodations = [], restaurants = [], tour
         circleRef.current = circle;  // 원 객체 저장
     };
 
-    // selectedStation과 radius가 업데이트될 때마다 지도에 반경을 그림
     useEffect(() => {
         if (isMapLoaded && selectedStation && radius) {
-            console.log("selectedStation:", selectedStation);
-            console.log("radius:", radius);
-            mapRef.current.setCenter(new window.kakao.maps.LatLng(selectedStation.latitude, selectedStation.longitude)); // 역 중심으로 이동
-            mapRef.current.setLevel(6); // 줌 레벨 설정
-            drawCircle(selectedStation, radius); // 선택된 역과 반경이 있을 때만 원을 그림
+            console.log("Drawing circle for:", selectedStation);
+            mapRef.current.setCenter(new window.kakao.maps.LatLng(selectedStation.latitude, selectedStation.longitude));
+            mapRef.current.setLevel(6);
+            drawCircle(selectedStation, radius); // 반경 그리기
         }
     }, [isMapLoaded, selectedStation, radius]);
 
-    const clearMarkers = () => {
-        // 모든 마커를 지도에서 제거
-        markersRef.current.forEach(marker => marker.setMap(null));
-        markersRef.current = []; // 마커 배열 초기화
+
+    const clearMarkers = (keepStations = false) => {
+        // keepStations가 true이면 역 마커는 유지
+        markersRef.current = markersRef.current.filter((marker) => {
+            const isStationMarker = marker.getTitle()?.includes('역');
+            if (keepStations && isStationMarker) {
+                return true; // 역 마커는 제거하지 않음
+            } else {
+                marker.setMap(null); // 지도에서 제거
+                return false; // 역 마커가 아니므로 삭제
+            }
+        });
     };
+
 
     const clearPolylines = () => {
         // 모든 폴리라인을 지도에서 제거
@@ -103,117 +174,89 @@ const DonghaeMap = ({ stations = [], accommodations = [], restaurants = [], tour
         setPolylines([]); // 폴리라인 배열 초기화
     };
 
-    // 마커 및 폴리라인 생성 및 제거 로직
     useEffect(() => {
-        if (isMapLoaded && mapRef.current) {
-            const createMarker = (latitude, longitude, name, onClick, markerType = 'station') => {
-                const markerPosition = new window.kakao.maps.LatLng(latitude, longitude);
-                let markerImageSrc = '';
+        if (!isMapLoaded || !mapRef.current) return;
 
-                switch (markerType) {
-                    case 'station':
-                        markerImageSrc = '/image/marker.png';
-                        break;
-                    case 'accommodation':
-                        markerImageSrc = '/image/AccommodaionMarker.png';
-                        break;
-                    case 'restaurant':
-                        markerImageSrc = '/image/RestaurantMarker.png';
-                        break;
-                    case 'touristSpot':
-                        markerImageSrc = '/image/TouristSpotMarker.png';
-                        break;
-                    default:
-                        break;
-                }
+        // 마커 및 폴리라인 초기화
+        clearMarkers();
+        clearPolylines();
 
-                const imageSize = new window.kakao.maps.Size(40, 40);
-                const imageOption = { offset: new window.kakao.maps.Point(20, 40) };
-                const markerImage = new window.kakao.maps.MarkerImage(markerImageSrc, imageSize, imageOption);
+        // 역 마커 생성 (항상 유지)
+        const filteredStations = stations
+            .filter((station) => station.region.includes("부산") || station.region.includes("울산"))
+            .sort((a, b) => a.stationOrder - b.stationOrder);
 
-                const marker = new window.kakao.maps.Marker({
-                    position: markerPosition,
-                    title: name,
-                    image: markerImage,
-                });
-                marker.setMap(mapRef.current);
-                markersRef.current.push(marker);
+        filteredStations.forEach((station) => {
+            createMarker(
+                station.latitude,
+                station.longitude,
+                station.stationName,
+                (stationName) => onStationClick(stationName),
+                "station" // 역 마커 타입
+            );
+        });
 
-                const customOverlay = new window.kakao.maps.CustomOverlay({
-                    position: markerPosition,
-                    content: `<div style="padding: 5px; background-color: white; border-radius: 10px;">${name}</div>`,
-                    yAnchor: 2.5,
-                    xAnchor: 0.5,
-                    zIndex: 3,
-                });
-                customOverlay.setMap(mapRef.current);
-                customOverlay.setVisible(false);
-
-                window.kakao.maps.event.addListener(marker, 'click', () => {
-                    onClick(name);
-                    mapRef.current.setCenter(markerPosition);
-                    mapRef.current.setLevel(6); // 줌 레벨 설정
-
-                    if (activeOverlay) {
-                        activeOverlay.setVisible(false);
-                    }
-                    customOverlay.setVisible(true);
-                    setActiveOverlay(customOverlay);
-                });
-
-                window.kakao.maps.event.addListener(marker, 'mouseover', () => customOverlay.setVisible(true));
-                window.kakao.maps.event.addListener(marker, 'mouseout', () => {
-                    if (customOverlay !== activeOverlay) {
-                        customOverlay.setVisible(false);
-                    }
-                });
-            };
-
-            const createPolyline = (stations) => {
-                const path = stations.map(station => new window.kakao.maps.LatLng(station.latitude, station.longitude));
-                const polyline = new window.kakao.maps.Polyline({
-                    path: path,
-                    strokeWeight: 7,
-                    strokeColor: "#0074FF",
-                    strokeOpacity: 0.8,
-                    strokeStyle: "solid",
-                });
-                polyline.setMap(mapRef.current);
-                setPolylines(prev => [...prev, polyline]);
-            };
-
-            if (stations.length || accommodations.length || restaurants.length || touristSpots.length) {
-                clearMarkers();
-                clearPolylines();
-            }
-
-            const filteredStations = stations.filter(station => station.region.includes('부산') || station.region.includes('울산'))
-                .sort((a, b) => a.stationOrder - b.stationOrder);
-
-            filteredStations.forEach(station => {
-                createMarker(station.latitude, station.longitude, station.stationName, onStationClick, 'station');
+        // 폴리라인 생성
+        if (filteredStations.length > 1) {
+            const path = filteredStations.map(
+                (station) => new window.kakao.maps.LatLng(station.latitude, station.longitude)
+            );
+            const polyline = new window.kakao.maps.Polyline({
+                path: path,
+                strokeWeight: 7,
+                strokeColor: "#0074FF",
+                strokeOpacity: 0.8,
+                strokeStyle: "solid",
             });
-            createPolyline(filteredStations);
+            polyline.setMap(mapRef.current); // 폴리라인을 지도에 추가
+            setPolylines((prev) => [...prev, polyline]);
+        }
 
-            accommodations.forEach(accommodation => {
-                createMarker(accommodation.latitude, accommodation.longitude, accommodation.name, () => {
-                    console.log(`숙박시설: ${accommodation.name} 클릭됨`);
-                }, 'accommodation');
+        // 선택된 카테고리에 따라 마커 생성
+        if (selectedCategory === "accommodations") {
+            accommodations.forEach((acc) => {
+                createMarker(
+                    acc.latitude,
+                    acc.longitude,
+                    acc.name,
+                    () => console.log(`숙박: ${acc.name}`),
+                    "accommodation"
+                );
             });
-
-            restaurants.forEach(restaurant => {
-                createMarker(restaurant.latitude, restaurant.longitude, restaurant.name, () => {
-                    console.log(`식당: ${restaurant.name} 클릭됨`);
-                }, 'restaurant');
+        } else if (selectedCategory === "restaurants") {
+            restaurants.forEach((res) => {
+                createMarker(
+                    res.latitude,
+                    res.longitude,
+                    res.name,
+                    () => console.log(`식당: ${res.name}`),
+                    "restaurant"
+                );
             });
-
-            touristSpots.forEach(touristSpot => {
-                createMarker(touristSpot.latitude, touristSpot.longitude, touristSpot.title, () => {
-                    console.log(`여행지: ${touristSpot.title} 클릭됨`);
-                }, 'touristSpot');
+        } else if (selectedCategory === "touristSpots") {
+            touristSpots.forEach((spot) => {
+                createMarker(
+                    spot.latitude,
+                    spot.longitude,
+                    spot.title,
+                    () => console.log(`여행지: ${spot.title}`),
+                    "touristSpot"
+                );
             });
         }
-    }, [isMapLoaded, stations, accommodations, restaurants, touristSpots, onStationClick, activeOverlay]);
+    }, [
+        isMapLoaded,
+        selectedCategory,
+        stations,
+        accommodations,
+        restaurants,
+        touristSpots,
+        onStationClick,
+    ]);
+
+
+
+
 
     return (
         <div id="donghae-map"

@@ -225,7 +225,6 @@
 .image-container {
     position: relative;
     width: 100%;
-    height: 200px; /* 이미지 높이 고정 */
     overflow: hidden;
 }
 

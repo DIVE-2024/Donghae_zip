@@ -110,7 +110,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         Member member = memberService.saveOrUpdateSocialUser(email, provider, providerId, name, nickname, phone);
 
         // JWT 토큰 발급
-        String token = jwtTokenUtil.generateToken(nickname,email);
+        String token = jwtTokenUtil.generateToken(email,name,name,provider);
 
         // 사용자 정보와 권한 반환 (기본 권한 "ROLE_USER")
         return new DefaultOAuth2User(

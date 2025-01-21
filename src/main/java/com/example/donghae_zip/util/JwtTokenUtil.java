@@ -13,60 +13,77 @@ import java.util.function.Function;
 @Component
 public class JwtTokenUtil {
 
-    // 환경 변수로부터 비밀 키를 주입 받음 (application.properties에서 설정된 값)
     @Value("${myapp.secret}")
     private String SECRET_KEY;
 
-    // 토큰에서 사용자 이름(주로 이메일)을 추출하는 메서드
     public String extractEmail(String token) {
-        // 'Claims::getSubject'를 통해 토큰의 주체(사용자)를 반환
         return extractClaim(token, Claims::getSubject);
     }
 
-    // JwtTokenUtil에 추가
     public String extractNickname(String token) {
         return extractClaim(token, claims -> claims.get("nickname", String.class));
     }
 
-
-    // 토큰에서 만료 시간을 추출하는 메서드
     public Date extractExpiration(String token) {
-        // 'Claims::getExpiration'을 사용하여 토큰의 만료 시간을 반환
         return extractClaim(token, Claims::getExpiration);
     }
 
-    // 토큰에서 특정 클레임(Claim)을 추출하는 일반적인 메서드
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        // 토큰에서 모든 클레임을 추출한 후, 전달된 함수(claimsResolver)를 사용해 필요한 클레임을 반환
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
-    // 토큰에서 모든 클레임을 추출하는 메서드
     private Claims extractAllClaims(String token) {
-        // 'SECRET_KEY'를 사용해 서명된 토큰을 파싱하고, 그 안에 포함된 클레임을 반환
         return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
     }
 
-    // 토큰이 만료되었는지 확인하는 메서드
     private Boolean isTokenExpired(String token) {
-        // 토큰의 만료 시간이 현재 시간 이전인지 확인해 만료 여부를 반환
         return extractExpiration(token).before(new Date());
     }
 
-    // JWT 토큰 생성 메서드 - 이메일과 닉네임을 인자로 받음
-    public String generateToken(String email, String nickname) {
+    public String generateToken(String email, String nickname, String name, String provider) {
+        if (email == null || email.isEmpty()) {
+            throw new IllegalArgumentException("Email cannot be null or empty");
+        }
+
+        // Claims 초기화
         Map<String, Object> claims = new HashMap<>();
-        System.out.println("generateToken 메서드 이메일: " + email);
-        System.out.println("generateToken 메서드 닉네임: "+ nickname);
-        claims.put("nickname", nickname); // 닉네임을 nickname 클레임에 추가
-        return createToken(claims, email); // subject에는 이메일을 전달
+        claims.put("provider", provider); // 소셜 로그인 여부 확인 가능
+
+        // 소셜 로그인 처리
+        if ("kakao".equals(provider)) {
+            if (name == null || name.isEmpty()) {
+                throw new IllegalArgumentException("Name cannot be null or empty for Kakao login");
+            }
+            claims.put("name", name); // 소셜 사용자는 name 사용
+        }
+        // 일반 로그인 처리
+        else {
+            if (nickname == null || nickname.isEmpty()) {
+                throw new IllegalArgumentException("Nickname cannot be null or empty for general login");
+            }
+            claims.put("nickname", nickname); // 일반 사용자는 nickname 사용
+        }
+
+        // 디버깅 로그 출력
+        System.out.println("[JwtTokenUtil] Generating token with:");
+        System.out.println(" - Email: " + email);
+        System.out.println(" - Nickname: " + (nickname != null ? nickname : "N/A"));
+        System.out.println(" - Name: " + (name != null ? name : "N/A"));
+        System.out.println(" - Provider: " + provider);
+        System.out.println(" - Claims: " + claims);
+
+        // Token 생성
+        return createToken(claims, email); // Subject는 email
     }
 
-    public Map parseJwt(String token) {
+
+
+    public Map<String, Object> parseJwt(String token) {
         try {
             String[] parts = token.split("\\.");
             String payload = new String(Base64.getDecoder().decode(parts[1]));
+            System.out.println("[JwtTokenUtil] Parsed JWT payload: " + payload);
             return new ObjectMapper().readValue(payload, Map.class);
         } catch (Exception e) {
             e.printStackTrace();
@@ -74,25 +91,35 @@ public class JwtTokenUtil {
         }
     }
 
-
-
-    // 클레임과 이메일을 기반으로 JWT 토큰을 생성하는 메서드
     private String createToken(Map<String, Object> claims, String subject) {
-        System.out.println("createToken 메서드 claims: " + claims);
-        System.out.println("createToken 메서드 subject: " +subject);
-        // subject를 이메일로 설정하고 nickname은 클레임으로 추가하여 토큰 생성
+        if (claims == null || claims.isEmpty()) {
+            throw new IllegalArgumentException("Claims cannot be null or empty");
+        }
+        if (subject == null || subject.isEmpty()) {
+            throw new IllegalArgumentException("Subject cannot be null or empty");
+        }
+
+        // 디버깅 로그 추가
+        System.out.println("[JwtTokenUtil] Creating token with:");
+        System.out.println(" - Claims: " + claims);
+        System.out.println(" - Subject: " + subject);
+
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(subject) // 이메일을 subject로 설정
+                .setSubject(subject) // Subject는 email
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10시간 유효기간 설정
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10시간 유효
                 .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
                 .compact();
     }
 
+
     public Boolean validateToken(String token, String email) {
-        // 토큰에서 subject를 추출한 후, email과 비교하여 검증
         final String extractedEmail = extractEmail(token);
+        System.out.println("[JwtTokenUtil] Validating token:");
+        System.out.println(" - Extracted Email: " + extractedEmail);
+        System.out.println(" - Provided Email: " + email);
+        System.out.println(" - Is Token Expired: " + isTokenExpired(token));
         return (extractedEmail.equals(email) && !isTokenExpired(token));
     }
 }
