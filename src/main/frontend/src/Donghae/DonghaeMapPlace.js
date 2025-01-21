@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import DonghaeMap from './DonghaeMap';
-import { Link } from 'react-router-dom';  // CSS 파일 임포트
-import './DonghaeMap.css';
+import React, {useState} from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import RadiusSelector from './RadiusSelector';
+import './DonghaeMap.css';
 
 const ScrollableContainer = styled.div`
   overflow-y: auto;
@@ -31,6 +30,21 @@ const ScrollableContainer = styled.div`
   }
 `;
 
+const Button = styled.button`
+  background-color: ${(props) => props.$bgColor};
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: ${(props) => props.$hoverColor};
+  }
+`;
+
 const Card = styled.div`
   width: 350px;
   border: 1px solid #ddd;
@@ -47,7 +61,7 @@ const Card = styled.div`
 
   img {
     width: 100%;
-    height: 150px;
+    height: 200px;
     object-fit: cover;
     border-radius: 8px;
   }
@@ -62,598 +76,320 @@ const CardContent = styled.div`
   }
 
   p {
-    font-size: 0.9em;
+    font-size: 1.1rem;
     color: #666;
   }
 `;
 
-const Button = styled.button`
-  background-color: ${(props) => props.$bgColor};
-  color: white;
-  padding: 0.8rem 1.5rem;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: ${(props) => props.$hoverColor};
-  }
-`;
-
-
-
-const DonghaeMapPlace = () => {
-    const [stations, setStations] = useState([]);
-    const [accommodations, setAccommodations] = useState([]);
-    const [restaurants, setRestaurants] = useState([]);
-    const [touristSpots, setTouristSpots] = useState([]);  // 여행지 상태 추가
-    const [selectedStation, setSelectedStation] = useState(null);
-    const [selectedAccommodation, setSelectedAccommodation] = useState(null);
-    const [showCategory, setShowCategory] = useState(false);
-    const [showAccommodations, setShowAccommodations] = useState(false);
-    const [showRestaurants, setShowRestaurants] = useState(false);
-    const [showTouristSpots, setShowTouristSpots] = useState(false);  // 여행지 표시 상태
-    const [totalAccommodationCount, setTotalAccommodationCount] = useState(0);
-    const [totalRestaurantCount, setTotalRestaurantCount] = useState(0);
-    const [totalTouristSpotCount, setTotalTouristSpotCount] = useState(0);  // 여행지 총 개수 상태 추가
-    const [hashtags, setHashtags] = useState([]);  // 해시태그 상태 추가
-    const [touristCategories, setTouristCategories] = useState([]);  // 여행지 카테고리 상태 추가
-    const [selectedHashtag, setSelectedHashtag] = useState(null);  // 선택된 해시태그 상태 추가
-    const [selectedCategory, setSelectedCategory] = useState(null);  // 선택된 카테고리 상태 추가
-    const [currentPage, setCurrentPage] = useState(0);
-    const [pageSize] = useState(4);
-    const [radius, setRadius] = useState(1500); // 기본값 1.5km로 설정
-
-
-    const handleRadiusChange = (e) => {
-        const selectedRadius = parseInt(e.target.value, 10); // 문자열을 숫자로 변환
-        console.log('Selected radius:', selectedRadius);
-        setRadius(selectedRadius); // 선택된 반경 값 업데이트
-
-        // 반경이 바뀌면 새로운 반경 값을 가지고 백엔드 API 요청
-        if (selectedStation) {
-            const { latitude, longitude } = selectedStation;
-
-            // 여행지 데이터 요청
-            axios.get(`/api/tourist-spots/radius`, {
-                params: {
-                    latitude: latitude,
-                    longitude: longitude,
-                    radius: selectedRadius,  // 선택된 반경 값으로 백엔드 요청
-                    page: currentPage,
-                    size: pageSize,
-                    sort: 'name,asc'
-                }
-            })
-                .then((response) => {
-                    setTouristSpots(response.data.content);
-                    setTotalTouristSpotCount(response.data.totalElements);  // 총 개수 업데이트
-                })
-                .catch((error) => {
-                    console.error("Error fetching tourist spots data:", error);
-                });
-
-            // 카테고리 데이터 요청
-            axios.get(`/api/tourist-spots/radius/categories`, {
-                params: {
-                    latitude: latitude,
-                    longitude: longitude,
-                    radius: selectedRadius  // 선택된 반경 값으로 백엔드 요청
-                }
-            })
-                .then((res) => {
-                    setTouristCategories(res.data);
-                })
-                .catch((err) => {
-                    console.error("Error fetching categories:", err);
-                });
-            // 숙박 데이터 요청
-            axios.get(`/api/accommodations/radius`, {
-                params: {
-                    latitude: latitude,
-                    longitude: longitude,
-                    radius: selectedRadius,  // 선택된 반경 값으로 백엔드 요청
-                    page: currentPage,
-                    size: pageSize,
-                    sort: 'name,asc'
-                }
-            })
-                .then((response) => {
-                    setAccommodations(response.data.content);
-                    setTotalAccommodationCount(response.data.totalElements);  // 총 개수 업데이트
-                })
-                .catch((error) => {
-                    console.error("Error fetching accommodation data:", error);
-                });
-
-            // 식당 데이터 요청
-            axios.get(`/api/restaurants/radius`, {
-                params: {
-                    latitude: latitude,
-                    longitude: longitude,
-                    radius: selectedRadius,  // 선택된 반경 값으로 백엔드 요청
-                    page: currentPage,
-                    size: pageSize,
-                    sort: 'name,asc'
-                }
-            })
-                .then((response) => {
-                    setRestaurants(response.data.content);
-                    setTotalRestaurantCount(response.data.totalElements);  // 총 개수 업데이트
-                })
-                .catch((error) => {
-                    console.error("Error fetching restaurant data:", error);
-                });
+// 유틸리티 함수: 이미지 URL 처리
+const getImageUrl = (imageUrl) => {
+    try {
+        if (typeof imageUrl === 'string') {
+            if (imageUrl.startsWith('[') && imageUrl.endsWith(']')) {
+                const images = JSON.parse(imageUrl); // JSON 문자열 파싱
+                return Array.isArray(images) && images.length > 0 ? images[0] : '/image/default_image.png';
+            }
+            return imageUrl || '/image/default_image.png'; // 일반 문자열
         }
-    };
-
-
-
-    // 초기 동해선 역 정보 불러오기
-    useEffect(() => {
-        axios.get("/api/donghae/donghae-line")
-            .then((response) => {
-                const filteredStations = response.data.filter(station => station.lineName === "동해선");
-                setStations(filteredStations);
-            })
-            .catch((error) => {
-                console.error("Error fetching station data:", error);
-            });
-    }, []);
-
-    const handleStationClick = (stationName) => {
-        // 새로운 역을 클릭할 때 이전 상태 초기화
-        setAccommodations([]);
-        setRestaurants([]);
-        setShowAccommodations(false);
-        setShowRestaurants(false);
-        setSelectedAccommodation(null);
-        setHashtags([]);  // 해시태그 초기화
-        setShowCategory(false); // 카테고리 메뉴 숨기기
-
-        const scrollableContainer = document.querySelector('.scrollable-container');
-        if (scrollableContainer) {
-            scrollableContainer.classList.add('active');  // active 클래스 추가
+        if (Array.isArray(imageUrl)) {
+            return imageUrl.length > 0 ? imageUrl[0] : '/image/default_image.png'; // 배열 처리
         }
+        return '/image/default_image.png'; // 기본 이미지
+    } catch (error) {
+        console.error('Error parsing imageUrl:', error);
+        return '/image/default_image.png'; // 오류 시 기본 이미지 반환
+    }
+};
 
-        // 새로운 역에 대한 정보를 가져옴
-        axios.get(`/api/donghae/station/${stationName}`)
-            .then((response) => {
-                const { stationInfo } = response.data;
-                setSelectedStation({
-                    name: stationInfo.stationName,
-                    latitude: stationInfo.latitude,
-                    longitude: stationInfo.longitude
-                });
-                setShowCategory(true); // 새로운 역에 대해 카테고리 메뉴 표시
-            })
-            .catch((error) => {
-                console.error("Error fetching station data:", error);
-            });
-    };
+const Pagination = ({ currentPage, totalCount, onPageChange, itemsPerPage = 4 }) => {
+    const totalPages = Math.ceil(totalCount / itemsPerPage);
 
-
-    const handleAccommodationClick = (page = 0, toggle = true) => {
-        console.log(page);
-        if (selectedStation) {
-            const { latitude, longitude } = selectedStation;
-
-            axios.get(`/api/accommodations/radius`, {
-                params: {
-                    latitude: latitude,
-                    longitude: longitude,
-                    radius: radius,
-                    page: page,
-                    size: pageSize,
-                    sort: 'name,asc'
-                }
-            })
-                .then((response) => {
-                    setAccommodations(response.data.content);
-                    setTotalAccommodationCount(response.data.totalElements);
-                    setCurrentPage(page);
-                    if (toggle) {
-                        setShowAccommodations(!showAccommodations); // 상태 토글을 옵션으로 처리
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error fetching accommodation data:", error);
-                });
-        }
-    };
-
-    const handleRestaurantClick = (page = 0, toggle = true) => {
-        console.log(page);
-        if (selectedStation) {
-            const { latitude, longitude } = selectedStation;
-
-            axios.get(`/api/restaurants/radius`, {
-                params: {
-                    latitude: latitude,
-                    longitude: longitude,
-                    radius: radius,
-                    page: page,
-                    size: pageSize,
-                    sort: 'name,asc'
-                }
-            })
-                .then((response) => {
-                    setRestaurants(response.data.content);
-                    setTotalRestaurantCount(response.data.totalElements);
-                    setCurrentPage(page);
-                    if (toggle) {
-                        setShowRestaurants(!showRestaurants); // 상태 토글을 옵션으로 처리
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error fetching restaurant data:", error);
-                });
-
-            // 해시태그 불러오기
-            axios.get(`/api/restaurants/radius/hashtags`, {
-                params: { latitude, longitude, radius }
-            })
-                .then((response) => {
-                    setHashtags(response.data);  // 해시태그 상태 업데이트
-                })
-                .catch((error) => {
-                    console.error("Error fetching hashtags:", error);
-                });
-        }
-    };
-
-    // 여행지 버튼을 클릭하면 해당 목록을 토글
-    const handleTouristSpotClick = (page = 0, toggle = true) => {
-        if (selectedStation) {
-            const { latitude, longitude } = selectedStation;
-
-            axios.get(`/api/tourist-spots/radius`, {
-                params: {
-                    latitude: latitude,
-                    longitude: longitude,
-                    radius: radius,
-                    page: page,
-                    size: pageSize,
-                    sort: 'name,asc'
-                }
-            })
-                .then((response) => {
-                    setTouristSpots(response.data.content);
-                    setTotalTouristSpotCount(response.data.totalElements);
-                    setCurrentPage(page);
-                    if (toggle) {
-                        setShowTouristSpots(!showTouristSpots);  // 상태를 토글하여 목록을 활성화/비활성화
-                    }
-
-                    // 카테고리 목록 불러오기
-                    axios.get(`/api/tourist-spots/radius/categories`, {
-                        params: {
-                            latitude: latitude,
-                            longitude: longitude,
-                            radius: radius
-                        }
-                    }).then((res) => {
-                        setTouristCategories(res.data);
-                    }).catch((err) => {
-                        console.error("Error fetching categories:", err);
-                    });
-                })
-                .catch((error) => {
-                    console.error("Error fetching tourist spots data:", error);
-                });
-        }
-    };
+    return (
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '8rem', marginTop: '1rem' }}>
+            <button
+                onClick={() => onPageChange(-1)}
+                disabled={currentPage === 0}
+            >
+                이전
+            </button>
+            <span style={{
+                alignSelf: 'center',
+                fontSize: '1.5rem',
+                fontWeight: 'bold'
+            }}>
+                {currentPage + 1} / {totalPages}
+            </span>
+            <button
+                onClick={() => onPageChange(1)}
+                disabled={(currentPage + 1) >= totalPages}
+            >
+                다음
+            </button>
+        </div>
+    );
+};
 
 
-    const handleCategoryClick = (category = selectedCategory, page = 0) => {
-        console.log("Selected category:", category);
-        const { latitude, longitude } = selectedStation;
+// 공통 렌더링 함수: 카테고리별 항목 렌더링
+const renderCategoryItems = (items, category, totalCount, linkPath, radius) => (
+    <div style={{ width: '45rem', marginTop: '2rem', margin: 'auto' }}>
+        <p style={{ textAlign: 'center', fontSize: '2rem', marginTop: '2rem' }}>
+            근처 {category} ({radius / 1000}km 반경) - 총 {totalCount}개
+        </p>
+        <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '20px',
+            width: '750px',
+            justifyContent: 'center',
+            alignItems: 'center',
+        }}>
+            {items.map((item, index) => (
+                <Card key={index}>
+                    <img
+                        src={getImageUrl(item.imageUrl || item.imageUrls)}
+                        alt={item.name || item.title}
+                        className="card-img-top"
+                    />
+                    <CardContent>
+                        <h3>{item.name || item.title}</h3>
+                        <p>{item.address || item.oneLineDesc || '정보 없음'}</p>
+                        {item.averagePrice && (
+                            <p>가격: {item.averagePrice.toLocaleString()} 원</p>
+                        )}
+                        {item.hashtag && (
+                            <p>해시태그: {item.hashtag}</p>
+                        )}
+                        {item.placeCategory && (
+                            <p>카테고리: {item.placeCategory}</p>
+                        )}
+                        {item.oneLineDesc && (
+                            <p>{item.oneLineDesc}</p>
+                        )}
+                        <button
+                            onClick={() => {
+                                const id = item.uniqueId || item.id || item.spotId;
+                                const token = sessionStorage.getItem('token'); // 세션에서 토큰 가져오기
+                                const detailUrl = `${window.location.origin}${linkPath}/${id}?token=${token}`;
 
-        const params = {
-            latitude: latitude,
-            longitude: longitude,
-            radius: radius,
-            placeCategory: category,
-            page: page,
-            size: pageSize
-        };
+                                console.log("Opening URL with token:", detailUrl);
 
-        console.log("API Request Params:", params); // API 요청 파라미터 확인
+                                // 새 창 열기
+                                window.open(detailUrl, "_blank", "noopener,noreferrer");
+                            }}
+                            className="btn btn-primary"
+                            style={{
+                                display: 'inline-block',
+                                marginTop: '10px',
+                                backgroundColor: '#007BFF',
+                                color: 'white',
+                                padding: '0.5rem 1rem',
+                                borderRadius: '5px',
+                                textDecoration: 'none',
+                                cursor: 'pointer',
+                            }}
+                        >
+                            상세 보기
+                        </button>
+                    </CardContent>
+                </Card>
+            ))}
+        </div>
+    </div>
+);
 
-        axios.get(`/api/tourist-spots/radius/filter`, { params })
-            .then((response) => {
-                setTouristSpots(response.data.content);
-                setTotalTouristSpotCount(response.data.totalElements);
-                setSelectedCategory(category);  // 선택된 카테고리 업데이트
-                setCurrentPage(page);
-            })
-            .catch((error) => {
-                console.error("Error fetching filtered tourist spots:", error);
-            });
-    };
+const DonghaeMapPlace = ({
+                             selectedStation,
+                             accommodations,
+                             restaurants,
+                             touristSpots,
+                             onCategoryChange, // 카테고리 변경 핸들러
+                             radius,
+                             setRadius,
+                             showCategory,
+                             hashtags,
+                             totalAccommodationCount,
+                             totalRestaurantCount,
+                             totalTouristSpotCount,
+                             onHashtagClick,
+                             currentPage, // 현재 페이지 상태
+                             onPageChange, // 페이지 변경 핸들러
+                             onClose, // 닫기 핸들러
+                         }) => {
+    const [selectedCategory, setSelectedCategory] = useState(null);
 
-
-    // 해시태그 클릭 시 해당 해시태그에 속하는 식당들만 보여줌
-    const handleHashtagClick = (hashtag, page = 0) => {
-        if (selectedStation) {
-            const { latitude, longitude } = selectedStation;
-
-            // 해시태그 선택 상태 업데이트
-            setSelectedHashtag(hashtag);
-
-            axios.get(`/api/restaurants/radius/hashtag`, {
-                params: {
-                    latitude: latitude,
-                    longitude: longitude,
-                    radius: radius,
-                    hashtag: hashtag,
-                    page: page,  // 페이지 번호 전달
-                    size: pageSize,
-                    sort: 'name,asc'
-                }
-            })
-                .then((response) => {
-                    setRestaurants(response.data.content);
-                    setTotalRestaurantCount(response.data.totalElements);  // 총 개수 업데이트
-                    setCurrentPage(page);  // 페이지 상태 업데이트
-                })
-                .catch((error) => {
-                    console.error("Error fetching restaurant data by hashtag:", error);
-                });
-        }
-    };
-
-    const handleAccommodationSelect = (accommodation) => {
-        setSelectedAccommodation(accommodation); // 선택된 숙박시설 저장
+    const handleCategorySelection = (category) => {
+        const newCategory = selectedCategory === category ? null : category; // 현재 선택된 카테고리와 같으면 해제
+        setSelectedCategory(newCategory); // 로컬 상태 업데이트
+        onCategoryChange(newCategory); // 부모 컴포넌트(MainPage)로 변경된 카테고리 전달
     };
 
     return (
-        <div style={{display: 'flex', flexDirection: 'row'}}>
-                <DonghaeMap
-                    stations={stations}
-                    accommodations={showAccommodations ? accommodations : []}
-                    restaurants={showRestaurants ? restaurants : []}
-                    touristSpots={showTouristSpots ? touristSpots : []}
-                    onStationClick={handleStationClick}
-                    radius={radius}
-                    selectedStation={selectedStation}
-                    hideMap={selectedStation && showCategory}
-                />
-            {/* 전체 목록을 감싸는 스크롤 가능한 컨테이너 */}
-            <ScrollableContainer $active={selectedStation && showCategory}>
+        <ScrollableContainer $active={!!selectedStation && showCategory}>
             {selectedStation && showCategory && (
+                <>
                     <div>
-                        <div style={{fontSize: '2.5rem'}}>{selectedStation.name}역 카테고리 선택</div>
-                        {/* 반경 선택 UI를 카테고리 버튼들 바로 아래에 위치 */}
-                        <div style={{display: 'flex', gap: '1rem', marginBottom: '1rem', justifyContent: 'center'}}>
-                            <label style={{fontSize: '1.5rem'}}>반경 선택:</label>
-                            <select value={radius} onChange={handleRadiusChange}>
-                                <option value={1000}>1km</option>
-                                <option value={1500}>1.5km</option>
-                                <option value={2000}>2km</option>
-                                <option value={3000}>3km</option>
-                            </select>
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            position: 'relative',
+                            padding: '1rem'
+                        }}>
+                            {/* 닫기 버튼 */}
+                            <button
+                                onClick={onClose}
+                                style={{
+                                    position: 'absolute', // 버튼을 왼쪽에 고정
+                                    left: '1rem',
+                                    backgroundColor: '#f44336',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '0.5rem 1rem',
+                                    borderRadius: '5px',
+                                    cursor: 'pointer',
+                                    fontSize: '2rem',
+                                    fontWeight: 'bold',
+                                    transition: 'background-color 0.3s ease',
+                                }}
+                            >
+                                닫기
+                            </button>
+
+                            {/* 제목 */}
+                            <h2 style={{
+                                fontSize: '2.5rem',
+                                textAlign: 'center',
+                                margin: 0,
+                            }}>
+                                {selectedStation.name} 역 카테고리 선택
+                            </h2>
                         </div>
+
+                        <RadiusSelector radius={radius} setRadius={setRadius}/>
                         <div style={{display: 'flex', gap: '0.5rem', marginBottom: '1rem', justifyContent: 'center'}}>
-                            <Button $bgColor="#4CAF50" $hoverColor="#45A049" onClick={() => handleAccommodationClick(0)}>
-                                {showAccommodations ? '목록 접기' : '숙박/휴양'}
+                            <Button
+                                $bgColor="#4CAF50"
+                                $hoverColor="#45A049"
+                                onClick={() => handleCategorySelection('accommodations')}
+                                $active={selectedCategory === 'accommodations'} // 선택된 상태 시 스타일
+                            >
+                                숙박/휴양
                             </Button>
-                            <Button $bgColor="#2196F3" $hoverColor="#1E88E5" onClick={() => handleRestaurantClick(0)}>
-                                {showRestaurants ? '목록 접기' : '식당'}
+                            <Button
+                                $bgColor="#2196F3"
+                                $hoverColor="#1E88E5"
+                                onClick={() => handleCategorySelection('restaurants')}
+                                $active={selectedCategory === 'restaurants'}
+                            >
+                                식당
                             </Button>
-                            <Button $bgColor="#FF9800" $hoverColor="#FB8C00" onClick={() => handleTouristSpotClick(0)}>
-                                {showTouristSpots ? '목록 접기' : '여행지'}
+                            <Button
+                                $bgColor="#FF9800"
+                                $hoverColor="#FB8C00"
+                                onClick={() => handleCategorySelection('touristSpots')}
+                                $active={selectedCategory === 'touristSpots'}
+                            >
+                                여행지
                             </Button>
                         </div>
                     </div>
-                )}
-
-                {/* 해시태그 필터링 */}
-                {showRestaurants && hashtags.length > 0 && (
-                    <div style={{marginTop: '1rem'}}>
-                        <h3>해시태그</h3>
-                        <div style={{display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center'}}>
-                            {hashtags.map((hashtag, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => handleHashtagClick(hashtag)}
-                                    style={{
-                                        backgroundColor: '#34a1eb',  // 하늘색
-                                        border: 'none',
-                                        color: 'white',
-                                        padding: '0.5rem 1rem',
-                                        borderRadius: '5px',
-                                        cursor: 'pointer',
-                                        fontSize: '1rem',
-                                        transition: 'background-color 0.3s ease',
-                                    }}
-                                    onMouseEnter={(e) => e.target.style.backgroundColor = '#00BFFF'}  // hover 효과
-                                    onMouseLeave={(e) => e.target.style.backgroundColor = '#34a1eb'}
-                                >
-                                    {hashtag}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                {/* 숙박시설 리스트 */}
-                {showAccommodations && accommodations.length > 0 && (
-                    <div style={{width: '45rem', marginTop: '2rem',margin:'auto'}}>
-                        <p style={{textAlign: 'center', fontSize: '2rem',marginTop:'2rem'}}>근처 숙박시설 ({radius / 1000}km
-                            반경)
-                            총 {totalAccommodationCount}개</p>
-                        <div style={{
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            gap: '20px',
-                            width: '750px',
-                            justifyContent: 'center',
-                            alignItems: 'center'
-                        }}>
-                            {accommodations.map((accommodation, index) => (
-                                <Card key={index} onClick={() => handleAccommodationSelect(accommodation)}>
-                                    <img src={accommodation.imageUrl} alt={accommodation.name} />
-                                    <CardContent>
-                                        <h3>{accommodation.name}</h3>
-                                        <p>주소: {accommodation.address}</p>
-                                        <p>가격: {accommodation.averagePrice} 원</p>
-                                        {/* Link 컴포넌트에 클릭 이벤트 전파 방지 */}
-                                        <Link
-                                            to={`/accommodation/${accommodation.uniqueId}`}
-                                            className="btn btn-primary"
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
-                                            상세 보기
-                                        </Link>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                            <div className="paging-container">
-                                {currentPage > 0 && (
-                                    <button className="paging-button"
-                                            onClick={() => handleAccommodationClick(currentPage - 1, false)}>이전</button>
-                                )}
-                                {restaurants.length === pageSize && (
-                                    <button className="paging-button"
-                                            onClick={() => handleAccommodationClick(currentPage + 1, false)}>다음</button>
-                                )}
+                    {hashtags.length > 0 && (
+                        <div>
+                            <h3>해시태그</h3>
+                            <div style={{display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center'}}>
+                                {hashtags.map((tag, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => onHashtagClick(tag)}
+                                        style={{
+                                            backgroundColor: '#34a1eb',
+                                            border: 'none',
+                                            color: 'white',
+                                            padding: '0.5rem 1rem',
+                                            borderRadius: '5px',
+                                            cursor: 'pointer',
+                                            fontSize: '1rem',
+                                            transition: 'background-color 0.3s ease',
+                                        }}
+                                    >
+                                        {tag}
+                                    </button>
+                                ))}
                             </div>
                         </div>
-                    </div>
-                )}
-
-                {/* 식당 리스트 */}
-                {showRestaurants && restaurants.length > 0 && (
-                    <div style={{width: '45rem', marginTop: '2rem',margin:'auto'}}>
-                        <p style={{textAlign: 'center', fontSize: '2rem',marginTop:'2rem'}}>근처 식당 ({radius / 1000}km 반경)
-                            총 {totalRestaurantCount}개</p>
-                        <div style={{
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            gap: '20px',
-                            width: '750px',
-                            justifyContent: 'center',
-                            alignItems: 'center'
-                        }}>
-                            {restaurants.map((restaurant, index) => (
-                                <Card key={index}>
-                                    <img
-                                        src={
-                                            restaurant.imageUrl && JSON.parse(restaurant.imageUrl).length > 0
-                                                ? JSON.parse(restaurant.imageUrl)[0]
-                                                : '/image/default_image.png'
-                                        }
-                                        className="card-img-top"
-                                        alt={restaurant.name}
-                                    />
-                                    <CardContent>
-                                        <h3>{restaurant.name}</h3>
-                                        <p>주소: {restaurant.address}</p>
-                                        <p>해시태그: {restaurant.hashtag}</p>
-                                        <Link to={`/restaurant/${restaurant.id}`} className="btn btn-primary"  onClick={(e) => e.stopPropagation()}>
-                                            상세 보기
-                                        </Link>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </div>
-                        <div className="paging-container">
-                            {currentPage > 0 && (
-                                <button className="paging-button"
-                                        onClick={() => handleRestaurantClick(currentPage - 1, false)}>이전</button>
-                            )}
-                            {restaurants.length === pageSize && (
-                                <button className="paging-button"
-                                        onClick={() => handleRestaurantClick(currentPage + 1, false)}>다음</button>
-                            )}
-                        </div>
-                    </div>
-                )}
-
-                {/* 여행지 리스트 */}
-                {showTouristSpots && touristSpots.length > 0 && (
-                    <div style={{width: '45rem', marginTop: '2rem',margin:'auto'}}>
-                        <p style={{textAlign: 'center', fontSize: '2rem'}}>카테고리 필터</p>
-                        {touristCategories.length > 0 && (
-                            <div style={{marginBottom: '1rem', gap: '5px'}}>
-                                <h3 style={{textAlign: 'center',marginTop:'2rem'}}>근처 여행지 ({radius / 1000}km 반경) -
-                                    총 {totalTouristSpotCount}개</h3>
-                                <div style={{
-                                    display: 'flex',
-                                    flexWrap: 'wrap',
-                                    gap: '0.5rem',
-                                    justifyContent: 'center',
-                                }}>
-                                    {touristCategories.map((category, index) => (
-                                        <button key={index} onClick={() => handleCategoryClick(category)}
-                                                style={{
-                                                    backgroundColor: '#34a1eb',  // 하늘색
-                                                    border: 'none',
-                                                    color: 'white',
-                                                    padding: '0.5rem 1rem',
-                                                    borderRadius: '5px',
-                                                    cursor: 'pointer',
-                                                    fontSize: '1rem',
-                                                    transition: 'background-color 0.3s ease',
-                                                }}
-                                                onMouseEnter={(e) => e.target.style.backgroundColor = '#00BFFF'}  // hover 효과
-                                                onMouseLeave={(e) => e.target.style.backgroundColor = '#34a1eb'}
-                                        >{category}
-                                        </button>
-                                    ))}
+                    )}
+                    {selectedCategory === 'accommodations' && (
+                        <>
+                            {accommodations.length === 0 ? (
+                                <div style={{textAlign: 'center', marginTop: '1rem', fontSize: '1.5rem', color: 'red'}}>
+                                    해당 반경 내 숙박시설이 없습니다.
                                 </div>
-                            </div>
-                        )}
-                        <div style={{
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            gap: '20px',
-                            width: '750px',
-                            justifyContent: 'center',
-                            alignItems: 'center'
-                        }}>
-                            {touristSpots.map((spot, index) => (
-                                <Card key={index}>
-                                    <img
-                                        src={spot.imageUrls && spot.imageUrls.length > 0 ? spot.imageUrls[0] : '/image/default_image.png'}
-                                        alt={spot.title}
-                                    />
-                                    <CardContent>
-                                        <h3>{spot.title}</h3>
-                                        <p>{spot.oneLineDesc}</p>
-                                        <p>카테고리: {spot.placeCategory}</p>
-                                        <Link to={`/tourist-spot/${spot.spotId}`} className="btn btn-primary" onClick={(e) => e.stopPropagation()}>
-                                            상세 보기
-                                        </Link>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </div>
-                        <div className="paging-container">
-                            {currentPage > 0 && (
-                                <button
-                                    className="paging-button"
-                                    onClick={() => handleTouristSpotClick(currentPage - 1, false)}
-                                >
-                                    이전
-                                </button>
+                            ) : (
+                                renderCategoryItems(
+                                    accommodations,
+                                    '숙박지',
+                                    totalAccommodationCount,
+                                    '/accommodation',
+                                    radius
+                                )
                             )}
-                            {touristSpots.length === pageSize && (
-                                <button
-                                    className="paging-button"
-                                    onClick={() => handleTouristSpotClick(currentPage + 1, false)}
-                                >
-                                    다음
-                                </button>
+                            <Pagination
+                                currentPage={currentPage.accommodations}
+                                totalCount={totalAccommodationCount}
+                                onPageChange={(direction) => onPageChange('accommodations', direction)}
+                            />
+                        </>
+                    )}
+
+                    {selectedCategory === 'restaurants' && (
+                        <>
+                            {restaurants.length === 0 ? (
+                                <div style={{textAlign: 'center', marginTop: '1rem', fontSize: '1.5rem', color: 'red'}}>
+                                    해당 반경 내 식당이 없습니다.
+                                </div>
+                            ) : (
+                                renderCategoryItems(
+                                    restaurants,
+                                    '식당',
+                                    totalRestaurantCount,
+                                    '/restaurant',
+                                    radius
+                                )
                             )}
-                        </div>
-                    </div>
-                )}
-            </ScrollableContainer>
-        </div>
+                            <Pagination
+                                currentPage={currentPage.restaurants}
+                                totalCount={totalRestaurantCount}
+                                onPageChange={(direction) => onPageChange('restaurants', direction)}
+                            />
+                        </>
+                    )}
+
+                    {selectedCategory === 'touristSpots' && (
+                        <>
+                            {touristSpots.length === 0 ? (
+                                <div style={{textAlign: 'center', marginTop: '1rem', fontSize: '1.5rem', color: 'red'}}>
+                                    해당 반경 내 여행지가 없습니다.
+                                </div>
+                            ) : (
+                                renderCategoryItems(
+                                    touristSpots,
+                                    '여행지',
+                                    totalTouristSpotCount,
+                                    '/tourist-spot',
+                                    radius
+                                )
+                            )}
+                            <Pagination
+                                currentPage={currentPage.touristSpots}
+                                totalCount={totalTouristSpotCount}
+                                onPageChange={(direction) => onPageChange('touristSpots', direction)}
+                            />
+                        </>
+                    )}
+                </>
+            )}
+        </ScrollableContainer>
     );
 };
 

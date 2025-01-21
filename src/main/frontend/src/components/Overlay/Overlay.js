@@ -443,7 +443,7 @@ const Overlay = ({ closeOverlay, selectedDay, travelId ,onSavePlan}) => {
 
                                     return (
                                         <div key={item.id || item.uniqueId || item.spotId} className="data-item">
-                                            <div className="image-container">
+                                            <div className="image-container" style={{height:'200px'}}>
                                                 <img src={imageUrl} alt={item.name || item.title}
                                                      className="data-image"/>
                                             </div>

@@ -49,33 +49,60 @@ public class MemberController {
         Optional<Member> member = memberService.login(email, password);
 
         if (member.isPresent()) {
-            // JWT 토큰 생성
-            String token = jwtTokenUtil.generateToken(member.get().getEmail(),member.get().getNickname());
-            System.out.println("token:" + token);
+            Member memberInfo = member.get();
+
+            String token;
+            if ("kakao".equals(memberInfo.getProvider())) { // 소셜 로그인인 경우
+                System.out.println("[DEBUG] Social Login Detected: " + memberInfo.getProvider());
+                token = jwtTokenUtil.generateToken(
+                        memberInfo.getEmail(),
+                        null, // 일반 로그인 사용자가 아니므로 nickname은 null
+                        memberInfo.getName(), // 카카오 사용자는 name 사용
+                        memberInfo.getProvider()
+                );
+            } else { // 일반 로그인인 경우
+                System.out.println("[DEBUG] General Login Detected");
+                token = jwtTokenUtil.generateToken(
+                        memberInfo.getEmail(),
+                        memberInfo.getNickname(), // 일반 사용자는 nickname 사용
+                        null, // 소셜 로그인이 아니므로 name은 null
+                        memberInfo.getProvider()
+                );
+            }
+
+            System.out.println("Generated token: " + token);
 
             // JSON 형식으로 응답
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);
 
-            // MemberResponse는 직접 생성
-            MemberResponse memberResponse = new MemberResponse(member.get().getEmail(), member.get().getNickname());
+            // MemberResponse는 사용자의 이메일과 닉네임으로 생성
+            MemberResponse memberResponse = new MemberResponse(
+                    memberInfo.getEmail(),
+                    memberInfo.getNickname()
+            );
             response.put("member", memberResponse);
-            System.out.println("memberResponse의 값:" + memberResponse);
 
             return ResponseEntity.ok(response);  // JSON 객체로 응답
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패: 이메일 또는 비밀번호가 잘못되었습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("로그인 실패: 이메일 또는 비밀번호가 잘못되었습니다.");
         }
     }
+
+
 
 
     // JWT 토큰을 이용해 사용자 정보를 반환하는 메서드 (추가적인 엔드포인트)
     @GetMapping("/profile")
     public ResponseEntity<?> getProfile(@RequestHeader("Authorization") String token) {
         // Bearer 제거하고 토큰 값만 추출
-        String jwt = token.substring(7);
+        String jwt = token.substring(7); // "Bearer " 이후의 값만 가져오기
         String email = jwtTokenUtil.extractEmail(jwt);
         String nickname = jwtTokenUtil.extractNickname(jwt);  // 추가된 메서드로 닉네임 추출
+
+        System.out.println("Extracted Email: " + email);
+        System.out.println("Extracted Nickname: " + nickname);
 
         Optional<Member> member = memberService.findByEmail(email);
         if (member.isPresent()) {
@@ -92,6 +119,7 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자 정보를 찾을 수 없습니다.");
         }
     }
+
 
 
     // 로그아웃 처리(클라이언트에서 토큰 삭제하도록 안내하는 역할.)

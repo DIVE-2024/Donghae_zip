@@ -13,7 +13,7 @@ import java.net.URLEncoder;
 import java.util.Map;
 
 @Component
-public class    OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtTokenUtil jwtTokenUtil;
 
@@ -24,33 +24,32 @@ public class    OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandl
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         String email = authentication.getName();
-
         String nickname = null;
+        String name = null;
+        String provider = null;
+
         if (authentication.getPrincipal() instanceof OAuth2User) {
             OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
-            // 제공자가 nickname을 "nickname"으로 제공하지 않을 경우 대비해 다른 속성도 확인
+            provider = request.getParameter("provider"); // Provider 정보 가져오기
             nickname = oAuth2User.getAttribute("nickname");
-            if (nickname == null) {
-                nickname = oAuth2User.getAttribute("name");  // name 속성으로 대체 가능
+            name = oAuth2User.getAttribute("name");
+
+            if (nickname == null && name != null) {
+                nickname = name;
             }
         }
 
-        if (nickname == null) {
-            nickname = "defaultNickname";  // 닉네임이 없을 경우 기본값
-        }
+        if (nickname == null) nickname = "defaultNickname";
+        if (name == null) name = "defaultName";
+        if (provider == null) provider = "unknown";
 
-        // JWT 토큰 생성
-        String token = jwtTokenUtil.generateToken(email, nickname);
+        // JWT 생성
+        String token = jwtTokenUtil.generateToken(email, nickname, name, provider);
         System.out.println("Generated JWT: " + token);
 
-        // 디코딩하여 subject와 nickname 확인
-        Map<String, Object> decodedJwt = jwtTokenUtil.parseJwt(token);
-        System.out.println("Decoded JWT: " + decodedJwt);
-
-        // 리다이렉트 URL에 JWT 토큰을 포함 (프론트엔드로 전달)
         String redirectUrl = "http://localhost:3000/loginSuccess?token=" + URLEncoder.encode(token, "UTF-8");
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
     }
-
 }
+

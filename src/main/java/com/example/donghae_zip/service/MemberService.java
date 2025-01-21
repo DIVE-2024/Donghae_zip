@@ -75,39 +75,42 @@ public class MemberService {
     public Member saveOrUpdateSocialUser(String email, String provider, String providerId, String name, String nickname, String phone) {
         logger.info("Trying to save or update social user. Email: {}, Provider: {}, ProviderId: {}", email, provider, providerId);
 
-        // 1. 이메일로 먼저 사용자 확인
+        // 1. 이메일로 사용자 확인
         Optional<Member> existingMemberByEmail = memberRepository.findByEmail(email);
 
         if (existingMemberByEmail.isPresent()) {
-            // 이미 이메일로 등록된 사용자가 있으면 해당 사용자 반환
             logger.info("Member already exists with email: {}", email);
             return existingMemberByEmail.get();
         }
 
-        // 2. 이메일이 없으면 provider와 providerId로 사용자 확인
+        // 2. provider와 providerId로 사용자 확인
         Optional<Member> existingMemberByProviderId = memberRepository.findByProviderAndProviderId(provider, providerId);
 
         if (existingMemberByProviderId.isPresent()) {
-            // 이미 같은 providerId로 등록된 사용자가 있으면 해당 사용자 반환
             logger.info("Member already exists with providerId: {}", providerId);
             return existingMemberByProviderId.get();
         }
 
         // 3. 새로운 사용자인 경우 저장
         Member newMember = new Member();
-        newMember.setEmail(email != null ? email : provider + "_" + providerId + "@example.com");
+        newMember.setEmail(email != null && !email.isEmpty() ? email : provider + "_" + providerId + "@example.com");
         newMember.setProvider(provider);
         newMember.setProviderId(providerId);
 
-        // 닉네임, 전화번호, 이름 생성 (기존 로직 그대로 사용)
-        String generatedNickname = (nickname != null) ? nickname : "동해선" + UUID.randomUUID().toString().substring(0, 8);
+        // 닉네임 생성
+        String generatedNickname = (nickname != null && !nickname.isEmpty()) ? nickname : "User_" + UUID.randomUUID().toString().substring(0, 8);
         while (memberRepository.findByNickname(generatedNickname).isPresent()) {
-            generatedNickname = "동해선" + UUID.randomUUID().toString().substring(0, 8);
+            generatedNickname = "User_" + UUID.randomUUID().toString().substring(0, 8);
         }
         newMember.setNickname(generatedNickname);
 
-        newMember.setPhone(phone != null ? phone : "000-0000-" + (int) (Math.random() * 10000));
-        newMember.setName(name != null ? name : "User_" + UUID.randomUUID().toString().substring(0, 8));
+        // 이름 설정
+        newMember.setName(name != null && !name.isEmpty() ? name : "SocialUser_" + UUID.randomUUID().toString().substring(0, 8));
+
+        // 전화번호 설정
+        newMember.setPhone(phone != null && !phone.isEmpty() ? phone : "000-0000-" + (int) (Math.random() * 10000));
+
+        // 기본 역할 설정
         newMember.setRole(Member.Role.USER);
 
         // 무작위 비밀번호 생성
@@ -117,6 +120,7 @@ public class MemberService {
         logger.info("Saving new member with email: {}", newMember.getEmail());
         return memberRepository.save(newMember);
     }
+
 
 
     // 역할 업데이트 로직

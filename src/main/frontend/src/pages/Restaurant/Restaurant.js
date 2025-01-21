@@ -18,14 +18,14 @@ const Restaurant = () => {
     const [userId, setUserId] = useState(null);
     const [averageRating, setAverageRating] = useState(0);
 
-
     useEffect(() => {
-        const userId = getUserIdFromToken();  // userId 가져오기
-        if (userId) setUserId(userId);
+        const fetchData = async () => {
+            const userIdFromToken = getUserIdFromToken();
+            if (userIdFromToken) setUserId(userIdFromToken);
 
-        axios.get(`/api/restaurants/${id}`, {})
-            .then(response => {
-                const data = response.data;
+            try {
+                const restaurantResponse = await axios.get(`/api/restaurants/${id}`);
+                const data = restaurantResponse.data;
 
                 const parsedRestaurant = {
                     ...data,
@@ -33,25 +33,21 @@ const Restaurant = () => {
                     businessHours: JSON.parse(data.businessHours),
                     info: JSON.parse(data.info),
                     menuInfo: JSON.parse(data.menuInfo),
-                    tags: JSON.parse(data.tags)
+                    tags: JSON.parse(data.tags),
                 };
-                console.log(response);
 
                 setRestaurant(parsedRestaurant);
-            })
-            .catch(error => {
-                console.error('Error fetching restaurant data:', error);
-            });
 
-        // 해당 코스에 대한 댓글 목록을 가져오는 API 호출
-        axios.get(`/api/comments/restaurants/${id}/reviews`)
-            .then(response => {
-                setComments(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching comments:', error);
-            });
+                const commentsResponse = await axios.get(`/api/comments/restaurants/${id}/reviews`);
+                setComments(commentsResponse.data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
     }, [id]);
+
 
     if (!restaurant) {
         return <p>Loading...</p>;
