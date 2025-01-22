@@ -37,14 +37,22 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         // 요청 경로를 확인
         String requestURI = request.getRequestURI();
 
+        System.out.println("Request URI: " + requestURI);
         // 인증이 필요 없는 경로들은 JWT 검증을 우회
-        if (requestURI.startsWith("/api/restaurants/") ||
+        if (requestURI.contains("swagger") ||
+                requestURI.startsWith("/v3/api-docs/") ||
+                requestURI.startsWith("/swagger-resources/") ||
+                requestURI.equals("/swagger-ui.html") || // /swagger-ui.html 명시적으로 추가
+                requestURI.equals("/error") ||
+                requestURI.startsWith("/favicon.ico") ||
+                requestURI.startsWith("/api/restaurants/") ||
                 requestURI.startsWith("/api/donghae/") ||   // 동해선 관련 경로 우회
                 requestURI.startsWith("/api/accommodations/") ||
                 requestURI.startsWith("/api/tourist-spots/") ||
                 requestURI.startsWith("/api/festivals/") ||
                 requestURI.startsWith("/api/trails/") ||
                 requestURI.startsWith("/api/favorites/public/")) { // 공개 API는 우회
+            System.out.println("Skipping JwtRequestFilter for URI: " + requestURI);
             filterChain.doFilter(request, response);
             return;
         }

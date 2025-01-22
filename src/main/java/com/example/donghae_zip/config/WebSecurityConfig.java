@@ -52,63 +52,60 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.disable()) // CSRF 비활성화
                 .authorizeHttpRequests(auth -> auth
                         // Swagger 및 정적 리소스 관련 경로 허용
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api-test-swagger").permitAll()
+                        .requestMatchers(
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-resources/**",
+                                "/favicon.ico",
+                                "/error" // /error 경로 추가
+                        ).permitAll()
+                        // Health Check 경로 허용
+                        .requestMatchers("/health").permitAll()
+                        // 인증 없이 허용되는 API 경로들
                         .requestMatchers("/api/members/**").permitAll()
                         .requestMatchers("/oauth2/**", "/login/**").permitAll()
-                        .requestMatchers("/static/**", "/favicon.ico").permitAll()
-
-                        // 날씨 관련 허용
+                        .requestMatchers("/static/**").permitAll()
                         .requestMatchers("/api/weather/**").permitAll()
-
-                        // 숙박, 식당, 동해선 등 관련 경로 허용
                         .requestMatchers("/api/accommodations/**").permitAll()
                         .requestMatchers("/api/restaurants/**").permitAll()
                         .requestMatchers("/api/donghae/**").permitAll()
                         .requestMatchers("/api/donghae_timetable/**").permitAll()
                         .requestMatchers("/api/station-stats/**").permitAll()
                         .requestMatchers("/api/map/coordinates/**").permitAll()
-
-                        // 둘레길, 여행지, 축제 관련 API 허용
                         .requestMatchers("/api/trails/**").permitAll()
                         .requestMatchers("/api/tourist-spots/**").permitAll()
                         .requestMatchers("/api/festivals/**").permitAll()
-
-                        // 찜 API는 인증 필요
-                        .requestMatchers("/api/favorites/auth/**").authenticated() // 찜 API는 인증 필요
-
-
-                        // 나이대별 인기 여행지 조회는 인증 없이 가능
                         .requestMatchers("/api/favorites/public/**").permitAll()
+                        .requestMatchers("/api/comments/**").permitAll()
 
-                        // Comment 관련 설정
-                        .requestMatchers("/api/comments/**").permitAll() // 평점 조회는 인증 없이 가능
-                        .requestMatchers(HttpMethod.POST, "/api/comments").authenticated() // 리뷰 작성은 인증 필요
-                        .requestMatchers(HttpMethod.PUT, "/api/comments/{commentId}").authenticated() // 리뷰 수정은 인증 필요
-                        .requestMatchers(HttpMethod.DELETE, "/api/comments/{commentId}").authenticated() // 리뷰 삭제는 인증 필요
+                        // 인증이 필요한 API 경로들
+                        .requestMatchers("/api/favorites/auth/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/comments").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/comments/{commentId}").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/comments/{commentId}").authenticated()
+                        .requestMatchers("/api/travel/**").authenticated()
+                        .requestMatchers("/api/travel-detail/**").authenticated()
 
-                        // 여행 및 상세 여행 API 인증 필요
-                        .requestMatchers("/api/travel/**").authenticated() // `travel` API는 인증 필요
-                        .requestMatchers("/api/travel-detail/**").authenticated() // `travel-detail` API는 인증 필요
-
+                        // 그 외의 모든 요청은 인증 필요
                         .anyRequest().authenticated()
                 )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 비활성화 (JWT 사용)
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class) // JWT 필터 추가
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/login")
+                        .loginPage("/login") // 로그인 페이지
                         .successHandler(oAuth2SuccessHandler)  // 소셜 로그인 성공 핸들러
                         .failureHandler(oAuth2FailureHandler)  // 소셜 로그인 실패 핸들러
-                        .userInfoEndpoint(userInfo -> userInfo
-                                .userService(customOAuth2UserService)  // CustomOAuth2UserService 사용
-                        )
+                        .userInfoEndpoint(userInfo ->
+                                userInfo.userService(customOAuth2UserService)) // CustomOAuth2UserService 사용
                 )
                 .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(customAuthenticationEntryPoint)
-                        .accessDeniedHandler(customAccessDeniedHandler)
-                );
+                        .authenticationEntryPoint(customAuthenticationEntryPoint) // 인증 실패 시
+                        .accessDeniedHandler(customAccessDeniedHandler)); // 접근 거부 시
         return http.build();
     }
 }

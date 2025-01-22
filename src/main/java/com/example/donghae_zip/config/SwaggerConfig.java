@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
+import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
@@ -26,8 +27,12 @@ public class SwaggerConfig {
                 .bearerFormat("JWT")
         );
 
+        // EC2 서버 URL을 Swagger에 추가
+        Server server = new Server().url("http://13.209.129.85:8080").description("EC2 Server");
+
         // OpenAPI 객체를 반환. 이 객체는 API 문서의 전반적인 구성을 정의한다.
         return new OpenAPI()
+                .addServersItem(server) // 서버 URL 추가
                 .components(components)  // 구성 요소(보안 스키마 등)를 추가.
                 .info(apiInfo())  // API 정보(제목, 설명, 버전)를 설정.
                 .addSecurityItem(securityRequirement);  // 보안 요구 사항을 추가.
@@ -36,8 +41,8 @@ public class SwaggerConfig {
     private Info apiInfo() {
         // Info 객체는 API 문서의 제목, 설명 및 버전을 정의한다.
         return new Info()
-                .title("FC Hub API Test")  // API 문서의 제목 설정.
-                .description("FC Hub Swagger")  // API 문서에 대한 설명 설정.
-                .version("1.0.0");  // API 문서의 버전 설정.
+                .title("Donghae ZIP API")
+                .description("API documentation for Donghae ZIP project")
+                .version("1.0");
     }
 }

@@ -11,10 +11,11 @@ import java.io.IOException;
 // 인증되지 않은 사용자가 접근할때 처리
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
-
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        // 401 Unauthorized 상태 코드와 커스텀 에러 메시지 설정
+        String requestURI = request.getRequestURI();
+        System.out.println("CustomAuthenticationEntryPoint called for URI: " + requestURI); // 디버깅 로그 추가
+
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
