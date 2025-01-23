@@ -12,3 +12,4 @@ phases:
 artifacts:
   files:
     - build/libs/Donghae_zip-0.0.1-SNAPSHOT.jar
+  discard-paths: yes
