@@ -1,7 +1,7 @@
 version: 0.0
 os: linux
 files:
-  - source: /build/libs/Donghae_zip-0.0.1-SNAPSHOT.jar
+  - source: build/libs/Donghae_zip-0.0.1-SNAPSHOT.jar
     destination: /home/ec2-user/backend-app
 
 hooks:
