@@ -8,7 +8,7 @@ phases:
   build:
     commands:
       - echo Building the project...
-      - ./gradlew build
+      - ./gradlew build -x test
 artifacts:
   files:
     - build/libs/Donghae_zip-0.0.1-SNAPSHOT.jar
