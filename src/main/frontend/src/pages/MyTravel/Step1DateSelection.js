@@ -4,11 +4,11 @@ import 'react-datepicker/dist/react-datepicker.css'; // 기본 스타일 포함
 import ko from 'date-fns/locale/ko'; // 한국어 로케일
 import './Step1DateSelection.css';
 import axios from "axios";
-import ClearIcon from '../../assets/images/맑음.png';
-import CloudyIcon from '../../assets/images/흐림.png';
-import SnowIcon from '../../assets/images/눈.png';
-import RainIcon from '../../assets/images/비.png';
-import ThunderstormIcon from '../../assets/images/번개.png';
+import ClearIcon from '../../assets/images/clear.png';
+import CloudyIcon from '../../assets/images/cloudy.png';
+import SnowIcon from '../../assets/images/snow.png';
+import RainIcon from '../../assets/images/rain.png';
+import ThunderstormIcon from '../../assets/images/lightning.png';
 import {getUserIdFromToken} from "../../components/Util/jwtUtils";
 import { useNavigate } from "react-router-dom";
 

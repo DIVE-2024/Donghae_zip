@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import subwayMap from '../assets/images/동해선_노선도.png'; // 동해선 노선도 이미지
+import subwayMap from '../assets/images/donghae_line_map.png';
 import Siren from '../assets/images/siren.png';
 
 const DonghaeSubway = () => {

@@ -1,6 +1,6 @@
 
 // import React, { useEffect } from 'react';
-// import subwayMap from '../assets/images/동해선_노선도.png'; // 이미지 경로
+// import subwayMap from '../assets/images/donghae_line_map.png'; // 이미지 경로
 //
 // const ImageMapWithCoordinates = () => {
 //
