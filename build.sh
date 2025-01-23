@@ -2,6 +2,7 @@
 
 # 1. 프론트엔드 빌드
 echo "Starting frontend build..."
+# shellcheck disable=SC2164
 cd src/main/frontend
 npm ci
 npm run build
