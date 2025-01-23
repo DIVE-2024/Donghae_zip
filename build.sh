@@ -12,8 +12,9 @@ echo "Copying built files to backend static directory..."
 cp -r build ../resources/static
 
 # 3. 백엔드 빌드
-echo "Starting backend build..."
-cd ../../..
-./mvnw clean package -DskipTests
+set -e
+Starting backend build...
+cd ../../../
+./gradlew build -x test
 
 echo "Build completed successfully!"
