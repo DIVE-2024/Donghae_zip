@@ -4,13 +4,22 @@ os: linux
 files:
   - source: Donghae_zip-0.0.1-SNAPSHOT.jar
     destination: /home/ec2-user/backend-app
+  - source: scripts/stop_server.sh
+    destination: /home/ec2-user/scripts
+  - source: scripts/start_server.sh
+    destination: /home/ec2-user/scripts
+  - source: scripts/ensure_permissions.sh
+    destination: /home/ec2-user/scripts
 
 hooks:
   BeforeInstall:
-    - location: scripts/stop_server.sh
+    - location: /home/ec2-user/scripts/stop_server.sh
       timeout: 300
       runas: root
+    - location: /home/ec2-user/scripts/ensure_permissions.sh
+      timeout: 60
+      runas: root
   AfterInstall:
-    - location: scripts/start_server.sh
+    - location: /home/ec2-user/scripts/start_server.sh
       timeout: 300
       runas: root
