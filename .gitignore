@@ -76,3 +76,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# ZIP 파일 제외
+*.zip
