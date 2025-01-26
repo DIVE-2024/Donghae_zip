@@ -2,18 +2,21 @@ version: 0.0
 os: linux
 
 files:
-  - source: Donghae_zip-0.0.1-SNAPSHOT.jar
-    destination: /home/ec2-user/backend-app
   - source: scripts/stop_server.sh
     destination: /home/ec2-user/scripts
   - source: scripts/start_server.sh
     destination: /home/ec2-user/scripts
   - source: scripts/ensure_permissions.sh
     destination: /home/ec2-user/scripts
+  - source: scripts/download_and_extract_zip.sh # 추가된 다운로드 스크립트
+    destination: /home/ec2-user/scripts
 
 hooks:
   BeforeInstall:
     - location: /home/ec2-user/scripts/stop_server.sh
+      timeout: 300
+      runas: root
+    - location: /home/ec2-user/scripts/download_and_extract_zip.sh # 경로 수정
       timeout: 300
       runas: root
     - location: /home/ec2-user/scripts/ensure_permissions.sh

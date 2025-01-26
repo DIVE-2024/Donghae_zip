@@ -1,3 +1,8 @@
 #!/bin/bash
-echo "Starting backend application..."
-nohup java -jar /home/ec2-user/backend-app/Donghae_zip-0.0.1-SNAPSHOT.jar > /home/ec2-user/backend-app/app.log 2>&1 &
+
+echo "Stopping existing application..."
+
+# 실행 중인 Java 프로세스 종료
+pkill -f 'java -jar' || echo "No running application found."
+
+echo "Application stopped successfully."
