@@ -11,6 +11,8 @@ phases:
       - ./gradlew build -x test
 artifacts:
   files:
-    - build/libs/Donghae_zip-0.0.1-SNAPSHOT.jar
+    - build/libs/Donghae_zip-0.0.1-SNAPSHOT.jar  # 빌드된 JAR 파일
+    - scripts/**
+    - appspec.yml  # AppSpec 파일 추가
   discard-paths: no  # 경로 유지
-  name: Donghae_zip-0.0.1-SNAPSHOT.jar  # S3에 저장될 이름 지정
+  name: DonghaeArtifact  # 아티팩트 이름
