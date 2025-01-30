@@ -6,16 +6,16 @@ phases:
       java: corretto17
     commands:
       - echo "Installing dependencies..."
-
   build:
     commands:
-      - echo Building the project...
+      - echo "Building the project..."
       - chmod +x ./gradlew
-      - ./gradlew build -x test
-      - cp build/libs/Donghae_zip-0.0.1-SNAPSHOT.jar .
-      - cp -r scripts .
-      - cp appspec.yml .
-      - zip -r deployment-package.zip .
+      - ./gradlew build -x test  # 테스트 제외하고 빌드
+      - cp build/libs/Donghae_zip-0.0.1-SNAPSHOT.jar .  # JAR 파일을 루트에 복사
+      - cp -r scripts .  # scripts 폴더를 루트에 복사
+      - cp appspec.yml .  # appspec.yml을 루트에 복사
+      - zip -r deployment-package.zip *  # 모든 파일을 ZIP으로 압축
+
 artifacts:
   files:
     - deployment-package.zip  # 최종 배포 파일 S3에 업로드
