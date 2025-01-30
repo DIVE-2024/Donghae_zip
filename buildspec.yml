@@ -5,7 +5,8 @@ phases:
     runtime-versions:
       java: corretto17
     commands:
-      - echo Installing dependencies...
+      - echo "Installing dependencies..."
+
   build:
     commands:
       - echo "Checking build files..."
@@ -15,11 +16,12 @@ phases:
       - cp -r scripts deploy/  # 스크립트 폴더 복사
       - cp appspec.yml deploy/  # appspec.yml 복사
       - ls -al deploy/  # 복사된 파일 확인
-      - cd deploy && zip -r ../deployment-package.zip .  # ZIP 파일을 deploy 폴더 기준으로 생성
-      - cd .. && ls -al  # ZIP 파일이 루트 디렉터리에 생성되었는지 확인
+      - cd deploy && zip -r deployment-package.zip .  # ZIP 파일 생성 (경로 수정)
+      - mv deployment-package.zip ../  # ZIP 파일을 프로젝트 루트로 이동
+      - cd .. && ls -al  # ZIP 파일이 최종 위치에 있는지 확인 (디버깅)
 
 artifacts:
   files:
-    - '**/*.zip'  # 모든 ZIP 파일을 업로드하도록 설정
+    - 'deployment-package.zip'  # 최종 ZIP 파일 업로드
   discard-paths: no
   name: DonghaeArtifact
