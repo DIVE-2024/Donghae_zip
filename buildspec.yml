@@ -11,11 +11,10 @@ phases:
       - echo Building the project...
       - chmod +x ./gradlew
       - ./gradlew build -x test  # 테스트 제외하고 빌드
-      - mkdir -p build/deploy     # 배포용 디렉터리 생성
-      - cp build/libs/Donghae_zip-0.0.1-SNAPSHOT.jar build/deploy/  # JAR 파일 복사
-      - cp -r scripts build/deploy/  # 스크립트 폴더 복사
-      - cp appspec.yml build/deploy/  # appspec.yml 복사
-      - cd build/deploy && zip -r ../../deployment-package.zip .  # 모든 파일을 압축
+      - cp build/libs/Donghae_zip-0.0.1-SNAPSHOT.jar .  # JAR 파일을 루트에 복사
+      - cp -r scripts .  # scripts 폴더를 루트에 복사
+      - cp appspec.yml .  # appspec.yml을 루트에 복사
+      - zip -r deployment-package.zip .  # 모든 파일을 ZIP으로 압축
 
 artifacts:
   files:
