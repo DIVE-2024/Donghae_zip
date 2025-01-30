@@ -11,13 +11,14 @@ phases:
       - echo Building the project...
       - chmod +x ./gradlew
       - ./gradlew build -x test  # 테스트 제외하고 빌드
-      - cp build/libs/Donghae_zip-0.0.1-SNAPSHOT.jar .  # JAR 파일을 루트에 복사
-      - cp -r scripts .  # scripts 폴더를 루트에 복사
-      - cp appspec.yml .  # appspec.yml을 루트에 복사
-      - zip -r deployment-package.zip .  # 모든 파일을 ZIP으로 압축
+      - mkdir -p deploy  # 배포용 디렉터리 생성
+      - cp build/libs/Donghae_zip-0.0.1-SNAPSHOT.jar deploy/  # JAR 파일 복사
+      - cp -r scripts deploy/  # 스크립트 폴더 복사
+      - cp appspec.yml deploy/  # appspec.yml 복사
+      - cd deploy && zip -r ../deployment-package.zip .  # ZIP 파일을 deploy 폴더 기준으로 생성
 
 artifacts:
   files:
     - deployment-package.zip  # 최종 배포 파일 S3에 업로드
   discard-paths: no
-  name: DonghaeArtifact  # CodeDeploy에서 사용할 S3 아티팩트 이름
+  name: DonghaeArtifact
