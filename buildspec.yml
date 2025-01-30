@@ -9,19 +9,15 @@ phases:
 
   build:
     commands:
-      - echo "Checking build files..."
-      - ls -al build/libs/  # JAR 파일이 존재하는지 확인
-      - mkdir -p deploy  # 배포용 디렉터리 생성
-      - cp build/libs/Donghae_zip-0.0.1-SNAPSHOT.jar deploy/  # JAR 파일 복사
-      - cp -r scripts deploy/  # 스크립트 폴더 복사
-      - cp appspec.yml deploy/  # appspec.yml 복사
-      - ls -al deploy/  # 복사된 파일 확인
-      - cd deploy && zip -r deployment-package.zip .  # ZIP 파일 생성 (경로 수정)
-      - mv deployment-package.zip ../  # ZIP 파일을 프로젝트 루트로 이동
-      - cd .. && ls -al  # ZIP 파일이 최종 위치에 있는지 확인 (디버깅)
-
+      - echo Building the project...
+      - chmod +x ./gradlew
+      - ./gradlew build -x test
+      - cp build/libs/Donghae_zip-0.0.1-SNAPSHOT.jar .
+      - cp -r scripts .
+      - cp appspec.yml .
+      - zip -r deployment-package.zip .
 artifacts:
   files:
-    - 'deployment-package.zip'  # 최종 ZIP 파일 업로드
+    - deployment-package.zip  # 최종 배포 파일 S3에 업로드
   discard-paths: no
-  name: DonghaeArtifact
+  name: DonghaeArtifact  # CodeDeploy에서 사용할 S3 아티팩트 이름
