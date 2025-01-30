@@ -18,6 +18,7 @@ phases:
 
 artifacts:
   files:
-    - deployment-package.zip  # 최종 배포 파일 S3에 업로드
+    - deployment-package.zip
+  base-directory: .  # CodeBuild가 ZIP을 찾을 수 있도록 설정
   discard-paths: no
-  name: DonghaeArtifact  # CodeDeploy에서 사용할 S3 아티팩트 이름
+
