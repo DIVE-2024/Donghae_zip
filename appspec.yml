@@ -12,7 +12,7 @@ permissions:
     pattern: "**"
     owner: ec2-user
     group: ec2-user
-    mode: 755
+    mode: 755  # ✅ 모든 파일을 ec2-user가 접근할 수 있도록 설정
 
 hooks:
   BeforeInstall:
@@ -21,10 +21,10 @@ hooks:
       runas: root
     - location: scripts/unzip_and_setup.sh
       timeout: 300
-      runas: ec2-user
+      runas: root
     - location: scripts/ensure_permissions.sh
       timeout: 300
-      runas: ec2-user
+      runas: root  # ✅ root 권한으로 실행하여 chmod 오류 방지
 
   AfterInstall:
     - location: scripts/start_server.sh
