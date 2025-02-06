@@ -5,20 +5,43 @@ phases:
     runtime-versions:
       java: corretto17
     commands:
-      - echo "Installing dependencies..."
+      - echo "===== Installing dependencies ====="
+      - java -version
+      - chmod +x gradlew || echo "Failed to set execute permissions!"
+      - ./gradlew --version || echo "Gradle wrapper execution failed!"
+
   build:
     commands:
-      - echo "Building the project..."
-      - chmod +x ./gradlew
-      - ./gradlew build -x test  # 테스트 제외하고 빌드
-      - cp build/libs/Donghae_zip-0.0.1-SNAPSHOT.jar .  # JAR 파일을 루트에 복사
-      - cp -r scripts .  # scripts 폴더를 루트에 복사
-      - cp appspec.yml .  # appspec.yml을 루트에 복사
-      - zip -r deployment-package.zip *  # 모든 파일을 ZIP으로 압축
+      - echo "===== Building the project ====="
+      - |
+        ./gradlew build -x test || \
+        echo "Gradle build failed!"
+
+      - echo "===== Moving JAR file to root for deployment ====="
+      - cp build/libs/Donghae_zip-0.0.1-SNAPSHOT.jar . || echo "JAR move failed!"
+
+      - echo "===== Creating Deployment ZIP (Fixed) ====="
+      - |
+        zip -r deployment-package.zip appspec.yml scripts Donghae_zip-0.0.1-SNAPSHOT.jar || echo "ZIP creation failed!"
+
+      - echo "===== Checking Deployment Package ====="
+      - |
+        unzip -l deployment-package.zip || \
+        echo "Deployment package is missing!"
+
+  post_build:
+    commands:
+      - echo "===== Uploading to S3 ====="
+      - |
+        aws s3 cp deployment-package.zip s3://codepipeline-ap-northeast-2-551819632284/DonghaePipeline/DonghaeArt/deployment-package.zip --sse aws:kms || \
+        echo "S3 upload failed!"
+
+      - echo "===== Verifying Deployment Files in S3 ====="
+      - |
+        aws s3 ls s3://codepipeline-ap-northeast-2-551819632284/DonghaePipeline/DonghaeArt/ || \
+        echo "S3 bucket check failed!"
 
 artifacts:
   files:
-    - deployment-package.zip
-  base-directory: .  # CodeBuild가 ZIP을 찾을 수 있도록 설정
-  discard-paths: no
-
+    - deployment-package.zip  # ✅ ZIP 파일명을 정확히 지정하여 중첩 방지
+  discard-paths: no  # ✅ ZIP 파일이 중첩되지 않도록 설정

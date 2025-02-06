@@ -1,3 +1,5 @@
 #!/bin/bash
-chmod +x /home/ec2-user/scripts/*.sh
-chmod +x /home/ec2-user/backend-app/Donghae_zip-0.0.1-SNAPSHOT.jar
+set -e  # 에러 발생 시 중단
+
+echo "Setting execute permissions for scripts..."
+chmod +x /home/ec2-user/donghae_app/scripts/*.sh
