@@ -13,35 +13,27 @@ phases:
   build:
     commands:
       - echo "===== Building the project ====="
-      - |
-        ./gradlew build -x test || \
-        echo "Gradle build failed!"
+      - ./gradlew build -x test || echo "Gradle build failed!"
 
-      - echo "===== Moving JAR file to root for deployment ====="
-      - cp build/libs/Donghae_zip-0.0.1-SNAPSHOT.jar . || echo "JAR move failed!"
-
-      - echo "===== Creating Deployment ZIP (Fixed) ====="
+      - echo "===== Creating Deployment ZIP (Optimized) ====="
       - |
-        zip -r deployment-package.zip appspec.yml scripts Donghae_zip-0.0.1-SNAPSHOT.jar || echo "ZIP creation failed!"
+        mkdir -p deploy
+        cp appspec.yml deploy/          # ✅ 배포 설정 포함
+        cp -r scripts/ deploy/          # ✅ 배포 스크립트 포함
+        cp build/libs/Donghae_zip-0.0.1-SNAPSHOT.jar deploy/  # ✅ JAR 파일 포함
 
-      - echo "===== Checking Deployment Package ====="
-      - |
-        unzip -l deployment-package.zip || \
-        echo "Deployment package is missing!"
+        cd deploy
+        zip -r ../deployment-package.zip .  # ✅ 이중 압축 방지
+        cd ..
 
   post_build:
     commands:
-      - echo "===== Uploading to S3 ====="
-      - |
-        aws s3 cp deployment-package.zip s3://codepipeline-ap-northeast-2-551819632284/DonghaePipeline/DonghaeArt/deployment-package.zip --sse aws:kms || \
-        echo "S3 upload failed!"
-
-      - echo "===== Verifying Deployment Files in S3 ====="
-      - |
-        aws s3 ls s3://codepipeline-ap-northeast-2-551819632284/DonghaePipeline/DonghaeArt/ || \
-        echo "S3 bucket check failed!"
+      - echo "===== Uploading to S3 for deployment ====="
+      - aws s3 cp deployment-package.zip s3://codepipeline-ap-northeast-2-551819632284/DonghaePipeline/DonghaeArt/deployment-package.zip --sse aws:kms
+      - echo "===== Build completed successfully ====="
 
 artifacts:
   files:
-    - deployment-package.zip  # ✅ ZIP 파일명을 정확히 지정하여 중첩 방지
-  discard-paths: no  # ✅ ZIP 파일이 중첩되지 않도록 설정
+    - appspec.yml  # ✅ `appspec.yml`을 개별적으로 포함하여 CodeDeploy가 올바르게 찾을 수 있도록 설정
+    - deployment-package.zip  # ✅ ZIP 파일 내부 경로 수정
+  discard-paths: no  # ✅ ZIP 내부에 불필요한 디렉토리 중첩 방지
