@@ -18,9 +18,20 @@ phases:
       - echo "===== Creating Deployment ZIP (Fixed) ====="
       - |
         mkdir -p deploy
-        cp appspec.yml deploy/             # ✅ 배포 설정 포함
-        cp -r scripts deploy/              # ✅ 배포 스크립트 포함
-        cp Donghae_zip-0.0.1-SNAPSHOT.jar deploy/  # ✅ JAR 파일 포함 (루트에서 복사)
+        cp appspec.yml deploy/          # ✅ 배포 설정 포함
+        cp -r scripts/ deploy/          # ✅ 배포 스크립트 포함
+
+        # ✅ JAR 파일을 자동으로 찾고 포함 (두 개의 경로를 모두 체크)
+        if [ -f Donghae_zip-0.0.1-SNAPSHOT.jar ]; then
+          echo "JAR file found in project root. Copying..."
+          cp Donghae_zip-0.0.1-SNAPSHOT.jar deploy/
+        elif [ -f build/libs/Donghae_zip-0.0.1-SNAPSHOT.jar ]; then
+          echo "JAR file found in build/libs/. Copying..."
+          cp build/libs/Donghae_zip-0.0.1-SNAPSHOT.jar deploy/
+        else
+          echo "ERROR: JAR file not found! Build might have failed."
+          exit 1
+        fi
 
         cd deploy
         zip -r ../deployment-package.zip .  # ✅ ZIP 파일 내부 구조 고정
@@ -37,5 +48,5 @@ artifacts:
     - appspec.yml  # ✅ `appspec.yml`을 개별적으로 포함하여 CodeDeploy가 올바르게 찾을 수 있도록 설정
     - deployment-package.zip  # ✅ ZIP 파일 내부 경로 수정
     - scripts/**  # ✅ `scripts/` 폴더 포함
-    - Donghae_zip-0.0.1-SNAPSHOT.jar  # ✅ JAR 파일 포함 (루트에 있는 파일)
+    - Donghae_zip-0.0.1-SNAPSHOT.jar  # ✅ JAR 파일 포함
   discard-paths: no  # ✅ ZIP 내부에 불필요한 디렉토리 중첩 방지
