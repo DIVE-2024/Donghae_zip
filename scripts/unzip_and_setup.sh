@@ -77,14 +77,18 @@ if [ -f "$BUNDLE_TAR" ]; then
     sudo rm -f "$BUNDLE_TAR"
 fi
 
-# ✅ JAR 파일 이동 (정확한 경로 찾기)
-JAR_FILE=$(find "$DEPLOY_DIR" -type f -name "Donghae_zip-*.jar" | sort -r | head -n 1)
+# ✅ JAR 파일 이동 (같은 경로일 경우 mv 실행 안 함)
+JAR_FILE="$DEPLOY_DIR/Donghae_zip-0.0.1-SNAPSHOT.jar"
 TARGET_JAR_PATH="$DEPLOY_DIR/Donghae_zip-0.0.1-SNAPSHOT.jar"
 
 if [ -f "$JAR_FILE" ]; then
-    echo "$(date) - Moving JAR file to $TARGET_JAR_PATH" | tee -a $LOG_FILE
-    sudo mv "$JAR_FILE" "$TARGET_JAR_PATH"
-    sudo chown ec2-user:ec2-user "$TARGET_JAR_PATH"
+    if [ "$JAR_FILE" != "$TARGET_JAR_PATH" ]; then
+        echo "$(date) - Moving JAR file to $TARGET_JAR_PATH" | tee -a $LOG_FILE
+        sudo mv "$JAR_FILE" "$TARGET_JAR_PATH"
+        sudo chown ec2-user:ec2-user "$TARGET_JAR_PATH"
+    else
+        echo "$(date) - JAR file is already in the correct location. Skipping move." | tee -a $LOG_FILE
+    fi
 else
     echo "$(date) - ERROR: JAR file not found!" | tee -a $LOG_FILE
     exit 1
