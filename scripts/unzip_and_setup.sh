@@ -6,20 +6,20 @@ DEPLOY_DIR="/home/ec2-user/donghae_app"
 
 echo "$(date) - Starting deployment setup..." | tee -a $LOG_FILE
 
-# ✅ 배포 루트 경로 설정
+# ✅ 배포 루트 설정
 DEPLOY_ROOT="/opt/codedeploy-agent/deployment-root"
 
-# ✅ 가장 최근 배포된 배포 루트 가져오기 (71a14a9c-b1af-41c1-bb64-6d75cf569b3f)
-LATEST_DEPLOY_ROOT=$(ls -1tr "$DEPLOY_ROOT" | tail -n 1)
+# ✅ 가장 최신 배포된 실제 배포 루트 찾기 (예: 71a14a9c-b1af-41c1-bb64-6d75cf569b3f)
+LATEST_DEPLOY_ROOT=$(ls -1tr "$DEPLOY_ROOT" | grep -v "ongoing-deployment" | grep -v "deployment-instructions" | grep -v "deployment-logs" | tail -n 1)
 
 if [ -z "$LATEST_DEPLOY_ROOT" ]; then
-    echo "$(date) - ERROR: No deployment root found in $DEPLOY_ROOT!" | tee -a $LOG_FILE
+    echo "$(date) - ERROR: No valid deployment root found in $DEPLOY_ROOT!" | tee -a $LOG_FILE
     exit 1
 fi
 
 echo "$(date) - Found deployment root: $LATEST_DEPLOY_ROOT" | tee -a $LOG_FILE
 
-# ✅ 가장 최근 배포된 배포 ID 가져오기 (d-XXXXX)
+# ✅ 가장 최신 배포된 배포 ID 찾기 (예: d-U4C2GZ04A)
 LATEST_DEPLOY_ID=$(ls -1tr "$DEPLOY_ROOT/$LATEST_DEPLOY_ROOT" | tail -n 1)
 LATEST_DEPLOY_PATH="$DEPLOY_ROOT/$LATEST_DEPLOY_ROOT/$LATEST_DEPLOY_ID"
 
@@ -35,7 +35,8 @@ echo "$(date) - Deployment path: $LATEST_DEPLOY_PATH" | tee -a $LOG_FILE
 DEPLOY_ARCHIVE_PATH="$LATEST_DEPLOY_PATH/deployment-archive"
 
 if [ ! -d "$DEPLOY_ARCHIVE_PATH" ]; then
-    echo "$(date) - ERROR: Deployment archive directory not found!" | tee -a $LOG_FILE
+    echo "$(date) - ERROR: Deployment archive directory not found at $DEPLOY_ARCHIVE_PATH!" | tee -a $LOG_FILE
+    ls -lah "$LATEST_DEPLOY_PATH" | tee -a $LOG_FILE  # 디버깅용 출력
     exit 1
 fi
 
@@ -45,7 +46,8 @@ echo "$(date) - Deployment archive path: $DEPLOY_ARCHIVE_PATH" | tee -a $LOG_FIL
 ZIP_FILE="$DEPLOY_ARCHIVE_PATH/deployment-package.zip"
 
 if [ ! -f "$ZIP_FILE" ]; then
-    echo "$(date) - ERROR: Deployment package ZIP not found!" | tee -a $LOG_FILE
+    echo "$(date) - ERROR: Deployment package ZIP not found at $ZIP_FILE!" | tee -a $LOG_FILE
+    ls -lah "$DEPLOY_ARCHIVE_PATH" | tee -a $LOG_FILE  # 디버깅용 출력
     exit 1
 fi
 
