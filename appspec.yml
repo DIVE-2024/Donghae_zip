@@ -2,27 +2,31 @@ version: 0.0
 os: linux
 
 files:
-  - source: scripts/stop_server.sh
-    destination: /home/ec2-user/scripts
-  - source: scripts/start_server.sh
-    destination: /home/ec2-user/scripts
-  - source: scripts/ensure_permissions.sh
-    destination: /home/ec2-user/scripts
-  - source: scripts/download_and_extract_zip.sh # 추가된 다운로드 스크립트
-    destination: /home/ec2-user/scripts
+  - source: /
+    destination: /home/ec2-user/donghae_app
+    overwrite: yes
+file_exists_behavior: OVERWRITE  # ✅ 기존 파일이 존재하면 덮어쓰기
+
+permissions:
+  - object: /home/ec2-user/donghae_app
+    pattern: "**"
+    owner: ec2-user
+    group: ec2-user
+    mode: 755
 
 hooks:
   BeforeInstall:
-    - location: /home/ec2-user/scripts/stop_server.sh
+    - location: scripts/clear_old_files.sh
       timeout: 300
       runas: root
-    - location: /home/ec2-user/scripts/download_and_extract_zip.sh # 경로 수정
+    - location: scripts/unzip_and_setup.sh
       timeout: 300
-      runas: root
-    - location: /home/ec2-user/scripts/ensure_permissions.sh
-      timeout: 60
-      runas: root
+      runas: ec2-user
+    - location: scripts/ensure_permissions.sh
+      timeout: 300
+      runas: ec2-user
+
   AfterInstall:
-    - location: /home/ec2-user/scripts/start_server.sh
+    - location: scripts/start_server.sh
       timeout: 300
-      runas: root
+      runas: ec2-user
