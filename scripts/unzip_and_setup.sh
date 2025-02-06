@@ -6,22 +6,32 @@ DEPLOY_DIR="/home/ec2-user/donghae_app"
 
 echo "$(date) - Starting deployment setup..." | tee -a $LOG_FILE
 
-# ✅ 배포 루트 확인
+# ✅ 배포 루트 경로 설정
 DEPLOY_ROOT="/opt/codedeploy-agent/deployment-root"
 
-# ✅ 최신 배포 경로 찾기 (가장 최근 생성된 배포 ID 가져오기)
-LATEST_DEPLOY_ID=$(ls -1tr "$DEPLOY_ROOT" | tail -n 1)
-LATEST_DEPLOY_PATH="$DEPLOY_ROOT/$LATEST_DEPLOY_ID"
+# ✅ 가장 최근 배포된 배포 루트 가져오기 (71a14a9c-b1af-41c1-bb64-6d75cf569b3f)
+LATEST_DEPLOY_ROOT=$(ls -1tr "$DEPLOY_ROOT" | tail -n 1)
 
-if [ -z "$LATEST_DEPLOY_ID" ]; then
-    echo "$(date) - ERROR: No deployment found in $DEPLOY_ROOT!" | tee -a $LOG_FILE
+if [ -z "$LATEST_DEPLOY_ROOT" ]; then
+    echo "$(date) - ERROR: No deployment root found in $DEPLOY_ROOT!" | tee -a $LOG_FILE
     exit 1
 fi
 
-echo "$(date) - Found deployment root ID: $LATEST_DEPLOY_ID" | tee -a $LOG_FILE
-echo "$(date) - Deployment root path: $LATEST_DEPLOY_PATH" | tee -a $LOG_FILE
+echo "$(date) - Found deployment root: $LATEST_DEPLOY_ROOT" | tee -a $LOG_FILE
 
-# ✅ 배포 아카이브 경로 설정
+# ✅ 가장 최근 배포된 배포 ID 가져오기 (d-XXXXX)
+LATEST_DEPLOY_ID=$(ls -1tr "$DEPLOY_ROOT/$LATEST_DEPLOY_ROOT" | tail -n 1)
+LATEST_DEPLOY_PATH="$DEPLOY_ROOT/$LATEST_DEPLOY_ROOT/$LATEST_DEPLOY_ID"
+
+if [ -z "$LATEST_DEPLOY_ID" ]; then
+    echo "$(date) - ERROR: No deployment found in $DEPLOY_ROOT/$LATEST_DEPLOY_ROOT!" | tee -a $LOG_FILE
+    exit 1
+fi
+
+echo "$(date) - Found deployment ID: $LATEST_DEPLOY_ID" | tee -a $LOG_FILE
+echo "$(date) - Deployment path: $LATEST_DEPLOY_PATH" | tee -a $LOG_FILE
+
+# ✅ `deployment-archive/` 경로 찾기
 DEPLOY_ARCHIVE_PATH="$LATEST_DEPLOY_PATH/deployment-archive"
 
 if [ ! -d "$DEPLOY_ARCHIVE_PATH" ]; then
@@ -65,8 +75,8 @@ if [ -f "$BUNDLE_TAR" ]; then
     sudo rm -f "$BUNDLE_TAR"
 fi
 
-# ✅ JAR 파일 이동
-JAR_FILE=$(ls -1t "$DEPLOY_DIR"/Donghae_zip-*.jar 2>/dev/null | head -n 1)
+# ✅ JAR 파일 이동 (정확한 경로 찾기)
+JAR_FILE=$(find "$DEPLOY_DIR" -type f -name "Donghae_zip-*.jar" | sort -r | head -n 1)
 TARGET_JAR_PATH="$DEPLOY_DIR/Donghae_zip-0.0.1-SNAPSHOT.jar"
 
 if [ -f "$JAR_FILE" ]; then
