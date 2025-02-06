@@ -15,15 +15,15 @@ phases:
       - echo "===== Building the project ====="
       - ./gradlew build -x test || echo "Gradle build failed!"
 
-      - echo "===== Creating Deployment ZIP (Optimized) ====="
+      - echo "===== Creating Deployment ZIP (Fixed) ====="
       - |
         mkdir -p deploy
-        cp appspec.yml deploy/          # ✅ 배포 설정 포함
-        cp -r scripts/ deploy/          # ✅ 배포 스크립트 포함
-        cp build/libs/Donghae_zip-0.0.1-SNAPSHOT.jar deploy/  # ✅ JAR 파일 포함
+        cp appspec.yml deploy/             # ✅ 배포 설정 포함
+        cp -r scripts deploy/              # ✅ 배포 스크립트 포함
+        cp Donghae_zip-0.0.1-SNAPSHOT.jar deploy/  # ✅ JAR 파일 포함 (루트에서 복사)
 
         cd deploy
-        zip -r ../deployment-package.zip .  # ✅ 이중 압축 방지
+        zip -r ../deployment-package.zip .  # ✅ ZIP 파일 내부 구조 고정
         cd ..
 
   post_build:
@@ -36,4 +36,6 @@ artifacts:
   files:
     - appspec.yml  # ✅ `appspec.yml`을 개별적으로 포함하여 CodeDeploy가 올바르게 찾을 수 있도록 설정
     - deployment-package.zip  # ✅ ZIP 파일 내부 경로 수정
+    - scripts/**  # ✅ `scripts/` 폴더 포함
+    - Donghae_zip-0.0.1-SNAPSHOT.jar  # ✅ JAR 파일 포함 (루트에 있는 파일)
   discard-paths: no  # ✅ ZIP 내부에 불필요한 디렉토리 중첩 방지
