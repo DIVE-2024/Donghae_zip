@@ -1,7 +1,7 @@
 import axios from 'axios';
 import qs from 'qs';  // URL 인코딩을 위한 라이브러리
 
-const BASE_URL = 'http://localhost:8080';  // 백엔드 서버 기본 주소
+const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080'; // 기본값은 localhost
 
 // 회원가입 함수
 export const signUp = async (signUpData) => {

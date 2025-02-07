@@ -2,20 +2,25 @@ version: 0.2
 
 phases:
   install:
-    runtime-versions:
-      nodejs: 18  # Node.js 18 버전 사용
     commands:
-      - cd my-react-app  # React 프로젝트 디렉토리로 이동
-      - npm install  # 패키지 설치
-
+      - echo "===== Installing dependencies ====="
+      - npm install
+  pre_build:
+    commands:
+      - echo "===== Creating .env file ====="
+      - echo "REACT_APP_API_URL=$REACT_APP_API_URL" > .env
+      - echo "REACT_APP_KAKAO_API_KEY=$REACT_APP_KAKAO_API_KEY" >> .env
   build:
     commands:
-      - npm run build  # React 빌드 실행
-
+      - echo "===== Building Frontend ====="
+      - npm run build
   post_build:
     commands:
+      - echo "===== Deploying to S3 ====="
       - aws s3 sync build/ s3://donghae-front --delete
+      - echo "===== Invalidating CloudFront Cache ====="
       - aws cloudfront create-invalidation --distribution-id E2ZQWLLPHFUX25 --paths "/*"
+
 artifacts:
   files:
-    - '**/*'
+    - "**/*"
