@@ -9,7 +9,19 @@ phases:
       - java -version
       - chmod +x gradlew || echo "Failed to set execute permissions!"
       - ./gradlew --version || echo "Gradle wrapper execution failed!"
-
+  pre_build:
+    commands:
+      - echo "===== Setting up environment variables ====="
+      - echo "DB_USER_NAME=${DB_USER_NAME}" >> .env
+      - echo "DB_PASSWORD=${DB_PASSWORD}" >> .env
+      - echo "GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}" >> .env
+      - echo "GOOGLE_SECRET_KEY=${GOOGLE_SECRET_KEY}" >> .env
+      - echo "JWT_SECRET_KEY=${JWT_SECRET_KEY}" >> .env
+      - echo "KAKAO_REST_API_KEY=${KAKAO_REST_API_KEY}" >> .env
+      - echo "KAKAO_REST_OAUTH2_API_KEY=${KAKAO_REST_OAUTH2_API_KEY}" >> .env
+      - echo "NAVER_CLIENT_ID=${NAVER_CLIENT_ID}" >> .env
+      - echo "NAVER_CLIENT_SECRET_KEY=${NAVER_CLIENT_SECRET_KEY}" >> .env
+      - echo "WEATHER_API=${WEATHER_API}" >> .env
   build:
     commands:
       - echo "===== Building the project ====="
