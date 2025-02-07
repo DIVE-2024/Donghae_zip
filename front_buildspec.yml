@@ -14,7 +14,7 @@ phases:
 
   post_build:
     commands:
-      - aws s3 sync build/ s3://Donghae-Front --delete
+      - aws s3 sync build/ s3://donghae-front --delete
       - aws cloudfront create-invalidation --distribution-id E2ZQWLLPHFUX25 --paths "/*"
 artifacts:
   files:
