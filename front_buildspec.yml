@@ -1,0 +1,21 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18  # Node.js 18 버전 사용
+    commands:
+      - cd my-react-app  # React 프로젝트 디렉토리로 이동
+      - npm install  # 패키지 설치
+
+  build:
+    commands:
+      - npm run build  # React 빌드 실행
+
+  post_build:
+    commands:
+      - aws s3 sync build/ s3://Donghae-Front --delete
+      - aws cloudfront create-invalidation --distribution-id E2ZQWLLPHFUX25 --paths "/*"
+artifacts:
+  files:
+    - '**/*'
