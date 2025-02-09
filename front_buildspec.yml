@@ -4,23 +4,28 @@ phases:
   install:
     commands:
       - echo "===== Installing dependencies ====="
+      - cd src/main/frontend
       - npm install
   pre_build:
     commands:
       - echo "===== Creating .env file ====="
+      - cd src/main/frontend
       - echo "REACT_APP_API_URL=$REACT_APP_API_URL" > .env
       - echo "REACT_APP_KAKAO_API_KEY=$REACT_APP_KAKAO_API_KEY" >> .env
   build:
     commands:
       - echo "===== Building Frontend ====="
+      - cd src/main/frontend
       - npm run build
   post_build:
     commands:
       - echo "===== Deploying to S3 ====="
-      - aws s3 sync build/ s3://donghae-front --delete
+      - aws s3 sync src/main/frontend/build/ s3://donghae-front --delete
       - echo "===== Invalidating CloudFront Cache ====="
       - aws cloudfront create-invalidation --distribution-id E2ZQWLLPHFUX25 --paths "/*"
 
 artifacts:
   files:
     - "**/*"
+  base-directory: src/main/frontend/build
+  discard-paths: no
