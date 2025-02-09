@@ -5,9 +5,11 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
-import org.springframework.context.annotation.Bean;
 import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
@@ -27,22 +29,25 @@ public class SwaggerConfig {
                 .bearerFormat("JWT")
         );
 
-        // EC2 서버 URL을 Swagger에 추가
-        Server server = new Server().url("http://13.209.129.85:8080").description("EC2 Server");
+        // 서버 URL 목록 (도메인 기반 설정 추가)
+        List<Server> servers = List.of(
+                new Server().url("https://donghae-zip.kro.kr").description("Production Server"),  // 도메인 기반 API
+                new Server().url("http://13.209.129.85:8080").description("EC2 Server")  // 기존 EC2 IP 유지
+        );
 
-        // OpenAPI 객체를 반환. 이 객체는 API 문서의 전반적인 구성을 정의한다.
+        // OpenAPI 객체 반환
         return new OpenAPI()
-                .addServersItem(server) // 서버 URL 추가
-                .components(components)  // 구성 요소(보안 스키마 등)를 추가.
-                .info(apiInfo())  // API 정보(제목, 설명, 버전)를 설정.
-                .addSecurityItem(securityRequirement);  // 보안 요구 사항을 추가.
+                .servers(servers)  // 서버 URL 리스트 추가
+                .components(components)  // 보안 설정 추가
+                .info(apiInfo())  // API 정보 추가
+                .addSecurityItem(securityRequirement);  // 보안 요구 사항 추가
     }
 
     private Info apiInfo() {
-        // Info 객체는 API 문서의 제목, 설명 및 버전을 정의한다.
         return new Info()
                 .title("Donghae ZIP API")
                 .description("API documentation for Donghae ZIP project")
                 .version("1.0");
     }
 }
+
