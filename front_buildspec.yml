@@ -3,24 +3,25 @@ version: 0.2
 phases:
   install:
     commands:
+      - echo "===== Checking Current Directory ====="
+      - pwd  # 현재 실행 경로 출력
+      - ls -l  # 현재 디렉토리의 파일 목록 출력
       - echo "===== Installing dependencies ====="
-      - cd src/main/frontend
-      - npm install
+      - npm --prefix src/main/frontend install  # ✅ 경로 지정하여 실행
   pre_build:
     commands:
       - echo "===== Creating .env file ====="
-      - cd src/main/frontend
-      - echo "REACT_APP_API_URL=$REACT_APP_API_URL" > .env
-      - echo "REACT_APP_KAKAO_API_KEY=$REACT_APP_KAKAO_API_KEY" >> .env
+      - echo "REACT_APP_API_URL=$REACT_APP_API_URL" > src/main/frontend/.env
+      - echo "REACT_APP_KAKAO_API_KEY=$REACT_APP_KAKAO_API_KEY" >> src/main/frontend/.env
+      - cat src/main/frontend/.env  # 🚀 .env 파일 내용 확인
   build:
     commands:
       - echo "===== Building Frontend ====="
-      - cd src/main/frontend
-      - npm run build
+      - npm --prefix src/main/frontend run build  # ✅ 경로 지정하여 실행
   post_build:
     commands:
       - echo "===== Deploying to S3 ====="
-      - aws s3 sync src/main/frontend/build/ s3://donghae-front --delete
+      - aws s3 sync src/main/frontend/build/ s3://donghae-front --delete  # ✅ 정확한 빌드 경로 지정
       - echo "===== Invalidating CloudFront Cache ====="
       - aws cloudfront create-invalidation --distribution-id E2ZQWLLPHFUX25 --paths "/*"
 
