@@ -1,7 +1,7 @@
 import React, {memo, useEffect, useState} from 'react';
 import styled from 'styled-components';
 import { Carousel } from 'react-bootstrap';
-import axios from "axios";
+import axiosInstance from "../../api/axiosInstance";
 import donghaeLineImage from '../../assets/images/Donghae_Line.png';
 import oceanImage from '../../assets/images/ocean.png'; // 이미지 가져오기
 import DonghaeMap from '../../Donghae/DonghaeMap';
@@ -244,11 +244,7 @@ const MainPage = () => {
             setIsLoggedIn(true); // 로그인 상태 설정
 
             // 사용자 정보를 가져오는 API 호출
-            axios.get('/api/members/profile', {
-                headers: {
-                    'Authorization': `Bearer ${token}` // JWT 토큰을 Authorization 헤더에 추가
-                }
-            })
+            axiosInstance.get('/api/members/profile')
                 .then(response => {
                     // API 응답 구조 확인
                     console.log('사용자 정보:', response.data);
@@ -271,19 +267,19 @@ const MainPage = () => {
         try {
             let response;
             if (category === "touristSpots") {
-                response = await axios.get(`/api/tourist-spots/radius`, {
+                response = await axiosInstance.get(`/api/tourist-spots/radius`, {
                     params: { latitude, longitude, radius, page, size: 4 },
                 });
                 setTouristSpots(response.data.content);
                 setTotalTouristSpotCount(response.data.totalElements);
             } else if (category === "accommodations") {
-                response = await axios.get(`/api/accommodations/radius`, {
+                response = await axiosInstance.get(`/api/accommodations/radius`, {
                     params: { latitude, longitude, radius, page, size: 4 },
                 });
                 setAccommodations(response.data.content);
                 setTotalAccommodationCount(response.data.totalElements);
             } else if (category === "restaurants") {
-                response = await axios.get(`/api/restaurants/radius`, {
+                response = await axiosInstance.get(`/api/restaurants/radius`, {
                     params: { latitude, longitude, radius, page, size: 4 },
                 });
                 setRestaurants(response.data.content);
@@ -309,7 +305,7 @@ const MainPage = () => {
         setCurrentPage({ accommodations: 0, restaurants: 0, touristSpots: 0 });
 
         try {
-            const stationResponse = await axios.get(`/api/donghae/station/${stationName}`);
+            const stationResponse = await axiosInstance.get(`/api/donghae/station/${stationName}`);
             const { stationInfo } = stationResponse.data;
 
             const selectedStationData = {
@@ -350,7 +346,7 @@ const MainPage = () => {
     // 동해선 역 데이터 및 진행 중인 축제 데이터를 API에서 가져오는 로직
     useEffect(() => {
         // 동해선 역 데이터 가져오기
-        axios.get("/api/donghae/donghae-line")
+        axiosInstance.get("/api/donghae/donghae-line")
             .then(response => {
                 const filteredStations = response.data.filter(station => station.lineName === "동해선");
                 setStationsData(filteredStations);
@@ -360,7 +356,7 @@ const MainPage = () => {
             });
 
         // 진행 중인 축제 데이터 가져오기
-        axios.get("/api/festivals/status", {
+        axiosInstance.get("/api/festivals/status", {
             params: {
                 status: 'COMPLETED',  // 진행 중인 축제만 필터링
                 page: 0,

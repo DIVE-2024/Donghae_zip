@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams,useNavigate} from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from "../../api/axiosInstance";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './TrailDetailPage.css';
@@ -24,7 +24,7 @@ const TrailDetailPage = () => {
         if (userId) setUserId(userId);
 
         // 특정 코스의 상세 정보를 가져오는 API 호출
-        axios.get(`/api/trails/${id}`)
+        axiosInstance.get(`/api/trails/${id}`)
             .then(response => {
                 setTrail(response.data);
             })
@@ -33,7 +33,7 @@ const TrailDetailPage = () => {
             });
 
         // 해당 코스에 대한 댓글 목록을 가져오는 API 호출
-        axios.get(`/api/comments/trails/${id}/reviews`)
+        axiosInstance.get(`/api/comments/trails/${id}/reviews`)
             .then(response => {
                 setComments(response.data);
             })

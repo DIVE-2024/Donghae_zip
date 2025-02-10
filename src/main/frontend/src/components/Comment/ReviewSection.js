@@ -6,6 +6,7 @@ import ReviewCount from "./ReviewCount";
 import StarRating from './StarRating';
 import './ReviewSection.css';
 import AverageRating from "./AverageRating";
+import axiosInstance from "../../api/axiosInstance";
 
 const ReviewSection = ({ entityType, entityId, userId,onAverageRatingChange }) => { //onAverageRatingChange 콜백함수추가
     const [comments, setComments] = useState([]);
@@ -20,7 +21,7 @@ const ReviewSection = ({ entityType, entityId, userId,onAverageRatingChange }) =
     }, [entityType, entityId]);
 
     const fetchComments = () => {
-        axios.get(`/api/comments/${entityType}/${entityId}/reviews`)
+        axiosInstance.get(`/api/comments/${entityType}/${entityId}/reviews`)
             .then(response => {
                 setComments(response.data);
                 calculateAverageRating(response.data); // 리뷰 데이터로 평균 점수 계산
@@ -77,9 +78,7 @@ const ReviewSection = ({ entityType, entityId, userId,onAverageRatingChange }) =
             [idField]: parseInt(entityId)
         };
 
-        axios.post('/api/comments', requestData, {
-            headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }
-        })
+        axiosInstance.post('/api/comments', requestData)
             .then(response => {
                 setNewComment('');
                 setRating(0);

@@ -1,7 +1,8 @@
 // components/AverageRating.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './AverageRating.css'; // 스타일을 위한 별도 CSS 파일
+import './AverageRating.css';
+import axiosInstance from "../../api/axiosInstance"; // 스타일을 위한 별도 CSS 파일
 
 const AverageRating = ({ entityType, entityId, fontSize = '2rem' }) => {
     const [averageRating, setAverageRating] = useState(0);
@@ -9,7 +10,7 @@ const AverageRating = ({ entityType, entityId, fontSize = '2rem' }) => {
     useEffect(() => {
         const fetchAverageRating = async () => {
             try {
-                const response = await axios.get(`/api/comments/${entityType}/${entityId}/average-rating`);
+                const response = await axiosInstance.get(`/api/comments/${entityType}/${entityId}/average-rating`);
                 setAverageRating(response.data);
             } catch (error) {
                 console.error(`Error fetching average rating for ${entityType}:`, error);
@@ -18,7 +19,8 @@ const AverageRating = ({ entityType, entityId, fontSize = '2rem' }) => {
         };
 
         fetchAverageRating();
-    }, [entityType, entityId]);
+    }, [entityType, entityId]);  // ✅ entityType 또는 entityId가 변경될 때 다시 호출
+
 
     const displayRating = typeof averageRating === 'number' ? averageRating.toFixed(1) : '0.0';
 

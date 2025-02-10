@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
+import axiosInstance from "../api/axiosInstance";
 import axios from 'axios';
 import './StationStatsChart.css';
 
@@ -29,7 +30,7 @@ const StationStatsChart = () => {
 
     // 연도와 월 가져오기
     useEffect(() => {
-        axios.get('/api/station-stats/years-and-months')
+        axiosInstance.get('/api/station-stats/years-and-months')
             .then(response => {
                 setYearsAndMonths(response.data);
             })
@@ -41,7 +42,8 @@ const StationStatsChart = () => {
     // 특정 연도와 월에 해당하는 주차 가져오기
     useEffect(() => {
         if (yearAndMonth) {
-            axios.get(`/api/station-stats/weeks/${yearAndMonth}`)
+            axiosInstance.get(`/api/station-stats/weeks/${yearAndMonth}`)
+
                 .then(response => {
                     setWeeks(response.data);
                 })
@@ -53,7 +55,7 @@ const StationStatsChart = () => {
 
     // 역 정보 가져오기 (백엔드에서)
     useEffect(() => {
-        axios.get('/api/station-stats/stations')
+        axiosInstance.get('/api/station-stats/stations')
             .then(response => {
                 setStations(response.data);
             })
@@ -71,7 +73,7 @@ const StationStatsChart = () => {
             const weekWithSuffix = `${weekNumber}주차`;
 
             // API 요청
-            axios.get(`/api/station-stats/${stationName}/${year}/${month}/${weekWithSuffix}`)
+            axiosInstance.get(`/api/station-stats/${stationName}/${year}/${month}/${weekWithSuffix}`)
                 .then(response => {
                     const stats = response.data;
 

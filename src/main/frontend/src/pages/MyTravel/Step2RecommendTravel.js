@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Step2RecommendTravel.css';
 import { useNavigate } from 'react-router-dom'; // React Router에서 useNavigate 가져오기
 import Overlay from "../../components/Overlay/Overlay";
-import axios from "axios";
+import axiosInstance from "../../api/axiosInstance";
 
 const Step2RecommendTravel = ({  travelId, startDate, endDate, selectedLocation, onNext, onPrevious, goToTravelList }) => {
     const [travelDays, setTravelDays] = useState([]); // 날짜별 일정 저장
@@ -71,14 +71,8 @@ const Step2RecommendTravel = ({  travelId, startDate, endDate, selectedLocation,
             // 각 날짜별로 데이터를 가져옴
             const updatedTravelDays = await Promise.all(
                 days.map(async (day) => {
-                    const response = await axios.get(
-                        `/api/travel-detail/travel/${travelId}/date/${day.date.toISOString().split("T")[0]}`,
-                        {
-                            headers: {
-                                Authorization: `Bearer ${token}`,
-                            },
-                        }
-                    );
+                    const response = await axiosInstance.get(
+                        `/api/travel-detail/travel/${travelId}/date/${day.date.toISOString().split("T")[0]}`);
                     return {
                         ...day,
                         plans: response.data || [], // API 결과 추가
@@ -102,18 +96,13 @@ const Step2RecommendTravel = ({  travelId, startDate, endDate, selectedLocation,
             }
 
             // 서버에 새로운 일정 저장
-            await axios.post(
+            await axiosInstance.post(
                 `/api/travel-detail`,
                 {
                     travelId: travelId,
                     travelDate: selectedDay.date.toISOString().split("T")[0],
                     plans: newPlans,
                 },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
             );
 
             // 저장 성공 후, 오버레이 닫기와 함께 추가된 일정 업데이트

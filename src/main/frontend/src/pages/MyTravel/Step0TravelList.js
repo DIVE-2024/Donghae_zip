@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from "../../api/axiosInstance";
 import './Step0TravelList.css'; // 스타일링 파일
 import {getUserIdFromToken} from "../../components/Util/jwtUtils";
 import OverlayCreateTravel from "../../components/Overlay/OverlayCreateTravel";
@@ -17,11 +17,7 @@ const Step0TravelList = ({ nickname, onNext }) => {
         if (userId) setUserId(userId);
         const fetchTravelList = async () => {
             try {
-                const response = await axios.get(`/api/travel/user/${userId}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    },
-                });
+                const response = await axiosInstance.get(`/api/travel/user/${userId}`);
                 setTravelList(response.data);
                 console.log(response.data);
                 setLoading(false);
@@ -51,16 +47,11 @@ const Step0TravelList = ({ nickname, onNext }) => {
     // 새로운 여행 생성
     const handleCreateTravel = async (title) => {
         try {
-            const response = await axios.post(
+            const response = await axiosInstance.post(
                 `/api/travel?email=${userId}`,
                 {
                     title: title, // 입력한 여행 이름
                 },
-                {
-                    headers: {
-                        Authorization: `Bearer ${sessionStorage.getItem('token')}`,
-                    },
-                }
             );
             // 새로운 여행을 목록에 추가
             console.log("Travel created:", response.data);

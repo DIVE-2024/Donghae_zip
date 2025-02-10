@@ -1,15 +1,14 @@
 import { useState } from 'react';
 import axios from 'axios';
+import axiosInstance from "../../api/axiosInstance";
 
 const EditComment = ({ commentId, content, rating, id, userId, onSave, entityType }) => {
     const [editedContent, setEditedContent] = useState(content);
     const [editedRating, setEditedRating] = useState(rating);
     const [isEditing, setIsEditing] = useState(false);
 
-    const handleSaveEditedComment = () => {
-        const token = sessionStorage.getItem('token');
-
-        if (!token) {
+    const handleSaveEditedComment = async () => {
+        if (!sessionStorage.getItem('token')) {
             console.error('Token is missing');
             return;
         }
@@ -19,24 +18,20 @@ const EditComment = ({ commentId, content, rating, id, userId, onSave, entityTyp
             rating: editedRating,
             [`${entityType}Id`]: parseInt(id) // restaurantId, accommodationId 등 동적으로 설정
         };
-        console.log(updatedComment);
 
-        axios.put(`/api/comments/${commentId}`, updatedComment, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            params: { email: userId }
-        })
-            .then(response => {
-                console.log("Response data:", response.data);  // 서버에서 받은 응답 데이터 확인
-                onSave(response.data); // 상위 컴포넌트에서 댓글 목록 갱신 처리
-                setIsEditing(false);
-            })
-            .catch(error => {
-                console.error('Error updating comment:', error.response?.data || error.message); // 에러 로그 확인
+        try {
+            const response = await axiosInstance.put(`/api/comments/${commentId}`, updatedComment, {
+                params: { email: userId }
             });
+
+            console.log("Response data:", response.data);  // 서버에서 받은 응답 데이터 확인
+            onSave(response.data); // 상위 컴포넌트에서 댓글 목록 갱신 처리
+            setIsEditing(false);
+        } catch (error) {
+            console.error('Error updating comment:', error.response?.data || error.message);
+        }
     };
+
 
 
     const renderStars = (rating) => {

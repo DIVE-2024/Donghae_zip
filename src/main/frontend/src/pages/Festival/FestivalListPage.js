@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, Container, Row, Col, Button, Pagination } from 'react-bootstrap';
-import axios from 'axios';
+import axiosInstance from "../../api/axiosInstance";
 import './FestivalListPage.css';
 import { Link } from 'react-router-dom';
 import ReviewCount from "../../components/Comment/ReviewCount";
@@ -40,10 +40,7 @@ const FestivalListPage = () => {
             return;
         }
 
-        axios.get(`/api/favorites/auth/festivals/${userId}`, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
+        axiosInstance.get(`/api/favorites/auth/festivals/${userId}`, {
             params: {
                 page: page,  // 페이지 번호 추가
                 size: itemsPerPage  // 페이지 크기 추가
@@ -87,7 +84,7 @@ const FestivalListPage = () => {
             }
 
             // 필터가 없는 경우 기본 데이터 가져오기
-            const response = await axios.get(filterUrl);
+            const response = await axiosInstance.get(filterUrl);
             console.log(response.data); // 콘솔 로그로 필터링된 데이터 확인
             setFestivals(response.data.content);
             setTotalPages(response.data.totalPages);
@@ -132,11 +129,7 @@ const FestivalListPage = () => {
 
         if (isFavorite) {
             // 좋아요 삭제 요청
-            axios.delete(`/api/favorites/auth/festivals/${id}?email=${userId}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
+            axiosInstance.delete(`/api/favorites/auth/festivals/${id}?email=${userId}`)
                 .then(() => {
                     // 기존 코드에서 삭제할 id를 명확히 지정하여 상태를 업데이트합니다
                     setFavoriteFestivals((prevFavorites) => prevFavorites.filter(favId => favId !== id));
@@ -147,11 +140,7 @@ const FestivalListPage = () => {
                 });
         } else {
             // 좋아요 추가 요청
-            axios.post(`/api/favorites/auth/festivals/${id}?email=${userId}`, null, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
+            axiosInstance().post(`/api/favorites/auth/festivals/${id}?email=${userId}`, null)
                 .then(() => {
                     setFavoriteFestivals((prevFavorites) => [...prevFavorites, id]);
                 })

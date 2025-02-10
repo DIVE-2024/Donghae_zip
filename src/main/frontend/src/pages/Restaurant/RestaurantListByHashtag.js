@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axiosInstance from "../../api/axiosInstance";
 import { useParams, Link } from 'react-router-dom';
 
 const RestaurantListByHashtag = () => {
@@ -12,7 +12,7 @@ const RestaurantListByHashtag = () => {
     useEffect(() => {
         setLoading(true);
         // 지역 및 해시태그에 따라 식당 목록 가져오기 (페이지네이션)
-        axios.get(`/api/restaurants/region/${region}/hashtag/${hashtag}?page=${page}&size=10`)
+        axiosInstance.get(`/api/restaurants/region/${region}/hashtag/${hashtag}?page=${page}&size=10`)
             .then(response => {
                 setRestaurants(response.data.content);
                 setTotalPages(response.data.totalPages);

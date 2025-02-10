@@ -1,22 +1,19 @@
 import axios from 'axios';
 import { useState } from 'react';
 import Warning from "../Warning/Warning";
+import axiosInstance from "../../api/axiosInstance";
 
 const DeleteComment = ({ commentId, userId, onDelete }) => {
     const [showWarning, setShowWarning] = useState(false);
 
-    const handleDeleteComment = () => {
-        const token = sessionStorage.getItem('token');
-        axios.delete(`/api/comments/${commentId}?email=${userId}`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        })
-            .then(() => {
-                onDelete(commentId); // 상위 컴포넌트에서 댓글 목록 갱신 처리
-                setShowWarning(false); // 모달 닫기
-            })
-            .catch(error => {
-                console.error('Error deleting comment:', error);
-            });
+    const handleDeleteComment = async () => {
+        try {
+            await axiosInstance.delete(`/api/comments/${commentId}?email=${userId}`);
+            onDelete(commentId); // 상위 컴포넌트에서 댓글 목록 갱신 처리
+            setShowWarning(false); // 모달 닫기
+        } catch (error) {
+            console.error('Error deleting comment:', error);
+        }
     };
 
     return (

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import subwayMap from '../assets/images/donghae_line_map.png';
 import Siren from '../assets/images/siren.png';
+import axiosInstance from "../api/axiosInstance";
 
 const DonghaeSubway = () => {
     const [stations, setStations] = useState([]);
@@ -12,7 +13,7 @@ const DonghaeSubway = () => {
 
     useEffect(() => {
         // 동해선 노선에 속한 모든 역 정보 가져오기
-        axios.get("/api/donghae/donghae-line")
+        axiosInstance.get("/api/donghae/donghae-line")
             .then((response) => {
                 const filteredStations = response.data.filter(station => station.lineName === "동해선");
                 setStations(filteredStations); // 동해선에 속한 역 정보를 상태에 저장
@@ -26,7 +27,7 @@ const DonghaeSubway = () => {
 
     // 특정 역 정보 가져오기
     const handleStationClick = (stationName) => {
-        axios.get(`/api/donghae/${stationName}`)
+        axiosInstance.get(`/api/donghae/${stationName}`)
             .then((response) => {
                 setSelectedStation(response.data); // 선택한 역 정보를 상태에 저장
             })

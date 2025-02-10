@@ -63,6 +63,8 @@ public class WebSecurityConfig {
                                 "/favicon.ico",
                                 "/error" // /error 경로 추가
                         ).permitAll()
+                        // ✅ 메인 페이지 및 정적 리소스 접근 허용
+                        .requestMatchers("/", "/index.html", "/static/**", "/css/**", "/js/**", "/img/**").permitAll()
                         // Health Check 경로 허용
                         .requestMatchers("/health").permitAll()
                         // 인증 없이 허용되는 API 경로들
