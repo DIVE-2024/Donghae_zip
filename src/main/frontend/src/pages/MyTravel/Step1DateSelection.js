@@ -177,7 +177,7 @@ const Step1DateSelection = ({ travel ,startDate, setStartDate, endDate, setEndDa
         try {
             // 로컬 날짜를 yyyy-MM-dd 형식으로 변환
             const formattedDate = date.toLocaleDateString("en-CA"); // yyyy-MM-dd 형식
-            const response = await axios.get('/api/weather', {
+            const response = await axiosInstance.get('/api/weather', {
                 params: {
                     location,
                     date: formattedDate,

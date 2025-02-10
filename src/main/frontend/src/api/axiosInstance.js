@@ -5,6 +5,7 @@ const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 
 // ✅ JWT 없이 요청 가능한 API 리스트
 const PUBLIC_PATHS = [
+    "/api/weather", // 날씨 정보
     "/api/station-stats", //역 정보
     "/api/accommodations", //숙박 정보
     "/api/trails", //둘렛길 정보
