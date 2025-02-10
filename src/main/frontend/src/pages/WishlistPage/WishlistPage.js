@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from "../../api/axiosInstance";
 import { useNavigate } from 'react-router-dom';
 
 const WishlistPage = () => {
@@ -14,10 +14,7 @@ const WishlistPage = () => {
             navigate('/login');
         } else {
             // API 호출하여 찜 목록 가져오기
-            axios.get('/api/favorites/auth', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
+            axiosInstance.get('/api/favorites/auth', {
                 params: {
                     userId: userId,
                     page: page, // 페이지 번호 전달

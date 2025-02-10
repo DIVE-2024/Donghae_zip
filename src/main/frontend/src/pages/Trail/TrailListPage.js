@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from "../../api/axiosInstance";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './TrailListPage.css';
@@ -36,10 +36,7 @@ const TrailListPage = () => {
 
         if (!userId || !token) return;
 
-        axios.get(`/api/favorites/auth/trails/${userId}`, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
+        axiosInstance.get(`/api/favorites/auth/trails/${userId}`, {
             params: {
                 page: page,
                 size: itemsPerPage  // 찜 목록 크기
@@ -76,7 +73,7 @@ const TrailListPage = () => {
             apiUrl = `/api/trails/sort/length?direction=asc&page=${currentPage}&size=${itemsPerPage}`;
         }
 
-        axios.get(apiUrl)
+        axiosInstance.get(apiUrl)
             .then(response => {
                 console.log("API 응답 데이터:", response.data);
                 setTrails(response.data.content || response.data); // content를 사용하여 데이터를 매핑
@@ -122,11 +119,7 @@ const TrailListPage = () => {
 
         if (isFavorite) {
             // 좋아요 삭제 요청
-            axios.delete(`/api/favorites/auth/trails/${id}?email=${userId}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
+            axiosInstance.delete(`/api/favorites/auth/trails/${id}?email=${userId}` )
                 .then(() => {
                     setFavoriteTrails((prevFavorites) => prevFavorites.filter(favId => favId !== id));
                 })
@@ -136,11 +129,7 @@ const TrailListPage = () => {
                 });
         } else {
             // 좋아요 추가 요청
-            axios.post(`/api/favorites/auth/trails/${id}?email=${userId}`, null, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
+            axiosInstance.post(`/api/favorites/auth/trails/${id}?email=${userId}`, null, )
                 .then(() => {
                     setFavoriteTrails((prevFavorites) => [...prevFavorites, id]);
                 })

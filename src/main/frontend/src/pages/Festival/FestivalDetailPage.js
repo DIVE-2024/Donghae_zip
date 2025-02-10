@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams,useNavigate } from 'react-router-dom'; // URL에서 festivalId를 가져오기 위해 useParams 사용
-import axios from 'axios';
+import axiosInstance from "../../api/axiosInstance";
 import { Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -22,7 +22,7 @@ const FestivalDetailPage = () => {
         const userId = getUserIdFromToken();  // userId 가져오기
         if (userId) setUserId(userId);
 
-        axios.get(`/api/festivals/${id}`)
+        axiosInstance.get(`/api/festivals/${id}`)
             .then(response => {
                 setFestival(response.data);
                 console.log(response);
@@ -31,7 +31,7 @@ const FestivalDetailPage = () => {
                 console.error('Error fetching festival data:', error);
             });
         // 해당 코스에 대한 댓글 목록을 가져오는 API 호출
-        axios.get(`/api/comments/festivals/${id}/reviews`)
+        axiosInstance.get(`/api/comments/festivals/${id}/reviews`)
             .then(response => {
                 setComments(response.data);
             })

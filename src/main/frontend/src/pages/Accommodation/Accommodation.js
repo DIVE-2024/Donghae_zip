@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams,useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from "../../api/axiosInstance";
 import Map from '../../components/Map/Map';
 import AccommodationImage from '../../components/ImageUrl/AccommodationImage';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -23,7 +23,7 @@ const Accommodation = () => {
         const userId = getUserIdFromToken();  // userId 가져오기
         if (userId) setUserId(userId);
 
-        axios.get(`/api/accommodations/${uniqueId}`, {})
+        axiosInstance.get(`/api/accommodations/${uniqueId}`, {})
             .then(response => {
                 const data = response.data;
                 console.log(response);
@@ -42,7 +42,7 @@ const Accommodation = () => {
             });
 
         // 해당 코스에 대한 댓글 목록을 가져오는 API 호출
-        axios.get(`/api/comments/accommodations/${uniqueId}/reviews`)
+        axiosInstance.get(`/api/comments/accommodations/${uniqueId}/reviews`)
             .then(response => {
                 console.log("댓글 API 응답 데이터: ", response.data);
                 setComments(response.data);

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './FavoriteButton.css';
 import Warning from "../Warning/Warning";
+import axiosInstance from "../../api/axiosInstance";
 
 const FavoriteButton = ({ entityType, entityId, userId }) => {
     const [isFavorite, setIsFavorite] = useState(false);
@@ -12,47 +13,45 @@ const FavoriteButton = ({ entityType, entityId, userId }) => {
         fetchFavoriteStatus();
     }, [entityType, entityId, userId]);
 
-    const fetchFavoriteStatus = () => {
-        const token = sessionStorage.getItem('token');
-        if (!userId || !token) return;
+    const fetchFavoriteStatus = async () => {
+        if (!userId || !sessionStorage.getItem('token')) return;
 
-        axios.get(`/api/favorites/auth/${entityType}/${entityId}?email=${userId}`, {
-            headers: { Authorization: `Bearer ${token}` }
-        })
-            .then(response => setIsFavorite(response.data.isFavorite))
-            .catch(error => console.error('찜 상태 확인 중 오류:', error));
+        try {
+            const response = await axiosInstance.get(`/api/favorites/auth/${entityType}/${entityId}`, {
+                params: { email: userId }
+            });
+            setIsFavorite(response.data.isFavorite);
+        } catch (error) {
+            console.error('찜 상태 확인 중 오류:', error);
+        }
     };
 
-    const toggleFavorite = () => {
-        const token = sessionStorage.getItem('token');
-        if (!userId || !token) {
+    const toggleFavorite = async () => {
+        if (!userId || !sessionStorage.getItem('token')) {
             setShowWarning(true); // Warning 모달을 열기
             return;
         }
 
-        if (isFavorite) {
-            // 찜 해제
-            axios.delete(`/api/favorites/auth/${entityType}/${entityId}?email=${userId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            })
-                .then(() => setIsFavorite(false))
-                .catch(error => {
-                    console.error("찜 해제 중 오류:", error);
-                    alert("찜 해제에 실패했습니다.");
+        try {
+            if (isFavorite) {
+                // 찜 해제
+                await axiosInstance.delete(`/api/favorites/auth/${entityType}/${entityId}`, {
+                    params: { email: userId }
                 });
-        } else {
-            // 찜 추가
-            axios.post(`/api/favorites/auth/${entityType}/${entityId}`, null, {
-                headers: { Authorization: `Bearer ${token}` },
-                params: { email: userId }
-            })
-                .then(() => setIsFavorite(true))
-                .catch(error => {
-                    console.error("찜 추가 중 오류:", error);
-                    alert("찜 추가에 실패했습니다.");
+                setIsFavorite(false);
+            } else {
+                // 찜 추가
+                await axiosInstance.post(`/api/favorites/auth/${entityType}/${entityId}`, null, {
+                    params: { email: userId }
                 });
+                setIsFavorite(true);
+            }
+        } catch (error) {
+            console.error(isFavorite ? "찜 해제 중 오류:" : "찜 추가 중 오류:", error);
+            alert(isFavorite ? "찜 해제에 실패했습니다." : "찜 추가에 실패했습니다.");
         }
     };
+
 
     const handleConfirmWarning = () => {
         setShowWarning(false);

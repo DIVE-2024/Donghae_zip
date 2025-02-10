@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from "../../api/axiosInstance";
 import { Carousel } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -26,7 +26,7 @@ const TouristSpotDetailPage = () => {
         if (userId) setUserId(userId);
 
         // spotId를 사용하여 API 호출
-        axios.get(`/api/tourist-spots/${spotId}`)
+        axiosInstance.get(`/api/tourist-spots/${spotId}`)
             .then(response => {
                 setSpot(response.data);
                 console.log(response);
@@ -36,7 +36,7 @@ const TouristSpotDetailPage = () => {
             });
 
         // 태그 데이터를 가져오는 API 호출
-        axios.get(`/api/comments/tourist-spots/${spotId}/tags`)
+        axiosInstance.get(`/api/comments/tourist-spots/${spotId}/tags`)
             .then(response => {
                 setTags(response.data);
             })
@@ -45,7 +45,7 @@ const TouristSpotDetailPage = () => {
             });
 
         // 해당 여행지에 대한 댓글 목록을 가져오는 API 호출
-        axios.get(`/api/comments/tourist-spots/${spotId}/reviews`)
+        axiosInstance.get(`/api/comments/tourist-spots/${spotId}/reviews`)
             .then(response =>{
                 console.log("댓글 API 응답 데이터: ", response.data);
                 setComments(response.data);

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams,useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from "../../api/axiosInstance";
 import Map from '../../components/Map/Map';
 import RestaurantImage from '../../components/ImageUrl/RestaurantImage';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -24,7 +24,7 @@ const Restaurant = () => {
             if (userIdFromToken) setUserId(userIdFromToken);
 
             try {
-                const restaurantResponse = await axios.get(`/api/restaurants/${id}`);
+                const restaurantResponse = await axiosInstance.get(`/api/restaurants/${id}`);
                 const data = restaurantResponse.data;
 
                 const parsedRestaurant = {
@@ -38,7 +38,7 @@ const Restaurant = () => {
 
                 setRestaurant(parsedRestaurant);
 
-                const commentsResponse = await axios.get(`/api/comments/restaurants/${id}/reviews`);
+                const commentsResponse = await axiosInstance.get(`/api/comments/restaurants/${id}/reviews`);
                 setComments(commentsResponse.data);
             } catch (error) {
                 console.error('Error fetching data:', error);

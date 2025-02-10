@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import axiosInstance from "../../api/axiosInstance";
 
 const ReviewCount = ({ entityType, id, className}) => {
     const [reviewCount, setReviewCount] = useState(null);
@@ -15,7 +16,7 @@ const ReviewCount = ({ entityType, id, className}) => {
         }
 
         // 리뷰 개수를 가져오는 API 호출
-        axios.get(`/api/comments/${entityType}/${id}/review-count`)
+        axiosInstance.get(`/api/comments/${entityType}/${id}/review-count`)
             .then(response => {
                 console.log(response);
                 setReviewCount(response.data);

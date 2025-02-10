@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios'; // axios for API requests
 import './Overlay.css';
 import Modal from "../Modal/Modal";
-import TouristFilter from "../Filter/TouristFilter"; // TouristFilter import
+import TouristFilter from "../Filter/TouristFilter";
+import axiosInstance from "../../api/axiosInstance"; // TouristFilter import
 
 const Overlay = ({ closeOverlay, selectedDay, travelId ,onSavePlan}) => {
     const [activeCategory, setActiveCategory] = useState("TOURIST_SPOT");
@@ -53,7 +54,7 @@ const Overlay = ({ closeOverlay, selectedDay, travelId ,onSavePlan}) => {
         }
 
         try {
-            const response = await axios.get(url);
+            const response = await axiosInstance.get(url);
             console.log("Fetched Data:", response.data.content || response.data);
             setData(response.data.content || []);
             setTotalPages(response.data.totalPages || 0);
@@ -106,12 +107,7 @@ const Overlay = ({ closeOverlay, selectedDay, travelId ,onSavePlan}) => {
     // 일정 삭제 요청 함수
     const deletePlan = async (detailId) => {
         try {
-            const token = sessionStorage.getItem("token");
-            await axios.delete(`/api/travel-detail/${detailId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            await axiosInstance.delete(`/api/travel-detail/${detailId}`,);
 
             // 삭제 후 상태 업데이트
             const updatedTimeSlots = timeSlots.map((slot) => ({
@@ -132,10 +128,8 @@ const Overlay = ({ closeOverlay, selectedDay, travelId ,onSavePlan}) => {
     useEffect(() => {
         const fetchTravelDetails = async () => {
             try {
-                const token = sessionStorage.getItem("token");
-                const response = await axios.get(`/api/travel-detail/travel/${travelId}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
+                //const token = sessionStorage.getItem("token");
+                const response = await axiosInstance.get(`/api/travel-detail/travel/${travelId}`);
 
                 const travelDetails = response.data.travelDetails || [];
 
@@ -195,7 +189,7 @@ const Overlay = ({ closeOverlay, selectedDay, travelId ,onSavePlan}) => {
         else if (category === "ACCOMMODATION") url = `/api/accommodations?page=${page}&size=${size}`;
 
         try {
-            const response = await axios.get(url);
+            const response = await axiosInstance.get(url);
             console.log("Fetched data:", response.data.content); // 데이터 구조 확인
             setData(response.data.content); // Set the current page's data
             setTotalPages(response.data.totalPages); // Set total pages
@@ -203,17 +197,6 @@ const Overlay = ({ closeOverlay, selectedDay, travelId ,onSavePlan}) => {
             console.error("Error fetching data:", error);
         }
     };
-
-    const handleCategoryChange = (category) => {
-        setActiveCategory(category); // 현재 활성 카테고리 변경
-        setTitle(""); // 필터 초기화
-        setCategory("");
-        setRegion("");
-        setIndoorOutdoor("");
-        setCurrentPage(0);
-    };
-
-
 
     const isTimeSlotAvailable = (startIndex, duration) => {
         for (let i = startIndex; i < startIndex + duration; i++) {
@@ -258,12 +241,7 @@ const Overlay = ({ closeOverlay, selectedDay, travelId ,onSavePlan}) => {
 
         try {
             const token = sessionStorage.getItem("token");
-            const response = await axios.post(`/api/travel-detail?travelId=${travelId}`, newPlan, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
+            const response = await axiosInstance.post(`/api/travel-detail?travelId=${travelId}`, newPlan);
             const addedPlan = response.data;
 
             // 새로 추가된 일정으로 timeSlots 업데이트

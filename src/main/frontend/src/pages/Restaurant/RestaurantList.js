@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import axios from 'axios';
+import axiosInstance from "../../api/axiosInstance";
 import { Link } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -33,11 +33,11 @@ const RestaurantList = () => {
     // useEffect로 region 값이 변경될 때 districts와 hashtags를 업데이트
     useEffect(() => {
         if (region) {
-            axios.get(`/api/restaurants/region/${region}/hashtags`)
+            axiosInstance.get(`/api/restaurants/region/${region}/hashtags`)
                 .then(response => setHashtags(Object.keys(response.data)))
                 .catch(error => console.error('Error fetching hashtags:', error));
 
-            axios.get(`/api/restaurants/region/${region}/districts`)
+            axiosInstance.get(`/api/restaurants/region/${region}/districts`)
                 .then(response => setDistricts(response.data))
                 .catch(error => console.error('Error fetching districts:', error));
         } else {
@@ -53,8 +53,7 @@ const RestaurantList = () => {
         if (!userId || !token) return;
 
         try {
-            const response = await axios.get(`/api/favorites/auth/restaurants/${userId}`, {
-                headers: { 'Authorization': `Bearer ${token}` },
+            const response = await axiosInstance.get(`/api/favorites/auth/restaurants/${userId}`, {
                 params: { page, size: itemsPerPage },
             });
             const favoriteIds = response.data.content.map(fav => fav.restaurant.id);
@@ -76,7 +75,7 @@ const RestaurantList = () => {
         }
 
         try {
-            const response = await axios.get(url);
+            const response = await axiosInstance.get(url);
             setRestaurants(response.data.content);
             setRestaurantCount(response.data.totalElements);
             setTotalPages(response.data.totalPages);
@@ -126,14 +125,10 @@ const RestaurantList = () => {
 
         try {
             if (isFavorite) {
-                await axios.delete(`/api/favorites/auth/restaurants/${id}?email=${userId}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+                await axiosInstance.delete(`/api/favorites/auth/restaurants/${id}?email=${userId}`);
                 setFavoriteRestaurants(prev => prev.filter(favId => favId !== id));
             } else {
-                await axios.post(`/api/favorites/auth/restaurants/${id}?email=${userId}`, null, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+                await axiosInstance.post(`/api/favorites/auth/restaurants/${id}?email=${userId}`, null);
                 setFavoriteRestaurants(prev => [...prev, id]);
             }
         } catch (error) {

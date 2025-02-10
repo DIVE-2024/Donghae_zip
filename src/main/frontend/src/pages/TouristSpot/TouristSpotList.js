@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from "../../api/axiosInstance";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './TouristSpotList.css';
@@ -35,10 +35,7 @@ const TouristSpotList = () => {
         const token = sessionStorage.getItem('token');
         if (!userId || !token) return;
 
-        axios.get(`/api/favorites/auth/tourist-spots/${userId}`, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
+        axiosInstance.get(`/api/favorites/auth/tourist-spots/${userId}`, {
             params: {
                 page: 0,
                 size: 100  // 찜 목록 크기
@@ -78,7 +75,7 @@ const TouristSpotList = () => {
             apiUrl = `/api/tourist-spots/${indoorOutdoor}?page=${page}&size=${itemsPerPage}`;
         }
 
-        axios.get(apiUrl)
+        axiosInstance.get(apiUrl)
             .then(response => {
                 setSpots(response.data.content || response.data);
                 setSpotCount(response.data.totalElements || response.data.length);
@@ -123,11 +120,7 @@ const TouristSpotList = () => {
 
         if (isFavorite) {
             // 좋아요 삭제 요청
-            axios.delete(`/api/favorites/auth/spots/${spotId}?email=${userId}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
+            axiosInstance.delete(`/api/favorites/auth/spots/${spotId}?email=${userId}`)
                 .then(() => {
                     setFavoriteSpots((prevFavorites) => prevFavorites.filter(id => id !== spotId));
                 })
@@ -137,11 +130,7 @@ const TouristSpotList = () => {
                 });
         } else {
             // 좋아요 추가 요청
-            axios.post(`/api/favorites/auth/spots/${spotId}?email=${userId}`, null, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            })
+            axiosInstance.post(`/api/favorites/auth/spots/${spotId}?email=${userId}`, null, )
                 .then(() => {
                     setFavoriteSpots((prevFavorites) => [...prevFavorites, spotId]);
                 })

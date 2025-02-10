@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from "../../api/axiosInstance";
 import { useNavigate } from 'react-router-dom';
 import {getUserIdFromToken} from "../../components/Util/jwtUtils";
 import './MyReviewsPage.css';
@@ -24,10 +24,7 @@ const MyReviewsPage = () => {
             navigate('/login');
         } else {
             // API 호출하여 내가 쓴 리뷰 목록 가져오기
-            axios.get('/api/comments/auth/my-reviews', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
+            axiosInstance.get('/api/comments/auth/my-reviews', {
                 params: {
                     email: userId,
                     page: page,

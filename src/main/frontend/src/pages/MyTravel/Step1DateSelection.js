@@ -3,7 +3,7 @@ import DatePicker, { registerLocale } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'; // 기본 스타일 포함
 import ko from 'date-fns/locale/ko'; // 한국어 로케일
 import './Step1DateSelection.css';
-import axios from "axios";
+import axiosInstance from "../../api/axiosInstance";
 import ClearIcon from '../../assets/images/clear.png';
 import CloudyIcon from '../../assets/images/cloudy.png';
 import SnowIcon from '../../assets/images/snow.png';
@@ -41,10 +41,7 @@ const Step1DateSelection = ({ travel ,startDate, setStartDate, endDate, setEndDa
         const fetchTravelDates = async () => {
             try {
                 const token = sessionStorage.getItem('token');
-                const response = await axios.get(`/api/travel/${travel.travelId}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                const response = await axiosInstance.get(`/api/travel/${travel.travelId}`, {
                     params: { email: getUserIdFromToken() },
                 });
 
@@ -86,17 +83,12 @@ const Step1DateSelection = ({ travel ,startDate, setStartDate, endDate, setEndDa
             });
 
             // 서버에 날짜 저장 요청
-            await axios.patch(
+            await axiosInstance.patch(
                 `/api/travel/${travel.travelId}/dates`,
                 {
                     startDate: selectedStartDate.toLocaleDateString("en-CA"), // YYYY-MM-DD 형식
                     endDate: selectedEndDate.toLocaleDateString("en-CA"),
                 },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
             );
 
             // 최종적으로 날짜 상태 업데이트
@@ -119,11 +111,7 @@ const Step1DateSelection = ({ travel ,startDate, setStartDate, endDate, setEndDa
         try {
             const token = sessionStorage.getItem('token');
             const email = getUserIdFromToken(); // JWT에서 이메일 추출
-            await axios.patch(`/api/travel/${travel.travelId}/reset-dates?email=${email}`, null, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            await axiosInstance.patch(`/api/travel/${travel.travelId}/reset-dates?email=${email}`, null);
             setStartDate(null);
             setEndDate(null);
             alert("날짜가 초기화되었습니다.");
