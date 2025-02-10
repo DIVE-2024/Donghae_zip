@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // 기본 API URL 설정 (환경 변수 기반)
-const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+const BASE_URL = process.env.REACT_APP_API_URL || 'https://api.donghae-zip.kro.kr' || 'http://localhost:8080';
 
 // ✅ JWT 없이 요청 가능한 API 리스트
 const PUBLIC_PATHS = [
