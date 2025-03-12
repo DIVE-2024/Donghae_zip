@@ -79,6 +79,11 @@ out/
 ### VS Code ###
 .vscode/
 
+# 환경별 설정 파일 제외
+src/main/resources/application-local.properties
+src/main/resources/application-prod.properties
+
+
 # ZIP 파일 제외, BUT 배포 파일은 포함
 *.zip
 !deployment-package.zip  # ✅ 배포 ZIP은 포함
